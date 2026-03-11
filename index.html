@@ -137,6 +137,32 @@
     .stat-blue  { background: rgba(30,58,138,0.25);  border-color: rgba(59,130,246,0.35); color: #93c5fd; }
     .stat-red   { background: rgba(127,29,29,0.25);  border-color: rgba(239,68,68,0.35);  color: #fca5a5; }
     .stat-off   { background: rgba(30,30,60,0.25);   border-color: rgba(100,116,139,0.3); color: #64748b; }
+
+    #export-bar {
+      margin-top: 10px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    }
+    .export-label { font-size: 9px; letter-spacing: 2px; color: #64748b; text-transform: uppercase; }
+    .export-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+      background: rgba(30,58,138,0.2); border: 1px solid rgba(59,130,246,0.35);
+      color: #93c5fd; border-radius: 4px; padding: 4px 14px;
+      cursor: pointer; transition: background 0.15s; display: flex; align-items: center; gap: 6px;
+    }
+    .export-btn:hover { background: rgba(30,58,138,0.45); }
+    .export-btn:active { transform: scale(0.97); }
+    #export-status {
+      font-size: 9px; color: #4ade80; letter-spacing: 1px;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    #export-status.show { opacity: 1; }
+    #export-error { font-size: 9px; color: #fca5a5; letter-spacing: 1px; display: none; }
+    #export-error.show { display: inline; }
+    @media print {
+      body { grid-template-columns: 1fr; background: #000; }
+      #sidebar, #stats-bar, #export-bar, #title-bar { display: none !important; }
+      #main { padding: 10px; }
+      #svg-wrap { border: none; }
+    }
   </style>
 </head>
 <body>
@@ -446,6 +472,17 @@
     <span class="stat-pill stat-red"   id="stat-red">● 0 Gap</span>
     <span class="stat-pill stat-off"   id="stat-off">● 0 Off</span>
   </div>
+
+  <div id="export-bar">
+    <span class="export-label">Export:</span>
+    <button class="export-btn" onclick="exportPNG()">&#11015; PNG</button>
+    <button class="export-btn" onclick="exportPDF()">&#11015; PDF</button>
+    <button class="export-btn" onclick="exportJSON()">&#11015; JSON</button>
+    <button class="export-btn" onclick="triggerLoadJSON()">&#11014; Load JSON</button>
+    <input type="file" id="json-file-input" accept=".json" style="display:none" onchange="loadFromJSON(event)">
+    <span id="export-status">&#10003; Downloaded</span>
+    <span id="export-error"></span>
+  </div>
 </main>
 
 <script>
@@ -597,6 +634,131 @@ document.getElementById('search').addEventListener('input', function() {
     li.classList.toggle('hidden-item', !sol.label.toLowerCase().includes(q));
   });
 });
+
+function getClientName() {
+  return document.getElementById('client-input').value.trim() || 'CDM';
+}
+
+function exportPNG() {
+  const svg = document.getElementById('owasp-chart');
+  const serializer = new XMLSerializer();
+  const svgStr = serializer.serializeToString(svg);
+  const svgBlob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(svgBlob);
+  const img = new Image();
+  img.onload = function() {
+    const scale = 2; // retina quality
+    const canvas = document.createElement('canvas');
+    canvas.width  = img.naturalWidth  * scale;
+    canvas.height = img.naturalHeight * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0);
+    URL.revokeObjectURL(url);
+    canvas.toBlob(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = getClientName().replace(/\s+/g, '-') + '-CDM.png';
+      a.click();
+      flashStatus();
+    }, 'image/png');
+  };
+  img.src = url;
+}
+
+function exportPDF() {
+  window.print();
+}
+
+function flashStatus() {
+  const el = document.getElementById('export-status');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+function exportJSON() {
+  const clientName = getClientName();
+  const output = {
+    client: clientName,
+    exportedAt: new Date().toISOString(),
+    controls: {}
+  };
+  SOLUTIONS.forEach(sol => {
+    output.controls[sol.id] = {
+      label: sol.label,
+      status: state[sol.id]
+    };
+  });
+  const blob = new Blob([JSON.stringify(output, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = clientName.replace(/\s+/g, '-') + '-CDM.json';
+  a.click();
+  flashStatus();
+}
+
+function triggerLoadJSON() {
+  document.getElementById('json-file-input').click();
+}
+
+function loadFromJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.controls) throw new Error('Invalid format: missing controls key');
+
+      // Restore client name
+      if (data.client) {
+        document.getElementById('client-input').value = data.client;
+      }
+
+      // Restore control states
+      let loaded = 0;
+      Object.entries(data.controls).forEach(([id, val]) => {
+        const status = typeof val === 'string' ? val : (val.status || 'off');
+        if (state.hasOwnProperty(id)) {
+          state[id] = status;
+          // Update radio button
+          const radio = document.getElementById(id + '-' + status);
+          if (radio) radio.checked = true;
+          // Update li class
+          const li = document.getElementById('li-' + id);
+          if (li) li.className = status !== 'off' ? 'active-' + status : '';
+          applyState(id);
+          loaded++;
+        }
+      });
+
+      updateStats();
+      save();
+
+      // Flash success
+      const statusEl = document.getElementById('export-status');
+      const errEl = document.getElementById('export-error');
+      errEl.classList.remove('show');
+      statusEl.textContent = '✓ Loaded ' + (data.client || file.name);
+      statusEl.classList.add('show');
+      setTimeout(() => {
+        statusEl.classList.remove('show');
+        statusEl.textContent = '✓ Downloaded';
+      }, 2500);
+
+    } catch(err) {
+      const errEl = document.getElementById('export-error');
+      errEl.textContent = '✗ ' + err.message;
+      errEl.classList.add('show');
+      setTimeout(() => errEl.classList.remove('show'), 3000);
+    }
+    // Reset input so same file can be reloaded
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
 </script>
 </body>
 </html>
