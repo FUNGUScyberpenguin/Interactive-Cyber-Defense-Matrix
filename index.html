@@ -744,12 +744,11 @@ function getClientName() {
   return document.getElementById('client-input').value.trim() || 'CDM';
 }
 
-function exportPNG() {
+// Render the matrix (plus Mason SC header) to a canvas, then hand it to cb().
+function renderCanvas(cb) {
   const svg = document.getElementById('owasp-chart');
-  const serializer = new XMLSerializer();
-  const svgStr = serializer.serializeToString(svg);
-  const svgBlob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
-  const url = URL.createObjectURL(svgBlob);
+  const svgStr = new XMLSerializer().serializeToString(svg);
+  const url = URL.createObjectURL(new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' }));
   const img = new Image();
   img.onload = function() {
     const scale = 2; // retina quality
@@ -762,7 +761,7 @@ function exportPNG() {
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, canvas.width / scale, canvas.height / scale);
 
-    // Draw header with Mason SC branding
+    // Header with Mason SC branding
     ctx.fillStyle = '#e2e8f0';
     ctx.font = 'bold 18px Rajdhani, sans-serif';
     ctx.textAlign = 'right';
@@ -770,9 +769,15 @@ function exportPNG() {
     ctx.font = '12px IBM Plex Mono, monospace';
     ctx.fillText('Cyber Defense Matrix', img.naturalWidth - 20, 50);
 
-    // Draw matrix
     ctx.drawImage(img, 0, headerHeight);
     URL.revokeObjectURL(url);
+    cb(canvas);
+  };
+  img.src = url;
+}
+
+function exportPNG() {
+  renderCanvas(canvas => {
     canvas.toBlob(blob => {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
@@ -780,12 +785,51 @@ function exportPNG() {
       a.click();
       flashStatus();
     }, 'image/png');
-  };
-  img.src = url;
+  });
 }
 
+// Wrap the rendered matrix image in a single-page PDF (self-contained,
+// embeds the picture as a JPEG image XObject — no print dialog, no libraries).
 function exportPDF() {
-  window.print();
+  renderCanvas(canvas => {
+    const jpeg = atob(canvas.toDataURL('image/jpeg', 0.95).split(',')[1]); // binary string, 1 char/byte
+    const iw = canvas.width, ih = canvas.height;
+    const margin = 18;
+    const drawW = 760, drawH = drawW * ih / iw;
+    const pageW = drawW + 2 * margin, pageH = drawH + 2 * margin;
+
+    const objs = [
+      '<< /Type /Catalog /Pages 2 0 R >>',
+      '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+      '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + pageW.toFixed(2) + ' ' + pageH.toFixed(2) +
+        '] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>',
+      '<< /Type /XObject /Subtype /Image /Width ' + iw + ' /Height ' + ih +
+        ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + jpeg.length +
+        ' >>\nstream\n' + jpeg + '\nendstream'
+    ];
+    const content = '0 0 0 rg 0 0 ' + pageW.toFixed(2) + ' ' + pageH.toFixed(2) + ' re f\n' +
+      'q ' + drawW.toFixed(2) + ' 0 0 ' + drawH.toFixed(2) + ' ' + margin + ' ' + margin + ' cm /Im0 Do Q';
+    objs.push('<< /Length ' + content.length + ' >>\nstream\n' + content + '\nendstream');
+
+    let pdf = '%PDF-1.4\n%\xFF\xFF\xFF\xFF\n';
+    const offsets = [];
+    for (let i = 0; i < objs.length; i++) {
+      offsets.push(pdf.length);
+      pdf += (i + 1) + ' 0 obj\n' + objs[i] + '\nendobj\n';
+    }
+    const xref = pdf.length;
+    pdf += 'xref\n0 ' + (objs.length + 1) + '\n0000000000 65535 f \n';
+    for (const o of offsets) pdf += String(o).padStart(10, '0') + ' 00000 n \n';
+    pdf += 'trailer\n<< /Size ' + (objs.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + xref + '\n%%EOF';
+
+    const bytes = new Uint8Array(pdf.length);
+    for (let i = 0; i < pdf.length; i++) bytes[i] = pdf.charCodeAt(i) & 0xff;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+    a.download = getClientName().replace(/\s+/g, '-') + '-CDM.pdf';
+    a.click();
+    flashStatus();
+  });
 }
 
 function flashStatus() {
