@@ -121,7 +121,7 @@
     #title-bar span { font-size: 13px; color: #cbd5e1; letter-spacing: 2px; }
 
     #templates-bar {
-      margin-bottom: 16px; display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; max-width: 850px;
+      margin-bottom: 16px; display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; max-width: 920px;
     }
     .template-group {
       display: flex; flex-direction: column; gap: 6px;
@@ -158,11 +158,11 @@
     #svg-wrap {
       background: #000;
       border: 1px solid rgba(59,130,246,0.2);
-      border-radius: 4px; overflow: visible; max-width: 850px;
+      border-radius: 4px; overflow: visible; max-width: 920px;
     }
 
     #stats-bar {
-      margin-top: 12px; display: flex; gap: 40px; align-items: flex-start; justify-content: space-between; max-width: 850px;
+      margin-top: 12px; display: flex; gap: 40px; align-items: flex-start; justify-content: space-between; max-width: 920px;
     }
     .clear-all-btn {
       font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 700;
@@ -253,6 +253,14 @@
       </div>
     </div>
     <div class="template-group">
+      <button class="template-btn" onclick="applyTemplate('gettingInsurance', 'red')">Getting Insurance</button>
+      <div class="template-colors">
+        <button class="color-btn current-btn" onclick="applyTemplate('gettingInsurance', 'blue')" title="Current">Current</button>
+        <button class="color-btn planned-btn" onclick="applyTemplate('gettingInsurance', 'green')" title="Planned">Planned</button>
+        <button class="color-btn gap-btn" onclick="applyTemplate('gettingInsurance', 'red')" title="Gap">Gap</button>
+      </div>
+    </div>
+    <div class="template-group">
       <button class="template-btn" onclick="applyTemplate('industryAverage', 'red')">Industry Average</button>
       <div class="template-colors">
         <button class="color-btn current-btn" onclick="applyTemplate('industryAverage', 'blue')" title="Current">Current</button>
@@ -261,7 +269,7 @@
       </div>
     </div>
     <div class="template-group">
-      <button class="template-btn" onclick="applyTemplate('regionalBankStandard', 'red')">Regional Bank Standard</button>
+      <button class="template-btn" onclick="applyTemplate('regionalBankStandard', 'red')">Regional Bank</button>
       <div class="template-colors">
         <button class="color-btn current-btn" onclick="applyTemplate('regionalBankStandard', 'blue')" title="Current">Current</button>
         <button class="color-btn planned-btn" onclick="applyTemplate('regionalBankStandard', 'green')" title="Planned">Planned</button>
@@ -271,268 +279,263 @@
   </div>
 
   <div id="svg-wrap">
-    <svg cursor="default" height="444.5" id="owasp-chart" width="803.10577" version="1.1"
+    <svg cursor="default" height="594.50000" id="owasp-chart" width="889.51752" version="1.1"
       preserveAspectRatio="xMidYMid" style="background-color: black"
-      viewBox="0 0 803.10577 444.5" xmlns="http://www.w3.org/2000/svg">
+      viewBox="0 0 889.51752 594.50000" xmlns="http://www.w3.org/2000/svg">
       <title>Cyber Defense Matrix</title>
       <defs/>
 
       <!-- GRID -->
       <g id="grid" transform="matrix(1.0950292,0,0,1,-3.7184358e-6,-0.92485547)">
-        <text stroke="none" stroke-width="1px" x="82.410408" font-family="Helvetica" fill="#ffffff" font-size="14px" y="99.924858" text-anchor="middle">DEVICES</text>
-        <text stroke="none" stroke-width="1px" x="88.410408" font-family="Helvetica" fill="#ffffff" font-size="14px" y="408.92487" text-anchor="middle">USERS</text>
-        <text stroke="none" stroke-width="1px" x="95.410408" font-family="Helvetica" fill="#ffffff" font-size="14px" y="332.92487" text-anchor="middle">DATA</text>
-        <text stroke="none" stroke-width="1px" x="72.410408" font-family="Helvetica" fill="#ffffff" font-size="14px" y="254.92485" text-anchor="middle">NETWORKS</text>
-        <text stroke="none" stroke-width="1px" x="62.410404" font-family="Helvetica" fill="#ffffff" font-size="14px" y="176.92485" text-anchor="middle">APPLICATIONS</text>
-        <text stroke="none" stroke-width="1px" x="678.4104"  font-family="Helvetica" fill="#ffffff" font-size="14px" y="44.924854" text-anchor="middle">RECOVER</text>
-        <text stroke="none" stroke-width="1px" x="577.4104"  font-family="Helvetica" fill="#ffffff" font-size="14px" y="43.924854" text-anchor="middle">RESPOND</text>
-        <text stroke="none" stroke-width="1px" x="476.4104"  font-family="Helvetica" fill="#ffffff" font-size="14px" y="43.924854" text-anchor="middle">DETECT</text>
-        <text stroke="none" stroke-width="1px" x="375.4104"  font-family="Helvetica" fill="#ffffff" font-size="14px" y="42.924854" text-anchor="middle">PROTECT</text>
-        <text stroke="none" stroke-width="1px" x="276.4104"  font-family="Helvetica" fill="#ffffff" font-size="14px" y="42.924854" text-anchor="middle">IDENTIFY</text>
-        <text stroke="none" stroke-width="1px" x="173.4104"  font-family="Helvetica" fill="#ffffff" font-size="14px" y="43.924854" text-anchor="middle">GOVERN</text>
-        <line stroke="#ffffff" y1="132.92485" x1="126.41041" stroke-width="3px" y2="132.92485" x2="727.4104"/>
-        <line stroke="#ffffff" y1="208.92485" x1="126.41041" stroke-width="3px" y2="208.92485" x2="727.4104"/>
-        <line stroke="#ffffff" y1="284.92487" x1="126.41041" stroke-width="3px" y2="284.92487" x2="727.4104"/>
-        <line stroke="#ffffff" y1="360.92487" x1="125.41041" stroke-width="3px" y2="360.92487" x2="727.4104"/>
-        <line stroke="#ffffff" y1="56.924854" x1="226.4104" stroke-width="3px" y2="437.92487" x2="226.4104"/>
-        <line stroke="#ffffff" y1="57.924854" x1="326.4104" stroke-width="3px" y2="437.92487" x2="326.4104"/>
-        <line stroke="#ffffff" y1="56.924854" x1="426.4104" stroke-width="3px" y2="437.92487" x2="426.4104"/>
-        <line stroke="#ffffff" y1="57.924854" x1="526.4104" stroke-width="3px" y2="437.92487" x2="526.4104"/>
-        <line stroke="#ffffff" y1="56.924854" x1="626.4104" stroke-width="3px" y2="437.92487" x2="626.4104"/>
-        <rect stroke="#ffffff" x="126.41041" height="380" y="56.924854" stroke-width="3px" width="600" fill="none"/>
+        <text stroke="none" stroke-width="1px" x="76.69315" font-family="Helvetica" fill="#ffffff" font-size="14px" y="114.92486" text-anchor="middle">DEVICES</text>
+        <text stroke="none" stroke-width="1px" x="83.47315" font-family="Helvetica" fill="#ffffff" font-size="14px" y="543.92487" text-anchor="middle">USERS</text>
+        <text stroke="none" stroke-width="1px" x="91.38315" font-family="Helvetica" fill="#ffffff" font-size="14px" y="437.92487" text-anchor="middle">DATA</text>
+        <text stroke="none" stroke-width="1px" x="65.39315" font-family="Helvetica" fill="#ffffff" font-size="14px" y="329.92485" text-anchor="middle">NETWORKS</text>
+        <text stroke="none" stroke-width="1px" x="54.09314" font-family="Helvetica" fill="#ffffff" font-size="14px" y="221.92485" text-anchor="middle">APPLICATIONS</text>
+        <text stroke="none" stroke-width="1px" x="750.17314"  font-family="Helvetica" fill="#ffffff" font-size="14px" y="44.924854" text-anchor="middle">RECOVER</text>
+        <text stroke="none" stroke-width="1px" x="636.04314"  font-family="Helvetica" fill="#ffffff" font-size="14px" y="43.924854" text-anchor="middle">RESPOND</text>
+        <text stroke="none" stroke-width="1px" x="521.91314"  font-family="Helvetica" fill="#ffffff" font-size="14px" y="43.924854" text-anchor="middle">DETECT</text>
+        <text stroke="none" stroke-width="1px" x="407.78314"  font-family="Helvetica" fill="#ffffff" font-size="14px" y="42.924854" text-anchor="middle">PROTECT</text>
+        <text stroke="none" stroke-width="1px" x="295.91314"  font-family="Helvetica" fill="#ffffff" font-size="14px" y="42.924854" text-anchor="middle">IDENTIFY</text>
+        <text stroke="none" stroke-width="1px" x="179.52314"  font-family="Helvetica" fill="#ffffff" font-size="14px" y="43.924854" text-anchor="middle">GOVERN</text>
+        <line stroke="#ffffff" y1="162.92485" x1="126.41315" stroke-width="3px" y2="162.92485" x2="805.54314"/>
+        <line stroke="#ffffff" y1="268.92485" x1="126.41315" stroke-width="3px" y2="268.92485" x2="805.54314"/>
+        <line stroke="#ffffff" y1="374.92487" x1="126.41315" stroke-width="3px" y2="374.92487" x2="805.54314"/>
+        <line stroke="#ffffff" y1="480.92487" x1="125.28315" stroke-width="3px" y2="480.92487" x2="805.54314"/>
+        <line stroke="#ffffff" y1="56.924854" x1="239.41314" stroke-width="3px" y2="587.92487" x2="239.41314"/>
+        <line stroke="#ffffff" y1="57.924854" x1="352.41314" stroke-width="3px" y2="587.92487" x2="352.41314"/>
+        <line stroke="#ffffff" y1="56.924854" x1="465.41314" stroke-width="3px" y2="587.92487" x2="465.41314"/>
+        <line stroke="#ffffff" y1="57.924854" x1="578.41314" stroke-width="3px" y2="587.92487" x2="578.41314"/>
+        <line stroke="#ffffff" y1="56.924854" x1="691.41314" stroke-width="3px" y2="587.92487" x2="691.41314"/>
+        <rect stroke="#ffffff" x="126.41041" height="530.00000" y="56.924854" stroke-width="3px" width="678.00274" fill="none"/>
       </g>
 
       <!-- CONTROLS -->
       <g id="labels" transform="matrix(1.0958935,0,0,0.99963677,72.433308,11.016104)">
 
         <g id="vCiso">
-          <rect stroke="#355bb7" height="293" x="69.184975" stroke-width="3px" width="12" y="50.849712" fill="#355bb7"/>
-          <text style="font-size:11.3333px;fill:#f9f9f9" x="-343.03378" y="78.220085" font-family="Helvetica" transform="rotate(-90)"><tspan x="-343.03378" y="78.220085">vCISO: Maturity Assessments, Roadmap Build</tspan></text>
+          <rect stroke="#355bb7" height="510.18531" x="67.68604" stroke-width="3px" width="20.07494" y="55.00388" fill="#355bb7"/>
+          <text style="font-size:11.3333px;fill:#f9f9f9" x="-418.06103" y="80.75862" font-family="Helvetica" transform="rotate(-90)"><tspan x="-418.06103" y="80.75862">vCISO: Maturity Assessments, Roadmap Build</tspan></text>
         </g>
 
         <g id="staffingAndRecruiting">
-          <rect stroke="#355bb7" height="293" x="108.18497" y="50.849712" stroke-width="3px" width="12" fill="#355bb7"/>
-          <text style="font-size:11.3333px;fill:#f9f9f9" x="-262.11526" y="117.0142" font-family="Helvetica" transform="rotate(-90)"><tspan x="-262.11526" y="117.0142">Staffing and Recruiting</tspan></text>
+          <rect stroke="#355bb7" height="510.18531" x="121.64810" y="55.00388" stroke-width="3px" width="20.07494" fill="#355bb7"/>
+          <text style="font-size:11.3333px;fill:#f9f9f9" x="-337.14251" y="134.51481" font-family="Helvetica" transform="rotate(-90)"><tspan x="-337.14251" y="134.51481">Staffing and Recruiting</tspan></text>
         </g>
 
         <g id="managedGrc">
-          <rect stroke="#355bb7" height="293" x="88.184975" y="50.924858" stroke-width="3px" width="12" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="-196.80684" y="102.11593" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-196.80684" y="102.11593">Managed GRC</tspan></text>
+          <rect stroke="#355bb7" height="510.18531" x="94.66707" y="55.00388" stroke-width="3px" width="20.07494" fill="#355bb7"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="-268.46340" y="113.13033" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-268.46340" y="113.13033">Managed GRC</tspan></text>
         </g>
 
         <g id="managedControlsAssurance">
-          <rect stroke="#355bb7" height="293" x="128.18497" y="50.849712" stroke-width="3px" width="12" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="-188.42041" y="144.06502" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-188.42041" y="144.06502">Managed Controls Assurance</tspan></text>
+          <rect stroke="#355bb7" height="510.18531" x="148.62913" y="55.00388" stroke-width="3px" width="20.07494" fill="#355bb7"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="-260.07697" y="169.69826" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-260.07697" y="169.69826">Managed Controls Assurance</tspan></text>
         </g>
 
         <g id="attackSurfaceManagement">
-          <rect stroke="#355bb7" height="372.20367" x="238.4068" y="49.04266" stroke-width="3.33388px" width="11.666118" fill="#355bb7"/>
-          <text style="font-size:10.8281px;fill:#f9f9f9" x="-323.15778" y="259.92191" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-323.15778" y="259.92191">Attack Surface Management</tspan></text>
+          <rect stroke="#355bb7" height="510.18531" x="258.12830" y="55.00388" stroke-width="3.33388px" width="20.07494" fill="#355bb7"/>
+          <text style="font-size:10.8281px;fill:#f9f9f9" x="-394.81434" y="284.97328" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-394.81434" y="284.97328">Attack Surface Management</tspan></text>
         </g>
 
         <g id="soc">
-          <rect stroke="#355bb7" height="373.31006" x="451.37384" y="48.281391" stroke-width="4.07723px" width="17.396755" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="-223.35106" y="486.0224" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-223.35106" y="486.0224">SOC</tspan></text>
+          <rect stroke="#355bb7" height="510.18531" x="502.01886" y="55.00388" stroke-width="4.07723px" width="20.07494" fill="#355bb7"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="-295.00762" y="540.45182" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-295.00762" y="540.45182">SOC</tspan></text>
         </g>
 
         <g id="managedSiem">
-          <rect stroke="#355bb7" height="374.0462" x="426.3584" y="47.942223" stroke-width="3.34109px" width="11.658909" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="-226.1983" y="456.25424" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-226.1983" y="456.25424">Managed SIEM</tspan></text>
+          <rect stroke="#355bb7" height="510.18531" x="470.50952" y="55.00388" stroke-width="3.34109px" width="20.07494" fill="#355bb7"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="-297.85486" y="506.88817" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-297.85486" y="506.88817">Managed SIEM</tspan></text>
         </g>
 
         <g id="incidentResponse">
-          <rect stroke="#355bb7" height="372.20367" x="490.2334" y="49.048447" stroke-width="3.33388px" width="11.666118" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="-224.21815" y="522.9696" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-224.21815" y="522.9696">Incident Response</tspan></text>
+          <rect stroke="#355bb7" height="510.18531" x="541.28699" y="55.00388" stroke-width="3.33388px" width="20.07494" fill="#355bb7"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="-295.87471" y="580.82691" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-295.87471" y="580.82691">Incident Response</tspan></text>
         </g>
 
         <g id="ransomwareNegotiation">
-          <rect stroke="#355bb7" height="373.08051" x="512.38519" y="47.814514" stroke-width="3.33732px" width="11.662683" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="-218.21431" y="545.29053" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-218.21431" y="545.29053">Ransomware Negotiation</tspan></text>
+          <rect stroke="#355bb7" height="510.18531" x="569.12729" y="55.00388" stroke-width="3.33732px" width="20.07494" fill="#355bb7"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="-289.87087" y="609.10573" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-289.87087" y="609.10573">Ransomware Negotiation</tspan></text>
         </g>
 
         <g id="draas">
-          <rect stroke="#355bb7" height="373.08051" x="622.68701" y="48.15736" stroke-width="3.33732px" width="11.662683" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="-222.41124" y="662.28918" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-222.41124" y="662.28918">DR-aaS</tspan></text>
+          <rect stroke="#355bb7" height="510.18531" x="684.09306" y="55.00388" stroke-width="3.33732px" width="20.07494" fill="#355bb7"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="-294.06780" y="730.98772" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-294.06780" y="730.98772">DR-aaS</tspan></text>
         </g>
 
         <g id="drPlanAndRehearsals">
-          <rect stroke="#355bb7" height="372.20367" x="642.62646" y="50.395264" stroke-width="3.33388px" width="11.666118" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="-222.39539" y="682.97351" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-222.39539" y="682.97351">DR Plan and Rehearsals</tspan></text>
+          <rect stroke="#355bb7" height="510.18531" x="710.07511" y="55.00388" stroke-width="3.33388px" width="20.07494" fill="#355bb7"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="-294.05195" y="757.99709" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-294.05195" y="757.99709">DR Plan and Rehearsals</tspan></text>
         </g>
 
         <g id="awarenessTraining">
-          <rect stroke="#355bb7" height="93.901169" x="352.29297" y="-156.59589" stroke-width="1.78241px" width="13.217586" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.1435px;fill:#f9f9f9" x="68.169609" y="344.30447" font-family="Helvetica" transform="scale(0.95095059,1.0515793)"><tspan x="68.169609" y="344.30447">Awareness Training</tspan></text>
+          <rect stroke="#355bb7" height="100.53440" x="485.16261" y="-166.91557" stroke-width="1.78241px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.1435px;fill:#f9f9f9;text-anchor:middle" x="122.66502" y="472.45539" font-family="Helvetica" transform="scale(0.95095059,1.0515793)"><tspan x="122.66502" y="472.45539">Awareness Training</tspan></text>
         </g>
 
         <g id="phishingTests">
-          <rect stroke="#355bb7" height="93.901169" x="372.81607" y="-156.79237" stroke-width="1.78241px" width="13.217586" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.1912px;fill:#f9f9f9" x="67.045967" y="364.41931" font-family="Helvetica" transform="scale(0.95507382,1.0470395)"><tspan x="67.045967" y="364.41931">Phishing Tests</tspan></text>
+          <rect stroke="#355bb7" height="100.53440" x="512.86880" y="-166.91557" stroke-width="1.78241px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.1912px;fill:#f9f9f9;text-anchor:middle" x="122.13545" y="499.98625" font-family="Helvetica" transform="scale(0.95507382,1.0470395)"><tspan x="122.13545" y="499.98625">Phishing Tests</tspan></text>
         </g>
 
         <g id="policyEnforcement">
-          <rect stroke="#355bb7" height="93.901169" x="393.33917" y="-156.79237" stroke-width="1.78241px" width="13.217586" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.1912px;fill:#f9f9f9" x="67.045967" y="384.94241" font-family="Helvetica" transform="scale(0.95507382,1.0470395)"><tspan x="67.045967" y="384.94241">Policy Enforcement</tspan></text>
+          <rect stroke="#355bb7" height="100.53440" x="540.57498" y="-166.91557" stroke-width="1.78241px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.1912px;fill:#f9f9f9;text-anchor:middle" x="122.13545" y="527.36972" font-family="Helvetica" transform="scale(0.95507382,1.0470395)"><tspan x="122.13545" y="527.36972">Policy Enforcement</tspan></text>
         </g>
 
         <g id="iam">
-          <rect stroke="#355bb7" height="65.231857" x="394.39087" y="-196.8154" stroke-width="1.50131px" width="13.498682" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.1912px;fill:#f9f9f9" x="161.01817" y="385.93246" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="161.01817" y="385.93246">IAM</tspan></text>
+          <rect stroke="#355bb7" height="69.18715" x="542.18452" y="-248.47619" stroke-width="1.50131px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.1912px;fill:#f9f9f9;text-anchor:middle" x="223.94354" y="528.75831" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="223.94354" y="528.75831">IAM</tspan></text>
         </g>
 
         <g id="mfaSso">
-          <rect stroke="#355bb7" height="59.929825" x="354.82867" y="-224.66223" stroke-width="1.44215px" width="13.557838" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.1912px;fill:#f9f9f9" x="176.66083" y="348.91467" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="176.66083" y="348.91467">MFA / SSO</tspan></text>
+          <rect stroke="#355bb7" height="69.18715" x="488.81548" y="-248.47619" stroke-width="1.44215px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.1912px;fill:#f9f9f9;text-anchor:middle" x="223.94354" y="478.52572" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="223.94354" y="478.52572">MFA / SSO</tspan></text>
         </g>
 
         <g id="emailSecurity">
-          <rect stroke="#355bb7" height="65.231857" x="375.66418" y="-230.74315" stroke-width="1.50131px" width="13.498682" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:9.82353px;fill:#f9f9f9" x="180.15756" y="354.23459" font-family="Helvetica" transform="scale(0.92061765,1.0862273)"><tspan x="180.15756" y="354.23459">Email Security</tspan></text>
+          <rect stroke="#355bb7" height="69.18715" x="516.90349" y="-248.47619" stroke-width="1.50131px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:9.82353px;fill:#f9f9f9;text-anchor:middle" x="232.32513" y="485.87368" font-family="Helvetica" transform="scale(0.92061765,1.0862273)"><tspan x="232.32513" y="485.87368">Email Security</tspan></text>
         </g>
 
         <g id="pam">
-          <rect stroke="#355bb7" height="64.974236" x="339.80859" y="-345.61435" stroke-width="1.75893px" width="18.602251" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="326.22879" y="335.73502" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="326.22879" y="335.73502">PAM</tspan></text>
+          <rect stroke="#355bb7" height="73.42089" x="439.98446" y="-382.71894" stroke-width="1.75893px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="362.28455" y="430.64524" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="362.28455" y="430.64524">PAM</tspan></text>
         </g>
 
         <g id="impersonation">
-          <rect stroke="#355bb7" height="66.292587" x="359.40363" y="-429.75574" stroke-width="1.51282px" width="13.48717" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="420.47708" y="352.12604" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="420.47708" y="352.12604">Impersonation</tspan></text>
+          <rect stroke="#355bb7" height="83.95062" x="494.94398" y="-482.31871" stroke-width="1.51282px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="461.05692" y="483.25458" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="461.05692" y="483.25458">Impersonation</tspan></text>
         </g>
 
         <g id="ddos">
-          <rect stroke="#355bb7" height="82.214378" x="255.19283" y="-344.53897" stroke-width="1.67459px" width="13.3254" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="313.93552" y="253.77998" transform="scale(0.95507383,1.0470395)"><tspan x="313.93552" y="253.77998">DDoS</tspan></text>
+          <rect stroke="#355bb7" height="89.30685" x="332.80448" y="-381.50376" stroke-width="1.67459px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="352.69560" y="329.65959" transform="scale(0.95507383,1.0470395)"><tspan x="352.69560" y="329.65959">DDoS</tspan></text>
         </g>
 
         <g id="dns">
-          <rect stroke="#355bb7" height="31.363605" x="227.50342" y="-296.03705" stroke-width="1.05796px" width="13.942028" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="293.44675" y="227.14461" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="293.44675" y="227.14461">DNS</tspan></text>
+          <rect stroke="#355bb7" height="34.49968" x="301.21329" y="-326.69659" stroke-width="1.05796px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="324.00296" y="299.00327" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="324.00296" y="299.00327">DNS</tspan></text>
         </g>
 
         <g id="networkIntelligence">
-          <rect stroke="#355bb7" height="100.27895" x="221.30426" y="-403.13705" stroke-width="1.83806px" width="13.161933" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.4714px;text-anchor:middle;fill:#f9f9f9" x="381.31979" y="212.72815" font-family="Helvetica" transform="scale(0.92361603,1.082701)"><tspan x="381.31979" y="212.72815">Network Intelligence</tspan></text>
+          <rect stroke="#355bb7" height="113.31521" x="293.61094" y="-447.71959" stroke-width="1.83806px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.4714px;text-anchor:middle;fill:#f9f9f9" x="423.40320" y="281.28421" font-family="Helvetica" transform="scale(0.92361603,1.082701)"><tspan x="423.40320" y="281.28421">Network Intelligence</tspan></text>
         </g>
 
         <g id="firewall">
-          <rect stroke="#355bb7" height="84.338638" x="201.79919" y="-349.21298" stroke-width="1.6948px" width="13.305191" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.5229px;text-anchor:middle;fill:#f9f9f9" x="330.94965" y="195.85274" font-family="Helvetica" transform="scale(0.92815178,1.07741)"><tspan x="330.94965" y="195.85274">Firewall</tspan></text>
+          <rect stroke="#355bb7" height="94.58848" x="271.18943" y="-386.78539" stroke-width="1.6948px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.5229px;text-anchor:middle;fill:#f9f9f9" x="365.77116" y="261.97208" font-family="Helvetica" transform="scale(0.92815178,1.07741)"><tspan x="365.77116" y="261.97208">Firewall</tspan></text>
         </g>
 
         <g id="managedFirewall">
-          <rect stroke="#355bb7" height="84.338638" x="215.10510" y="-349.21298" stroke-width="1.6948px" width="13.305191" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.5229px;text-anchor:middle;fill:#f9f9f9" x="330.94965" y="208.41085" font-family="Helvetica" transform="scale(0.92815178,1.07741)"><tspan x="330.94965" y="208.41085">Managed Firewall</tspan></text>
+          <rect stroke="#355bb7" height="94.58848" x="270.38859" y="-386.78539" stroke-width="1.6948px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.5229px;text-anchor:middle;fill:#f9f9f9" x="365.77116" y="261.43699" font-family="Helvetica" transform="scale(0.92815178,1.07741)"><tspan x="365.77116" y="261.43699">Managed Firewall</tspan></text>
         </g>
 
         <g id="botManagement">
-          <rect stroke="#355bb7" height="84.338638" x="176.61647" y="-347.80219" stroke-width="1.6948px" width="13.305191" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.5192px;text-anchor:middle;fill:#f9f9f9" x="328.97879" y="171.89903" font-family="Helvetica" transform="scale(0.92782665,1.0777875)"><tspan x="328.97879" y="171.89903">Bot Management</tspan></text>
-        </g>
-
-        <g id="patching">
-          <rect stroke="#355bb7" height="90.713081" x="85.661568" y="-354.73444" stroke-width="1.75378px" width="13.24621" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="325.20432" y="91.918777" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="325.20432" y="91.918777">Patching</tspan></text>
+          <rect stroke="#355bb7" height="92.99429" x="242.78265" y="-385.19120" stroke-width="1.6948px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.5192px;text-anchor:middle;fill:#f9f9f9" x="365.04023" y="235.00384" font-family="Helvetica" transform="scale(0.92782665,1.0777875)"><tspan x="365.04023" y="235.00384">Bot Management</tspan></text>
         </g>
 
         <g id="managedPatching">
-          <rect stroke="#355bb7" height="90.713081" x="99.907778" y="-354.73444" stroke-width="1.75378px" width="13.24621" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="325.20432" y="105.45390" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="325.20432" y="105.45390">Managed Patching</tspan></text>
+          <rect stroke="#355bb7" height="100.53440" x="94.42578" y="-392.73132" stroke-width="1.75378px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="358.57344" y="102.01076" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="358.57344" y="102.01076">Managed Patching</tspan></text>
         </g>
 
         <g id="managedEdr">
-          <rect stroke="#355bb7" height="216.37222" x="48.489159" y="-480.35864" stroke-width="2.61866px" width="12.381332" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="384.62173" y="56.063454" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="384.62173" y="56.063454">Managed EDR</tspan></text>
+          <rect stroke="#355bb7" height="242.78308" x="57.11146" y="-534.97999" stroke-width="2.61866px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="433.04343" y="66.50397" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="433.04343" y="66.50397">Managed EDR</tspan></text>
         </g>
 
         <g id="deviceBackups">
-          <rect stroke="#355bb7" height="44.534405" x="49.740368" y="-607.9942" stroke-width="1.82625px" width="29.257305" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="613.07141" y="57.087898" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="613.07141" y="57.087898">Device</tspan><tspan x="613.07141" y="70.623024">Backups</tspan></text>
+          <rect stroke="#355bb7" height="48.28766" x="59.42247" y="-679.20817" stroke-width="1.82625px" width="32" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="685.87822" y="67.64476" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="685.87822" y="67.64476">Device</tspan><tspan x="685.87822" y="81.17988">Backups</tspan></text>
         </g>
 
         <g id="cloudRecovery">
-          <rect stroke="#355bb7" height="44.534405" x="126.44985" y="-608.42487" stroke-width="1.82625px" width="29.257305" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="614.09589" y="130.84741" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="614.09589" y="130.84741">Cloud</tspan><tspan x="614.09589" y="144.38254">Recovery</tspan></text>
+          <rect stroke="#355bb7" height="48.77431" x="165.08191" y="-679.69483" stroke-width="1.82625px" width="32" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="686.13300" y="169.05362" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="686.13300" y="169.05362">Cloud</tspan><tspan x="686.13300" y="182.58875">Recovery</tspan></text>
         </g>
 
         <g id="vmDbBackup">
-          <rect stroke="#355bb7" height="44.534405" x="278.51779" y="-609.45886" stroke-width="1.82625px" width="29.257305" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="614.09583" y="276.31763" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="614.09583" y="276.31763">VM/DB</tspan><tspan x="614.09583" y="289.85275">Backup</tspan></text>
+          <rect stroke="#355bb7" height="46.64190" x="375.43165" y="-677.56241" stroke-width="1.82625px" width="32" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="685.01664" y="370.18727" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="685.01664" y="370.18727">VM/DB</tspan><tspan x="685.01664" y="383.72239">Backup</tspan></text>
         </g>
 
         <g id="tapeBackup">
-          <rect stroke="#355bb7" height="46.323597" x="318.71426" y="-606.53778" stroke-width="1.98957px" width="33.382938" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="611.02258" y="317.29514" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="611.02258" y="317.29514">Tape</tspan><tspan x="611.02258" y="330.83026">Backup</tspan></text>
-        </g>
-
-        <g id="sse">
-          <rect stroke="#355bb7" height="88.587997" x="137.40822" y="-304.91556" stroke-width="1.73439px" width="13.265606" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;fill:#f9f9f9" x="264.76251" y="141.09181" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="264.76251" y="141.09181">SSE</tspan></text>
+          <rect stroke="#355bb7" height="46.64190" x="418.51367" y="-677.56241" stroke-width="1.98957px" width="32" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="685.01664" y="411.95055" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="685.01664" y="411.95055">Tape</tspan><tspan x="685.01664" y="425.48567">Backup</tspan></text>
         </g>
 
         <g id="ztna">
-          <rect stroke="#355bb7" height="88.587997" x="151.67428" y="-304.91556" stroke-width="1.73439px" width="13.265606" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;fill:#f9f9f9" x="264.76251" y="154.62694" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="264.76251" y="154.62694">ZTNA</tspan></text>
+          <rect stroke="#355bb7" height="100.10444" x="175.54443" y="-336.72931" stroke-width="1.73439px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;fill:#f9f9f9;text-anchor:middle" x="300.16223" y="179.20801" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="300.16223" y="179.20801">ZTNA</tspan></text>
         </g>
 
         <g id="vpn">
-          <rect stroke="#355bb7" height="88.587997" x="165.94034" y="-304.91556" stroke-width="1.73439px" width="13.265606" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;fill:#f9f9f9" x="264.76251" y="168.16207" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="264.76251" y="168.16207">VPN</tspan></text>
+          <rect stroke="#355bb7" height="100.10444" x="175.54443" y="-336.72931" stroke-width="1.73439px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;fill:#f9f9f9;text-anchor:middle" x="300.16223" y="179.11800" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="300.16223" y="179.11800">VPN</tspan></text>
+        </g>
+
+        <g id="sse">
+          <rect stroke="#355bb7" height="100.10444" x="175.54443" y="-336.72931" stroke-width="1.73439px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;fill:#f9f9f9;text-anchor:middle" x="300.16223" y="179.29802" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="300.16223" y="179.29802">SSE</tspan></text>
         </g>
 
         <g id="penTest">
-          <rect stroke="#355bb7" height="42.815983" x="109.74678" y="-305.72147" stroke-width="1.40019px" width="17.888748" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;fill:#f9f9f9" x="273.98242" y="116.5053" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="273.98242" y="116.5053">Pen Test</tspan></text>
+          <rect stroke="#355bb7" height="45.44307" x="121.92754" y="-337.63998" stroke-width="1.40019px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;fill:#f9f9f9;text-anchor:middle" x="329.73205" y="127.71441" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="329.73205" y="127.71441">Pen Test</tspan></text>
         </g>
 
         <g id="codeTesting">
-          <rect stroke="#355bb7" height="48.708679" x="109.22255" y="-359.04034" stroke-width="1.94092px" width="30.214867" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="349.82166" y="114.45641" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="349.82166" y="114.45641">Code </tspan><tspan x="349.82166" y="127.99154">Testing</tspan></text>
+          <rect stroke="#355bb7" height="49.88182" x="148.33339" y="-392.73132" stroke-width="1.94092px" width="32" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="385.09107" y="152.66262" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="385.09107" y="152.66262">Code </tspan><tspan x="385.09107" y="166.19775">Testing</tspan></text>
         </g>
 
         <g id="bugBounty">
-          <rect stroke="#355bb7" height="48.708679" x="139.43723" y="-359.04034" stroke-width="1.94092px" width="30.214867" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="349.82166" y="143.02680" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="349.82166" y="143.02680">Bug </tspan><tspan x="349.82166" y="156.56192">Bounty</tspan></text>
+          <rect stroke="#355bb7" height="49.88182" x="186.55098" y="-392.73132" stroke-width="1.94092px" width="32" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="385.09107" y="188.87637" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="385.09107" y="188.87637">Bug </tspan><tspan x="385.09107" y="202.41149">Bounty</tspan></text>
         </g>
 
         <g id="apiDiscovery">
-          <rect stroke="#355bb7" height="84.025726" x="153.99712" y="-256.85159" stroke-width="1.81576px" width="15.328726" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="225.83386" y="157.4828" font-family="Helvetica" transform="scale(0.95507382,1.0470395)"><tspan x="225.83386" y="157.4828">API Discovery</tspan></text>
+          <rect stroke="#355bb7" height="92.35549" x="193.16489" y="-279.82344" stroke-width="1.81576px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="244.63627" y="195.68901" font-family="Helvetica" transform="scale(0.95507382,1.0470395)"><tspan x="244.63627" y="195.68901">API Discovery</tspan></text>
         </g>
 
         <g id="apiProtection">
-          <rect stroke="#355bb7" height="84.025726" x="153.59337" y="-349.89532" stroke-width="1.81576px" width="15.328726" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="321.10657" y="156.45839" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="321.10657" y="156.45839">API Protection</tspan></text>
+          <rect stroke="#355bb7" height="94.94907" x="222.77204" y="-387.55643" stroke-width="1.81576px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="356.07917" y="223.32722" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="356.07917" y="223.32722">API Protection</tspan></text>
         </g>
 
         <g id="microsegmentation">
-          <rect stroke="#355bb7" height="157.39143" x="65.096779" y="-422.54071" stroke-width="2.43443px" width="14.710057" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="360.03522" y="72.45446" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="360.03522" y="72.45446">Microsegmentation</tspan></text>
+          <rect stroke="#355bb7" height="177.44882" x="75.10687" y="-469.64573" stroke-width="2.43443px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="398.83966" y="83.10837" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="398.83966" y="83.10837">Microsegmentation</tspan></text>
         </g>
 
         <g id="otSecurity">
-          <rect stroke="#355bb7" height="58.57766" x="85.138962" y="-422.85541" stroke-width="1.53013px" width="15.614359" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.4663px;text-anchor:middle;fill:#ffffff" x="426.54163" y="88.847801" font-family="Helvetica" transform="scale(0.92316489,1.0832301)"><tspan x="426.54163" y="88.847801">OT Security</tspan></text>
+          <rect stroke="#355bb7" height="64.89656" x="95.85886" y="-470.00134" stroke-width="1.53013px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.4663px;text-anchor:middle;fill:#ffffff" x="473.97065" y="99.38362" font-family="Helvetica" transform="scale(0.92316489,1.0832301)"><tspan x="473.97065" y="99.38362">OT Security</tspan></text>
         </g>
 
         <g id="dataIdAndClassification">
-          <rect stroke="#355bb7" height="67.731056" x="308.10443" y="-233.05826" stroke-width="2.02686px" width="23.695515" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="207.39398" y="302.953" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="207.39398" y="302.953">Data ID and</tspan><tspan x="207.39398" y="316.48813">Classification</tspan></text>
+          <rect stroke="#355bb7" height="76.24152" x="402.75927" y="-255.53056" stroke-width="2.02686px" width="32" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="227.63664" y="397.32106" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="227.63664" y="397.32106">Data ID and</tspan><tspan x="227.63664" y="410.85619">Classification</tspan></text>
         </g>
 
         <g id="dataLossPrevention">
-          <rect stroke="#355bb7" height="85.717453" x="306.12003" y="-353.79782" stroke-width="2.2685px" width="23.453875" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:11.3333px;text-anchor:middle;fill:#ffffff" x="413.88364" y="325.96017" font-family="Helvetica" transform="matrix(0.91249743,0,0,1.0003634,-66.095207,-11.020107)"><tspan x="413.88364" y="325.96017">Data Loss</tspan><tspan x="413.88364" y="340.1268">Prevention</tspan></text>
+          <rect stroke="#355bb7" height="96.86072" x="400.61307" y="-391.96626" stroke-width="2.2685px" width="32" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:11.3333px;text-anchor:middle;fill:#ffffff" x="448.91207" y="424.69039" font-family="Helvetica" transform="matrix(0.91249743,0,0,1.0003634,-66.095207,-11.020107)"><tspan x="448.91207" y="424.69039">Data Loss</tspan><tspan x="448.91207" y="438.85702">Prevention</tspan></text>
         </g>
 
         <g id="darkWebScanning">
-          <rect stroke="#355bb7" height="50.558929" x="303.11789" y="-416.21933" stroke-width="2.04319px" width="32.257088" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="408.18381" y="301.92856" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="408.18381" y="301.92856">Dark Web</tspan><tspan x="408.18381" y="315.46368">Scanning</tspan></text>
+          <rect stroke="#355bb7" height="57.13159" x="402.03977" y="-462.50257" stroke-width="2.04319px" width="32" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="454.34893" y="396.28350" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="454.34893" y="396.28350">Dark Web</tspan><tspan x="454.34893" y="409.81862">Scanning</tspan></text>
         </g>
 
         <g id="ddosTesting">
-          <rect stroke="#355bb7" height="84.025726" x="237.62306" y="-382.6716" stroke-width="1.81576px" width="15.328726" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="355.93747" y="236.36455" font-family="Helvetica" transform="scale(0.95507382,1.0470395)"><tspan x="355.93747" y="236.36455">DDoS Testing</tspan></text>
+          <rect stroke="#355bb7" height="94.94907" x="313.68887" y="-424.59363" stroke-width="1.81576px" width="17" fill="#355bb7" transform="rotate(90)"/>
+          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="394.85858" y="309.81111" font-family="Helvetica" transform="scale(0.95507382,1.0470395)"><tspan x="394.85858" y="309.81111">DDoS Testing</tspan></text>
         </g>
 
       </g>
@@ -567,15 +570,19 @@
 const TEMPLATES = {
   'tableStakes': {
     label: 'Table Stakes',
-    controls: ['managedPatching', 'managedEdr', 'botManagement', 'managedFirewall', 'dataLossPrevention', 'mfaSso', 'iam', 'emailSecurity', 'soc', 'incidentResponse', 'deviceBackups', 'vmDbBackup', 'cloudRecovery']
+    controls: ['vCiso', 'managedEdr', 'managedPatching', 'vpn', 'firewall', 'managedSiem', 'incidentResponse', 'deviceBackups', 'vmDbBackup', 'mfaSso', 'emailSecurity', 'iam', 'awarenessTraining']
+  },
+  'gettingInsurance': {
+    label: 'Getting Insurance',
+    controls: ['vCiso', 'managedSiem', 'incidentResponse', 'drPlanAndRehearsals', 'managedEdr', 'managedPatching', 'penTest', 'deviceBackups', 'ztna', 'codeTesting', 'botManagement', 'managedFirewall', 'dns', 'networkIntelligence', 'ddos', 'pam', 'vmDbBackup', 'impersonation', 'awarenessTraining', 'phishingTests', 'mfaSso', 'emailSecurity', 'iam']
   },
   'industryAverage': {
     label: 'Industry Average',
-    controls: ['managedPatching', 'managedEdr', 'botManagement', 'managedFirewall', 'dataLossPrevention', 'mfaSso', 'iam', 'emailSecurity', 'soc', 'incidentResponse', 'deviceBackups', 'vmDbBackup', 'cloudRecovery', 'vCiso', 'staffingAndRecruiting', 'managedGrc', 'managedControlsAssurance', 'attackSurfaceManagement', 'penTest', 'sse', 'dns', 'networkIntelligence', 'ddos', 'awarenessTraining', 'phishingTests', 'policyEnforcement']
+    controls: ['vCiso', 'staffingAndRecruiting', 'attackSurfaceManagement', 'managedEdr', 'managedPatching', 'penTest', 'sse', 'codeTesting', 'botManagement', 'managedFirewall', 'dns', 'networkIntelligence', 'ddos', 'managedSiem', 'soc', 'incidentResponse', 'pam', 'impersonation', 'deviceBackups', 'vmDbBackup', 'drPlanAndRehearsals', 'awarenessTraining', 'phishingTests', 'mfaSso', 'emailSecurity', 'iam']
   },
   'regionalBankStandard': {
-    label: 'Regional Bank Standard',
-    controls: ['managedPatching', 'managedEdr', 'botManagement', 'managedFirewall', 'dataLossPrevention', 'mfaSso', 'iam', 'emailSecurity', 'soc', 'incidentResponse', 'deviceBackups', 'vmDbBackup', 'cloudRecovery', 'vCiso', 'staffingAndRecruiting', 'managedGrc', 'managedControlsAssurance', 'attackSurfaceManagement', 'penTest', 'sse', 'dns', 'networkIntelligence', 'ddos', 'awarenessTraining', 'phishingTests', 'policyEnforcement', 'apiDiscovery', 'apiProtection', 'microsegmentation', 'otSecurity', 'bugBounty', 'ddosTesting', 'dataIdAndClassification', 'darkWebScanning', 'managedSiem', 'ransomwareNegotiation', 'pam', 'impersonation', 'tapeBackup', 'drPlanAndRehearsals', 'draas', 'codeTesting']
+    label: 'Regional Bank',
+    controls: ['vCiso', 'managedGrc', 'staffingAndRecruiting', 'managedControlsAssurance', 'attackSurfaceManagement', 'managedSiem', 'soc', 'incidentResponse', 'ransomwareNegotiation', 'draas', 'drPlanAndRehearsals', 'managedEdr', 'microsegmentation', 'managedPatching', 'otSecurity', 'penTest', 'bugBounty', 'sse', 'apiDiscovery', 'apiProtection', 'botManagement', 'managedFirewall', 'dns', 'networkIntelligence', 'ddosTesting', 'ddos', 'dataIdAndClassification', 'dataLossPrevention', 'pam', 'darkWebScanning', 'vmDbBackup', 'tapeBackup', 'deviceBackups', 'cloudRecovery', 'awarenessTraining', 'phishingTests', 'policyEnforcement', 'mfaSso', 'emailSecurity', 'iam', 'impersonation']
   }
 };
 
@@ -586,7 +593,6 @@ const SOLUTIONS = [
   { id: 'managedControlsAssurance', label: "Mng'd Controls Assurance" },
   { id: 'attackSurfaceManagement',  label: 'Attack Surface Mgmt' },
   { id: 'apiDiscovery',             label: 'API Discovery' },
-  { id: 'patching',                 label: 'Patching' },
   { id: 'managedPatching',          label: 'Managed Patching' },
   { id: 'microsegmentation',        label: 'Microsegmentation' },
   { id: 'otSecurity',               label: 'OT Security' },
@@ -628,8 +634,9 @@ const SOLUTIONS = [
   { id: 'draas',                    label: 'DR-aaS' },
 ];
 
-const COLOR_FILLS   = { green: '#16a34a', blue: '#1d4ed8', red: '#dc2626' };
-const COLOR_STROKES = { green: '#22c55e', blue: '#3b82f6', red: '#ef4444' };
+const COLOR_FILLS   = { green: '#166534', blue: '#1e3a8a', red: '#7f1d1d' };
+const COLOR_STROKES = { green: '#4ade80', blue: '#93c5fd', red: '#fca5a5' };
+const COLOR_TEXT    = { green: '#4ade80', blue: '#93c5fd', red: '#fca5a5' };
 
 // State
 const state = {};
@@ -655,6 +662,7 @@ function applyState(id) {
     if (text) text.style.display = '';
     rect.setAttribute('fill', COLOR_FILLS[color]);
     rect.setAttribute('stroke', COLOR_STROKES[color]);
+    if (text) text.style.fill = COLOR_TEXT[color];
   }
 }
 
