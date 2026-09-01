@@ -30,12 +30,13 @@ markets get renamed, merged and retired constantly.
 
 ---
 
-## Corrections needed
+## Corrections applied
 
-These are the entries that do not survive scrutiny. Everything in this table is
-wrong in the shipped code and should change.
+Every row below has been applied — the shipped `CONTROLS` list carries the
+canonical name in the last column. The table is kept as the record of what was
+changed and why, not as a list of outstanding work.
 
-| Control | Current category | Problem | Canonical name |
+| Control | Was | Problem | Now |
 |---|---|---|---|
 | App Detection (ADR) | `Runtime Application Security` | Invented phrasing. The category itself is real ✅ | **Application Detection and Response (ADR)** |
 | Data Detection (DDR) | `Database Activity Monitoring` | Two different things conflated. DDR is a *capability inside DSPM*, not a market ✅; DAM is a separate legacy market | **Data Detection and Response (DDR)**, noted as a DSPM capability |
@@ -55,6 +56,20 @@ wrong in the shipped code and should change.
 | Directory Recovery | `Active Directory Recovery` | Capability; vendors sit in ITDR and backup | **TERM** — keep, but labelled as such |
 | Detection Engineering & Hunting | `Threat Hunting` | A practice, not a market | **TERM** — keep, but labelled as such |
 | Data Discovery | `Data Classification` | A DSPM capability | **TERM** — keep, but labelled as such |
+
+All 47 shipped categories resolve to an entry in `VENDOR_LIBRARY`, every one
+carries a tier, and four controls carry no category at all by design: Security
+Leadership, Zero Trust Architecture, Data Breach Response and Network
+Restoration are advisory, architectural or legal work, not a product purchase.
+
+## How this reaches the screen
+
+The ✅ / ○ distinction is not confined to this file. Each control's detail panel
+shows the category, its tier badge, and either **✓ verified** or **not
+re-verified** — because a consultant reading a panel in front of a client
+cannot open a markdown file, and an honest sourcing note nobody sees is not
+doing any work. The tier is spelled out in full underneath the badge for the
+same reason: "MG" means nothing across a conference table.
 
 ## Categories that hold up
 

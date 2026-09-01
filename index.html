@@ -4,9 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Interactive Cyber Defense Matrix</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
+    /* System stacks, no webfonts: the page is advertised as self-contained
+       with no dependencies, and a healthcare client's IT team should not have
+       to explain a call to Google when they open it. */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -15,7 +16,7 @@
       min-height: 100vh;
       background: #060810;
       color: #e2e8f0;
-      font-family: 'IBM Plex Mono', monospace;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
     }
 
     /* ── SIDEBAR ── */
@@ -34,15 +35,17 @@
       border-bottom: 1px solid rgba(59,130,246,0.15);
       flex-shrink: 0;
     }
-    .brand { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-    .brand-logo {
-      width: 24px; height: 24px; object-fit: contain;
+    #firm-input {
+      width: 100%; background: transparent; border: none;
+      color: #7c8ba3; font-family: inherit; font-size: 11px; letter-spacing: 1.4px;
+      text-transform: uppercase; padding: 0 0 4px; outline: none;
     }
-    .brand-label { font-size: 14px; letter-spacing: 1px; color: #cbd5e1; text-transform: uppercase; font-family: 'Rajdhani', sans-serif; font-weight: 600; }
+    #firm-input::placeholder { color: #33415580; }
+    #firm-input:focus { color: #cbd5e1; }
     #client-input {
       width: 100%; background: transparent;
       border: none; border-bottom: 1px dashed rgba(148,163,184,0.25);
-      color: #e2e8f0; font-family: 'Rajdhani', sans-serif;
+      color: #e2e8f0; font-family: inherit;
       font-size: 15px; font-weight: 700; padding: 3px 0; outline: none;
     }
     #client-input:focus { border-bottom-color: #3b82f6; }
@@ -58,6 +61,9 @@
     .leg-swatch.green { background: #166534; border: 1px solid #22c55e; }
     .leg-swatch.blue  { background: #1e3a8a; border: 1px solid #3b82f6; }
     .leg-swatch.red   { background: #7f1d1d; border: 1px solid #ef4444; }
+    .leg-swatch.none  { background: #16233c; border: 1px solid #475569; }
+    .leg-swatch.prov  { border: 1px dashed #60a5fa; background:
+      repeating-linear-gradient(45deg, #1e3a8a 0 3px, #111c30 3px 6px); }
 
     #search-wrap {
       padding: 7px 12px;
@@ -68,7 +74,7 @@
       width: 100%; background: rgba(15,23,42,0.8);
       border: 1px solid rgba(59,130,246,0.2); border-radius: 4px;
       padding: 7px 11px; color: #94a3b8;
-      font-family: 'IBM Plex Mono', monospace; font-size: 14px; outline: none;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 14px; outline: none;
     }
     #search:focus { border-color: #3b82f6; color: #e2e8f0; }
     #search::placeholder { color: #334155; }
@@ -97,13 +103,13 @@
       border-top: 1px solid rgba(59,130,246,0.25);
       border-bottom: 1px solid rgba(59,130,246,0.25);
       padding: 5px 12px;
-      font-family: 'Rajdhani', sans-serif; font-weight: 700;
+      font-family: 'Avenir Next Condensed', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700;
       font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
       color: #7dd3fc; cursor: default;
     }
     #solution-checkboxes li.group-head:hover { background: #0d1424; }
     .group-count {
-      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 11px;
       letter-spacing: 0; color: #64748b;
     }
 
@@ -118,6 +124,8 @@
       font-size: 10px; color: #5b6b84; line-height: 1.2;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
+    li.active-prov  .sol-label { color: #93c5fd; font-style: italic; }
+    li.active-prov  .sol-alias { color: #7c8ba3; }
     li.active-green .sol-label { color: #4ade80; }
     li.active-blue  .sol-label { color: #93c5fd; }
     li.active-red   .sol-label { color: #fca5a5; }
@@ -131,7 +139,7 @@
       text-transform: uppercase; margin-right: 2px;
     }
     .group-btn {
-      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 11px;
       background: transparent; border: 1px solid rgba(59,130,246,0.2);
       color: #64748b; border-radius: 3px; padding: 3px 8px; cursor: pointer;
       transition: all 0.12s;
@@ -174,7 +182,7 @@
     .detail-prio { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
     .detail-tag { font-size: 10px; letter-spacing: 1px; color: #475569; text-transform: uppercase; margin-right: 2px; }
     .prio-btn {
-      font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 10.5px;
       background: transparent; border: 1px solid rgba(148,163,184,0.25);
       color: #64748b; border-radius: 3px; padding: 2px 7px; cursor: pointer;
       transition: all 0.12s;
@@ -192,6 +200,9 @@
     .tier-hc   { color: #fbbf24; border-color: rgba(251,191,36,0.45);  background: rgba(251,191,36,0.12); }
     .tier-term { color: #94a3b8; border-color: rgba(148,163,184,0.4);  background: rgba(148,163,184,0.1); }
     .tier-none { color: #64748b; border-color: rgba(100,116,139,0.4); }
+    .cat-seen { font-size: 9px; letter-spacing: 0.3px; color: #64748b; }
+    .cat-seen.yes { color: #4ade80; }
+    .cat-gloss { font-size: 9.5px; color: #64748b; margin: -3px 0 7px; line-height: 1.4; }
     .cat-none { font-size: 11px; color: #64748b; font-style: italic; }
 
     .detail-vendors { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-bottom: 7px; }
@@ -212,7 +223,7 @@
     .note-input {
       width: 100%; resize: vertical; background: rgba(2,6,23,0.7);
       border: 1px solid rgba(59,130,246,0.2); border-radius: 3px;
-      color: #cbd5e1; font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      color: #cbd5e1; font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 11px;
       padding: 5px 7px; outline: none; line-height: 1.4;
     }
     .note-input:focus { border-color: #3b82f6; }
@@ -226,7 +237,7 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     #filter-clear {
-      font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 10.5px;
       background: transparent; border: 1px solid rgba(251,191,36,0.4);
       color: #fbbf24; border-radius: 3px; padding: 2px 7px; cursor: pointer;
     }
@@ -236,7 +247,7 @@
     #view-switch { display: flex; gap: 4px; margin-left: auto; }
     #title-bar { flex-wrap: wrap; }
     .view-btn {
-      font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 12px;
       background: transparent; border: 1px solid rgba(59,130,246,0.25);
       color: #64748b; border-radius: 4px; padding: 4px 14px; cursor: pointer;
       transition: all 0.12s;
@@ -246,7 +257,7 @@
     .product-input { margin-bottom: 5px; }
     .detail-picks { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 7px; }
     .pick-btn {
-      font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 10px;
       background: transparent; border: 1px dashed rgba(148,163,184,0.3);
       color: #64748b; border-radius: 3px; padding: 1px 6px; cursor: pointer;
       transition: all 0.12s;
@@ -261,18 +272,13 @@
     }
     #examples-toggle { accent-color: #3b82f6; cursor: pointer; }
 
-    /* A product the client actually has reads solid; a market example is
-       dimmed, so a suggestion is never mistaken for something they own. */
-    .bar-sub { fill: #cbd5e1; }
-    .bar-sub.muted { fill: #7c8ba3; opacity: 0.85; }
-
     #overlay-wrap {
       display: flex; align-items: center; gap: 6px; margin-left: 10px;
       font-size: 11px; letter-spacing: 1px; color: #475569; text-transform: uppercase;
       transition: opacity 0.15s;
     }
     #overlay-select {
-      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 11px;
       background: rgba(15,23,42,0.9); border: 1px solid rgba(59,130,246,0.25);
       color: #93c5fd; border-radius: 4px; padding: 4px 8px; outline: none;
       max-width: 190px; cursor: pointer;
@@ -309,7 +315,7 @@
       width: 100%; background: rgba(2,6,23,0.8);
       border: 1px solid rgba(56,189,248,0.3); border-radius: 4px;
       padding: 7px 10px; color: #e2e8f0;
-      font-family: 'IBM Plex Mono', monospace; font-size: 13px; outline: none;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 13px; outline: none;
     }
     #intake-input:focus { border-color: #38bdf8; }
     #intake-input.asking { border-color: #fbbf24; color: #fde68a; }
@@ -318,7 +324,12 @@
     #intake-error { display: none; font-size: 10.5px; color: #fca5a5; margin-top: 5px; }
     #intake-error.on { display: block; }
 
-    #intake-hits { list-style: none; margin-top: 4px; }
+    #intake-asking:empty { display: none; }
+    #intake-asking {
+      margin-top: 5px; font-size: 10.5px; color: #fde68a;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    #intake-hits { list-style: none; margin-top: 4px; max-height: 232px; overflow-y: auto; }
     .intake-hit {
       display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
       padding: 4px 8px; border-radius: 3px; cursor: pointer;
@@ -326,6 +337,29 @@
     }
     .intake-hit:hover { background: rgba(56,189,248,0.16); }
     .hit-cat { font-size: 9.5px; color: #64748b; text-align: right; }
+
+    #confirm-bar:empty { display: none; }
+    #confirm-bar {
+      margin-top: 8px; padding: 7px 9px; border-radius: 4px;
+      background: rgba(30,58,138,0.22); border: 1px dashed rgba(96,165,250,0.5);
+      font-size: 10.5px; line-height: 1.45; color: #bfdbfe;
+    }
+    .confirm-btn {
+      display: block; margin-top: 6px; width: 100%;
+      background: rgba(59,130,246,0.2); border: 1px solid rgba(96,165,250,0.6);
+      border-radius: 3px; padding: 4px; cursor: pointer;
+      color: #dbeafe; font-family: inherit; font-size: 11px; letter-spacing: 0.4px;
+    }
+    .confirm-btn:hover { background: rgba(59,130,246,0.38); }
+    .confirm-btn.inline { display: inline-block; width: auto; margin: 6px 5px 0 0; padding: 3px 10px; }
+    .confirm-btn.deny { border-color: rgba(248,113,113,0.5); color: #fecaca;
+                        background: rgba(127,29,29,0.25); }
+    .confirm-btn.deny:hover { background: rgba(127,29,29,0.5); }
+    .detail-confirm {
+      margin-bottom: 8px; padding: 7px 9px; border-radius: 4px;
+      background: rgba(30,58,138,0.18); border: 1px dashed rgba(96,165,250,0.45);
+    }
+    .confirm-q { font-size: 11px; line-height: 1.45; color: #bfdbfe; }
 
     #intake-stack { list-style: none; display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
     .stack-chip {
@@ -342,6 +376,9 @@
       font-size: 13px; line-height: 1; padding: 0 2px;
     }
     .stack-x:hover { color: #fca5a5; }
+    .stack-more { cursor: pointer; background: none; border-style: dashed;
+                  color: #7c8ba3; padding: 1px 6px; }
+    .stack-more:hover { color: #bfdbfe; border-color: #3b82f6; }
 
     #scoreboard {
       padding: 8px 12px 9px; border-bottom: 1px solid rgba(59,130,246,0.12); flex-shrink: 0;
@@ -360,6 +397,7 @@
       position: relative; overflow: hidden;
     }
     .sb-track > span { position: absolute; left: 0; top: 0; height: 100%; border-radius: 3px; }
+    .sb-unconf { background: rgba(59,130,246,0.22); }
     .sb-plan { background: rgba(34,197,94,0.5); }
     .sb-now  { background: #3b82f6; }
     .sb-num { font-size: 10.5px; color: #cbd5e1; width: 32px; text-align: right; flex-shrink: 0; }
@@ -369,12 +407,12 @@
       font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #475569;
     }
     #tpl-mode {
-      font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 12px;
       background: rgba(15,23,42,0.9); border: 1px solid rgba(59,130,246,0.25);
       color: #93c5fd; border-radius: 4px; padding: 5px 8px; outline: none; cursor: pointer;
     }
     #bm-toggle {
-      font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 15px;
+      font-family: 'Avenir Next Condensed', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 15px;
       letter-spacing: 2px; text-transform: uppercase; color: #cbd5e1;
       background: none; border: none; cursor: pointer; padding: 0;
     }
@@ -384,11 +422,11 @@
 
     #benchmark, #vendor-panel { margin-top: 18px; max-width: 920px; }
     .bm-head {
-      font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 15px;
+      font-family: 'Avenir Next Condensed', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 15px;
       letter-spacing: 2px; text-transform: uppercase; color: #cbd5e1; margin-bottom: 8px;
     }
     .bm-hint {
-      font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: 11px;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-weight: 400; font-size: 11px;
       letter-spacing: 0; text-transform: none; color: #64748b;
     }
     #benchmark-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
@@ -409,7 +447,7 @@
     .bm-num { font-size: 13px; color: #e2e8f0; width: 42px; text-align: right; flex-shrink: 0; }
     .bm-detail { font-size: 11px; color: #64748b; width: 86px; flex-shrink: 0; }
     .bm-btn {
-      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 11px;
       background: transparent; border: 1px solid rgba(59,130,246,0.3);
       color: #93c5fd; border-radius: 3px; padding: 3px 10px; cursor: pointer;
       width: 142px; flex-shrink: 0; transition: all 0.12s;
@@ -434,7 +472,7 @@
     #main { overflow: auto; padding: 18px 12px; display: flex; flex-direction: column; }
     #title-bar { margin-bottom: 12px; display: flex; align-items: baseline; gap: 10px; }
     #title-bar h2 {
-      font-family: 'Rajdhani', sans-serif;
+      font-family: 'Avenir Next Condensed', 'Helvetica Neue', Helvetica, Arial, sans-serif;
       font-size: 24px; font-weight: 700; color: #e2e8f0; letter-spacing: 2px;
     }
     #title-bar span { font-size: 13px; color: #cbd5e1; letter-spacing: 2px; }
@@ -446,7 +484,7 @@
       display: flex; flex-direction: column; gap: 6px;
     }
     .template-btn {
-      font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 13px; font-weight: 600;
       background: rgba(30,58,138,0.25); border: 1px solid rgba(59,130,246,0.35);
       color: #93c5fd; border-radius: 4px; padding: 8px 14px;
       cursor: pointer; transition: background 0.15s; white-space: nowrap;
@@ -462,7 +500,7 @@
       display: flex; gap: 4px;
     }
     .color-btn {
-      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 11px;
       border: none; border-radius: 3px; padding: 4px 10px;
       cursor: pointer; transition: all 0.15s; font-weight: 500;
     }
@@ -479,12 +517,20 @@
       border: 1px solid rgba(59,130,246,0.2);
       border-radius: 4px; overflow: visible; max-width: 920px;
     }
+    /* The picture and its own tally have to be on screen together — you
+       cannot show a client a matrix and then scroll to find out what it
+       says. Pick the width that makes the height fit, capped at natural
+       size; the viewBox does the rest. */
+    #owasp-chart {
+      display: block; height: auto;
+      width: min(900px, calc((100vh - 232px) * 900 / 710));
+    }
 
     #stats-bar {
       margin-top: 12px; display: flex; gap: 40px; align-items: flex-start; justify-content: space-between; max-width: 980px;
     }
     .clear-all-btn {
-      font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 700;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 18px; font-weight: 700;
       background: rgba(239,68,68,0.25); border: 2px solid rgba(239,68,68,0.35);
       color: #fca5a5; border-radius: 6px; padding: 18px 32px;
       cursor: pointer; transition: background 0.15s;
@@ -503,12 +549,14 @@
     .stat-blue  { background: rgba(30,58,138,0.25);  border-color: rgba(59,130,246,0.35); color: #93c5fd; }
     .stat-red   { background: rgba(127,29,29,0.25);  border-color: rgba(239,68,68,0.35);  color: #fca5a5; }
     .stat-off   { background: rgba(30,30,60,0.25);   border-color: rgba(100,116,139,0.3); color: #cbd5e1; }
+    .stat-prov  { background: rgba(30,58,138,0.2); border-color: rgba(96,165,250,0.45);
+                  border-style: dashed; color: #bfdbfe; }
     #export-bar-inner {
       display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
     }
     .export-label { font-size: 13px; letter-spacing: 2px; color: #cbd5e1; text-transform: uppercase; }
     .export-btn {
-      font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 12px;
       background: rgba(30,58,138,0.2); border: 1px solid rgba(59,130,246,0.35);
       color: #93c5fd; border-radius: 4px; padding: 6px 16px;
       cursor: pointer; transition: background 0.15s; display: flex; align-items: center; gap: 6px;
@@ -535,10 +583,8 @@
 <!-- ── SIDEBAR ── -->
 <aside id="sidebar">
   <div id="sidebar-header">
-    <div class="brand">
-      <img src="../favicon-192.png" alt="Mason SC" class="brand-logo" />
-      <span class="brand-label">Mason SC</span>
-    </div>
+    <input id="firm-input" type="text" placeholder="Your firm" maxlength="40"
+           title="Your firm's name — appears on the exported picture" />
     <input id="client-input" type="text" placeholder="Client Name" title="Click to edit" />
   </div>
 
@@ -546,15 +592,19 @@
     <div class="leg"><div class="leg-swatch blue"></div>Current</div>
     <div class="leg"><div class="leg-swatch green"></div>Planned</div>
     <div class="leg"><div class="leg-swatch red"></div>Gap</div>
+    <div class="leg" title="A product answers it; nobody has confirmed it operates"><div class="leg-swatch prov"></div>Unconfirmed</div>
+    <div class="leg"><div class="leg-swatch none"></div>Not assessed</div>
   </div>
 
   <div id="intake">
     <label for="intake-input">What do you run?</label>
     <input id="intake-input" type="text" autocomplete="off" spellcheck="false"
-           placeholder="CrowdStrike, Okta, Zscaler…" />
+           placeholder="CrowdStrike, Okta, Microsoft 365 E5…" />
+    <div id="intake-asking"></div>
     <div id="intake-error"></div>
     <ul id="intake-hits"></ul>
     <ul id="intake-stack"></ul>
+    <div id="confirm-bar"></div>
   </div>
 
   <div id="scoreboard">
@@ -588,10 +638,9 @@
     <div id="view-switch">
       <button class="view-btn on" data-view="controls" title="The assessed control set">Controls</button>
       <button class="view-btn"    data-view="vendors"  title="Products only, plotted at the control they answer">Vendors</button>
-      <button class="view-btn"    data-view="both"     title="Controls with their products underneath">Both</button>
     </div>
-    <label id="examples-wrap" title="Fill empty controls with sample vendors for that market category — not a ranking">
-      <input type="checkbox" id="examples-toggle" checked />
+    <label id="examples-wrap" title="Name common products on the controls you have not filled in. Working view only — it puts a named product against every gap, so turn it off before a client sees the screen.">
+      <input type="checkbox" id="examples-toggle" />
       <span>Sample vendors</span>
     </label>
     <label id="overlay-wrap" title="Lay product coverage over the control matrix">
@@ -607,19 +656,26 @@
       <option value="green">Planned</option>
       <option value="red">Gap</option>
     </select>
-    <button class="template-btn" onclick="applyTemplate('tableStakes')">Table Stakes</button>
-    <button class="template-btn" onclick="applyTemplate('gettingInsurance')">Insurance Ready</button>
-    <button class="template-btn" onclick="applyTemplate('industryAverage')">Industry Average</button>
-    <button class="template-btn" onclick="applyTemplate('regionalBankStandard')">Regulated / Bank</button>
+    <button class="template-btn" onclick="applyTemplate('tableStakes')" title="Opinionated baseline, CIS v8.1 IG1 in shape">Table stakes</button>
+    <button class="template-btn" onclick="applyTemplate('gettingInsurance')" title="What carrier questionnaires commonly ask about">Insurance ready</button>
+    <button class="template-btn" onclick="applyTemplate('industryAverage')" title="A funded mid-market programme — not a measured average">Commonly seen</button>
+    <button class="template-btn" onclick="applyTemplate('regionalBankStandard')" title="Every control in the tool">Everything</button>
   </div>
   </div>
 
   <div id="svg-wrap">
-    <svg cursor="default" height="710" id="owasp-chart" width="900" version="1.1"
+    <svg cursor="default" id="owasp-chart" version="1.1"
       preserveAspectRatio="xMidYMid" style="background-color: black"
       viewBox="0 0 900 710" xmlns="http://www.w3.org/2000/svg">
       <title>Cyber Defense Matrix</title>
-      <defs/>
+      <defs>
+        <!-- Unconfirmed: a product answers this control, nobody has verified it. -->
+        <pattern id="prov-hatch" width="7" height="7" patternUnits="userSpaceOnUse"
+                 patternTransform="rotate(45)">
+          <rect width="7" height="7" fill="#111c30"/>
+          <line x1="0" y1="0" x2="0" y2="7" stroke="#1e3a8a" stroke-width="4"/>
+        </pattern>
+      </defs>
 
       <!-- GRID -->
       <g id="grid" transform="matrix(1.0950292,0,0,1,-3.7184358e-6,-0.92485547)">
@@ -668,6 +724,8 @@
         <span class="stat-pill stat-blue"  id="stat-blue">● 0 Current</span>
         <span class="stat-pill stat-green" id="stat-green">● 0 Planned</span>
         <span class="stat-pill stat-red"   id="stat-red">● 0 Gap</span>
+        <span class="stat-pill stat-prov"  id="stat-prov"
+              title="A product answers these, nobody has confirmed they operate">◪ 0 Unconfirmed</span>
         <span class="stat-pill stat-off"   id="stat-off">● 0 Off</span>
       </div>
       <div id="export-bar-inner">
@@ -697,7 +755,8 @@
   <div id="benchmark" class="collapsed">
     <div class="bm-head">
       <button id="bm-toggle" aria-expanded="false">Benchmark</button>
-      <span class="bm-hint">— current (+&thinsp;planned) against each profile</span>
+      <span class="bm-hint">— current (+&thinsp;planned) against each profile.
+        Checklists, not percentiles: an opinionated set, not survey data.</span>
     </div>
     <ul id="benchmark-list"></ul>
   </div>
@@ -757,7 +816,7 @@ const CONTROLS = [
   { id:'zeroTrustArchitecture', label:'Zero Trust Architecture', fn:2, rows:'all',
     alias:['Zero Trust Strategy','Least Privilege','Policy Enforcement Point','Continuous Verification'], csf:['PR.AA','PR.IR'], vendor:'' },
   { id:'endpointProtection', label:'Endpoint Protection (EPP)', fn:2, rows:[0,0],
-    alias:['NGAV','Anti-Malware','Application Control','Device Control','Host Firewall'], csf:['PR.PS'], vendor:'Endpoint Protection' },
+    alias:['NGAV','Antivirus','Anti-Malware','Application Control','Device Control','Host Firewall'], csf:['PR.PS'], vendor:'Endpoint Protection' },
   { id:'patchConfigMgmt', label:'Patch & Config Mgmt', fn:2, rows:[0,0],
     alias:['Managed Patching','Hardening','CIS Benchmarks','UEM / MDM','Secure Baselines'], csf:['PR.PS-01','PR.PS-02'], vendor:'Patch Management' },
   { id:'otIotSecurity', label:'OT / IoT Security', fn:2, rows:[0,0],
@@ -944,6 +1003,11 @@ const CATEGORY_TIER = {
   TERM: ['Data Detection and Response (DDR)','Data Classification','Threat Hunting',
          'Active Directory Recovery','Cyber Insurance']
 };
+/* Verified against a published source while this was built. Everything else
+   is carried from general knowledge and marked as such — see
+   docs/category-provenance.md. The distinction only helps if it reaches the
+   panel a consultant is reading in front of a client. */
+const VERIFIED_CATEGORIES = ['DSPM', 'Application Detection and Response (ADR)'];
 const TIER_LABEL = {
   MQ: 'Gartner Magic Quadrant market', MG: 'Gartner Market Guide / Forrester Wave',
   HC: 'Emerging — Gartner Hype Cycle', TERM: 'Common industry term, no analyst market'
@@ -1014,7 +1078,28 @@ const LEGACY_IDS = {
   drPlanAndRehearsals: 'drPlanRehearsals'
 };
 
-/* ── Maturity templates ─────────────────────────────────────────────────── */
+/* ── Maturity profiles ──────────────────────────────────────────────────────
+   These are the one place the tool says something about the client relative
+   to other companies, so they have to be honest about where they come from:
+   they are an opinionated consultant's checklist, not survey data.
+
+   · Table stakes — the set a small company is expected to have before any
+     conversation about maturity starts. Opinion, informed by the CIS Controls
+     v8.1 Implementation Group 1 shape.
+   · Insurance ready — the capabilities cyber insurance applications ask about
+     (MFA, EDR, immutable backup, PAM, tested IR). A reading of common carrier
+     questionnaires, not any one carrier's form.
+   · Commonly seen — what a funded mid-market programme usually holds. It was
+     called "Industry Average", which claims a measured population nobody
+     here has measured.
+   · Everything — all controls in the tool. It was called "Regulated / Bank",
+     which implied a regulatory basis it never had; it always tracked overall
+     coverage exactly, because it is the whole list.
+
+   The profiles nest strictly, which real populations do not: a client cannot
+   read above "commonly seen" and below "insurance ready" here, though plenty
+   of them are exactly that in life. Read them as checklists, not percentiles.
+   ─────────────────────────────────────────────────────────────────────────── */
 const BASELINE = [
   'securityLeadership', 'policyStandards', 'assetInventory', 'exposureManagement',
   'endpointProtection', 'patchConfigMgmt', 'edrXdr', 'saseSse', 'networkSegmentation',
@@ -1033,10 +1118,14 @@ const INDUSTRY = INSURANCE.concat([
   'soarAutomation', 'appRecovery', 'networkRecovery', 'identityRecovery'
 ]);
 const TEMPLATES = {
-  tableStakes:          { label: 'Table Stakes',     controls: BASELINE },
-  gettingInsurance:     { label: 'Insurance Ready',  controls: INSURANCE },
-  industryAverage:      { label: 'Industry Average', controls: INDUSTRY },
-  regionalBankStandard: { label: 'Regulated / Bank', controls: CONTROLS.map(c => c.id) }
+  tableStakes:          { label: 'Table stakes',    controls: BASELINE,
+    note: 'Opinionated baseline, CIS v8.1 IG1 in shape' },
+  gettingInsurance:     { label: 'Insurance ready', controls: INSURANCE,
+    note: 'What carrier questionnaires commonly ask about' },
+  industryAverage:      { label: 'Commonly seen',   controls: INDUSTRY,
+    note: 'A funded mid-market programme — not a measured average' },
+  regionalBankStandard: { label: 'Everything',      controls: CONTROLS.map(c => c.id),
+    note: 'Every control in the tool' }
 };
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -1240,9 +1329,7 @@ function renderBars(layer, placed, idFor) {
       text.setAttribute('y', (cx + p.text.font * 0.35).toFixed(2));
       text.textContent = p.text.lines[0];
     } else {
-      const subLines = p.sub ? p.sub.lines.length : 0;
-      const slh = p.sub ? p.sub.font * 1.2 : 0;
-      const block = (p.text.lines.length - 1) * lh + subLines * slh;
+      const block = (p.text.lines.length - 1) * lh;
       const top = cy - block / 2 + p.text.font * 0.35;
       text.setAttribute('x', cx.toFixed(2));
       text.setAttribute('y', top.toFixed(2));
@@ -1250,15 +1337,6 @@ function renderBars(layer, placed, idFor) {
         const ts = document.createElementNS(SVG_NS, 'tspan');
         ts.setAttribute('x', cx.toFixed(2));
         if (i) ts.setAttribute('dy', lh.toFixed(2));
-        ts.textContent = line;
-        text.appendChild(ts);
-      });
-      if (p.sub) p.sub.lines.forEach(function(line, i) {
-        const ts = document.createElementNS(SVG_NS, 'tspan');
-        ts.setAttribute('x', cx.toFixed(2));
-        ts.setAttribute('dy', (i ? slh : slh).toFixed(2));
-        ts.setAttribute('font-size', p.sub.font.toFixed(2));
-        ts.setAttribute('class', p.subMuted ? 'bar-sub muted' : 'bar-sub');
         ts.textContent = line;
         text.appendChild(ts);
       });
@@ -1298,6 +1376,62 @@ function covBar(x, y, w, h, cov) {
   return g;
 }
 
+/* Everything the exported picture needs to be read a year later without the
+   person who made it: who it is about, when, what the colours mean, and the
+   numbers the engagement turns on. It occupies the continuum's space rather
+   than its own, so the working view and the deliverable stay the same size. */
+function drawExportBand(layer) {
+  const x1 = GRID.x0, x2 = GRID.x0 + 6 * GRID.colW;
+  const all = coverage(CONTROLS);
+  const text = (x, y, size, fill, str, anchor, weight) => {
+    const el = svgEl('text', { x: x, y: y, 'font-family': SVG_FONT,
+      'font-size': size, fill: fill, 'text-anchor': anchor || 'start',
+      'font-weight': weight || 'normal' }, str);
+    layer.appendChild(el);
+    return el;
+  };
+
+  text(x1, 606, 10, '#7dd3fc', 'COVERAGE', 'start', 'bold');
+  text(x2, 606, 10, '#94a3b8',
+    all.scoped ? pct(all.now) + ' current  ·  ' + pct(all.withPlan) + ' with plan  ·  ' +
+      all.scoped + ' applicable controls' +
+      (all.unconf ? '  ·  ' + all.unconf + ' unconfirmed, not counted' : '')
+    : 'no controls in scope', 'end');
+
+  GRID.functions.forEach(function(name, i) {
+    const bx = x1 + i * GRID.colW + 8, bw = GRID.colW - 16;
+    const cv = coverageByFunction(i);
+    if (cv.scoped && cv.withUnconf > cv.withPlan)
+      layer.appendChild(svgEl('rect', { x: bx, y: 616, width: (bw * cv.withUnconf).toFixed(2),
+        height: 9, rx: 4.5, fill: COV_NOW, opacity: 0.25 }));
+    layer.appendChild(covBar(bx, 616, bw, 9, cv));
+    text(bx, 638, 9, '#94a3b8', name.toUpperCase());
+    text(bx + bw, 638, 9, '#e2e8f0', cv.scoped ? pct(cv.now) : '—', 'end');
+  });
+
+  const KEY = [
+    ['Current', '#1e3a8a', '#93c5fd', null],
+    ['Planned', '#166534', '#4ade80', null],
+    ['Gap', '#7f1d1d', '#fca5a5', null],
+    ['Unconfirmed', 'url(#prov-hatch)', '#60a5fa', '3 2'],
+    ['Not assessed', NEUTRAL_FILL, NEUTRAL_STROKE, null]
+  ];
+  let kx = x1;
+  KEY.forEach(function(k) {
+    layer.appendChild(svgEl('rect', { x: kx, y: 658, width: 13, height: 10, rx: 2,
+      fill: k[1], stroke: k[2], 'stroke-width': 1, 'stroke-dasharray': k[3] || 'none' }));
+    text(kx + 18, 667, 9.5, '#94a3b8', k[0]);
+    kx += 30 + k[0].length * 5.4;
+  });
+
+  text(x1, 692, 9, '#475569',
+    'Cyber Defense Matrix after Sounil Yu  ·  assessed against NIST CSF 2.0');
+  const firm = firmLabel();
+  text(x2, 692, 9, '#475569',
+    clientLabel() + '  ·  ' + new Date().toLocaleDateString() + (firm ? '  ·  ' + firm : ''),
+    'end');
+}
+
 function drawCoverage() {
   const layer = document.getElementById('coverage');
   while (layer.firstChild) layer.removeChild(layer.firstChild);
@@ -1319,17 +1453,20 @@ function renderScoreboard() {
     li.className = 'sb-row';
     li.title = cv.scoped
       ? cv.cur + ' current of ' + cv.scoped + ' applicable · ' +
+        (cv.unconf ? cv.unconf + ' unconfirmed · ' : '') +
         cv.todo + ' still to assess'
       : name + ' has no applicable controls';
     li.innerHTML = '<span class="sb-name">' + name + '</span>' +
-      '<span class="sb-track"><span class="sb-plan" style="width:' +
+      '<span class="sb-track"><span class="sb-unconf" style="width:' +
+        (cv.withUnconf * 100).toFixed(1) + '%"></span><span class="sb-plan" style="width:' +
         (cv.withPlan * 100).toFixed(1) + '%"></span><span class="sb-now" style="width:' +
         (cv.now * 100).toFixed(1) + '%"></span></span>' +
       '<span class="sb-num">' + (cv.scoped ? pct(cv.now) : '—') + '</span>';
     wrap.appendChild(li);
   });
-  document.getElementById('sb-note').textContent = all.todo
-    ? all.todo + ' of ' + CONTROLS.length + ' controls still to assess'
+  document.getElementById('sb-note').textContent =
+    all.unconf ? all.unconf + ' unconfirmed, not counted as covered'
+    : all.todo ? all.todo + ' of ' + CONTROLS.length + ' controls still to assess'
     : 'All controls assessed.';
 }
 
@@ -1401,7 +1538,10 @@ const STATUS_RANK = { blue: 0, green: 1, red: 2, off: 3 };
    an answer to "what belongs here": the library examples, drawn muted so a
    suggestion is never mistaken for something the client owns. */
 const EXAMPLE_LIMIT = 2;
-let showExamples = true;
+/* Off by default. On, this view puts two named products against every gap on
+   the board, which is a procurement recommendation however it is captioned —
+   and a client screenshots the picture, not the tooltip. */
+let showExamples = false;
 
 function vendorsFor(ctl, limit) {
   const own = productList(ctl.id);
@@ -1435,29 +1575,24 @@ function vendorSummary() {
 function barItems(mode) {
   const out = [];
   CONTROLS.forEach(function(c) {
+    if (mode !== 'vendors') { out.push(Object.assign({}, c, { exampleOnly: false })); return; }
     const v = vendorsFor(c);
-    if (mode === 'vendors') {
-      if (!v.names.length) return;                    // nothing to name here
-      out.push(Object.assign({}, c, { label: v.names.join(' · '),
-                                      exampleOnly: v.fromLibrary }));
-      return;
-    }
-    const item = Object.assign({}, c, { exampleOnly: false });
-    const w = mode === 'both' ? vendorsFor(c, 1) : v;   // a subtitle fits one
-    if (mode === 'both' && w.names.length) {
-      // A vertical band is too narrow for a second line, so it reads inline.
-      if (c.rows === 'all') item.label = c.label + ' · ' + w.names.join(' · ');
-      else { item.sub = w.names.join(' · '); item.subMuted = w.fromLibrary; }
-      item.exampleOnly = w.fromLibrary;
-    }
-    out.push(item);
+    if (!v.names.length) return;                      // nothing to name here
+    // A library sample says "e.g." on the bar itself, not in a tooltip, and is
+    // drawn hollow. Whatever the client is looking at, the two never merge.
+    out.push(Object.assign({}, c, {
+      label: (v.fromLibrary ? 'e.g. ' : '') + v.names.join(' · '),
+      exampleOnly: v.fromLibrary }));
   });
   return out;
 }
 
 function renderMatrix() {
   const layer = document.getElementById('labels');
-  renderBars(layer, layoutControls(barItems(viewMode)),
+  const items = barItems(viewMode);
+  const examples = {};
+  items.forEach(function(i) { if (i.exampleOnly) examples[i.id] = true; });
+  renderBars(layer, layoutControls(items),
     p => p.ctl.id + (p.vertical ? '' : '--r' + p.row));
   CONTROLS.forEach(function(c) {
     const nodes = nodesFor(c.id);
@@ -1468,7 +1603,7 @@ function renderMatrix() {
     // would empty the grid on a board nobody has assessed yet, so it shows in
     // neutral instead: present, and plainly carrying no status.
     if (viewMode !== 'controls' && !ASSESSED[state[c.id]] &&
-        state[c.id] !== 'off' && vendorsFor(c).names.length) {
+        state[c.id] !== 'off' && state[c.id] !== 'prov' && vendorsFor(c).names.length) {
       nodes.forEach(function(n) {
         const rect = n.querySelector('rect'), text = n.querySelector('text');
         if (!rect) return;
@@ -1480,6 +1615,17 @@ function renderMatrix() {
     } else {
       applyState(c.id);
     }
+    // A suggestion is hollow and grey wherever it lands, after any status
+    // styling has been applied, so nothing can dress it as the client's own.
+    if (examples[c.id]) nodes.forEach(function(n) {
+      const rect = n.querySelector('rect'), text = n.querySelector('text');
+      if (!rect) return;
+      rect.style.display = '';
+      rect.setAttribute('fill', 'none');
+      rect.setAttribute('stroke', '#3f4d66');
+      rect.setAttribute('stroke-dasharray', '2 2');
+      if (text) { text.style.display = ''; text.style.fill = '#64748b'; }
+    });
   });
   drawOverlay();
 }
@@ -1526,7 +1672,17 @@ function drawOverlay() {
   let hit = 0, scoped = 0;
   CONTROLS.forEach(function(c) {
     const covered = on && overlayCovers(c);
-    nodesFor(c.id).forEach(n => n.classList.toggle('covered', covered));
+    nodesFor(c.id).forEach(function(n) {
+      n.classList.toggle('covered', covered);
+      // Inline, not CSS: the export serializes the SVG alone, and the caption
+      // below it claims to say what the picture shows.
+      n.style.opacity = on ? (covered ? '1' : '0.22') : '';
+      const rect = n.querySelector('rect');
+      if (rect && covered) {
+        rect.style.stroke = OVERLAY_EDGE;
+        rect.style.strokeWidth = '2.2';
+      }
+    });
     if (state[c.id] !== 'off') scoped++;
     if (covered) hit++;
   });
@@ -1534,9 +1690,11 @@ function drawOverlay() {
 
   const who = overlayTarget === '*' ? 'All products'
     : (vendorSummary().find(v => v.name.toLowerCase() === overlayTarget) || {}).name || overlayTarget;
-  note.appendChild(svgEl('rect', { x: 12, y: 688, width: 9, height: 9, rx: 2,
+  // Above the grid, in the one strip nothing else uses. It used to print at
+  // y=697, directly on top of the continuum's "after Sounil Yu" credit.
+  note.appendChild(svgEl('rect', { x: 12, y: 13, width: 9, height: 9, rx: 2,
     fill: 'none', stroke: OVERLAY_EDGE, 'stroke-width': 2 }));
-  note.appendChild(svgEl('text', { x: 28, y: 697, 'font-family': SVG_FONT,
+  note.appendChild(svgEl('text', { x: 28, y: 22, 'font-family': SVG_FONT,
     'font-size': 10.5, fill: '#7dd3fc' },
     'Overlay: ' + who + ' — covers ' + hit + ' of ' + scoped + ' applicable controls'));
 }
@@ -1544,7 +1702,8 @@ function drawOverlay() {
 let viewMode = 'controls';
 
 function setView(mode) {
-  viewMode = mode;
+  viewMode = mode === 'vendors' ? 'vendors' : 'controls';
+  mode = viewMode;
   document.getElementById('benchmark').style.display = mode === 'vendors' ? 'none' : '';
   document.getElementById('vendor-panel').style.display = mode === 'controls' ? 'none' : '';
   document.getElementById('examples-wrap').style.opacity = mode === 'controls' ? '0.35' : '';
@@ -1556,11 +1715,19 @@ function setView(mode) {
 const COLOR_FILLS   = { green: '#166534', blue: '#1e3a8a', red: '#7f1d1d' };
 const NEUTRAL_FILL = '#16233c', NEUTRAL_STROKE = '#475569';
 const COLOR_STROKES = { green: '#4ade80', blue: '#93c5fd', red: '#fca5a5' };
+const PROV_FILL = 'url(#prov-hatch)', PROV_STROKE = '#60a5fa';
 
 /* ── State ──────────────────────────────────────────────────────────────── */
+/* Owning a product is not operating a control, and the difference is the whole
+   job. Naming a product proposes the controls it could answer; a human still
+   has to confirm each one is actually running. Until they do it sits at
+   "prov" — counted as applicable, excluded from the current-coverage
+   numerator, and drawn hatched so the picture never claims it. */
 const STATUS_LABEL = { blue: 'Current', green: 'Planned', red: 'Gap',
-                       off: 'Not applicable', new: 'Not assessed' };
+                       off: 'Not applicable', new: 'Not assessed',
+                       prov: 'Unconfirmed' };
 const ASSESSED = { blue: 1, green: 1, red: 1 };
+const CONFIRMABLE = { prov: 1 };
 const PRIORITIES = [
   { val: 'p1', label: 'P1', title: 'P1 — do now' },
   { val: 'p2', label: 'P2', title: 'P2 — next' },
@@ -1579,6 +1746,10 @@ CONTROLS.forEach(function(c) {
   try {
     const saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
     if (saved && saved.status) {
+      // Without this the board reloads intact but anonymous, and the next
+      // export is headed "CDM" instead of the client's name.
+      if (saved.client) document.getElementById('client-input').value = saved.client;
+      if (saved.firm) document.getElementById('firm-input').value = saved.firm;
       Object.assign(state, saved.status);
       Object.keys(saved.meta || {}).forEach(function(id) {
         if (meta[id]) meta[id] = {
@@ -1594,13 +1765,16 @@ CONTROLS.forEach(function(c) {
   } catch (e) {}
 })();
 CONTROLS.forEach(function(c) {
-  if (!COLOR_FILLS[state[c.id]] && state[c.id] !== 'off') state[c.id] = 'new';
+  if (!COLOR_FILLS[state[c.id]] && state[c.id] !== 'off' && state[c.id] !== 'prov')
+    state[c.id] = 'new';
   if (!PRIORITIES.some(p => p.val === meta[c.id].priority)) meta[c.id].priority = '';
 });
 
 function save() {
   try {
-    localStorage.setItem(STORE_KEY, JSON.stringify({ v: 2, status: state, meta: meta }));
+    localStorage.setItem(STORE_KEY, JSON.stringify({ v: 2, status: state, meta: meta,
+      client: document.getElementById('client-input').value,
+      firm: document.getElementById('firm-input').value }));
   } catch (e) {}
 }
 
@@ -1612,28 +1786,33 @@ function save() {
 function inRow(ctl, r) { return rowsOf(ctl).indexOf(r) !== -1; }
 
 function coverage(list) {
-  let cur = 0, plan = 0, gap = 0, todo = 0;
+  let cur = 0, plan = 0, gap = 0, todo = 0, unconf = 0;
   list.forEach(function(c) {
     const st = state[c.id];
     if (st === 'blue') cur++;
     else if (st === 'green') plan++;
     else if (st === 'red') gap++;
+    else if (st === 'prov') unconf++;
     else if (st === 'new') todo++;
   });
   // Denominator is everything applicable, not just what has been looked at.
   // An unassessed control is not covered, and scoring only the assessed ones
   // would read 100% on a board with fifty controls still untouched.
-  const applicable = cur + plan + gap + todo;
-  return { cur: cur, plan: plan, gap: gap, todo: todo,
+  // Unconfirmed is in the denominator and out of the numerator for the same
+  // reason: a licence is not evidence that the control operates.
+  const applicable = cur + plan + gap + todo + unconf;
+  return { cur: cur, plan: plan, gap: gap, todo: todo, unconf: unconf,
            scoped: applicable, assessed: cur + plan + gap,
            now: applicable ? cur / applicable : 0,
-           withPlan: applicable ? (cur + plan) / applicable : 0 };
+           withPlan: applicable ? (cur + plan) / applicable : 0,
+           withUnconf: applicable ? (cur + plan + unconf) / applicable : 0 };
 }
 
 const pct = v => Math.round(v * 100) + '%';
 
 function applyState(id) {
-  const color = state[id], unassessed = !COLOR_FILLS[color];
+  const color = state[id], prov = color === 'prov';
+  const unassessed = !COLOR_FILLS[color] && !prov;
   nodesFor(id).forEach(function(g) {
     const rect = g.querySelector('rect'), text = g.querySelector('text');
     if (!rect) return;
@@ -1644,16 +1823,20 @@ function applyState(id) {
     }
     rect.style.display = '';
     if (text) text.style.display = '';
-    rect.setAttribute('fill',   unassessed ? NEUTRAL_FILL   : COLOR_FILLS[color]);
-    rect.setAttribute('stroke', unassessed ? NEUTRAL_STROKE : COLOR_STROKES[color]);
-    if (text) text.style.fill = unassessed ? '#93a4bd' : '#f8fafc';
+    rect.setAttribute('fill',   prov ? PROV_FILL
+                              : unassessed ? NEUTRAL_FILL : COLOR_FILLS[color]);
+    rect.setAttribute('stroke', prov ? PROV_STROKE
+                              : unassessed ? NEUTRAL_STROKE : COLOR_STROKES[color]);
+    rect.setAttribute('stroke-dasharray', prov ? '3 2' : 'none');
+    if (text) text.style.fill = prov ? '#dbeafe' : unassessed ? '#93a4bd' : '#f8fafc';
   });
 }
 
 function updateStats() {
-  const counts = { green: 0, blue: 0, red: 0, off: 0, new: 0 };
+  const counts = { green: 0, blue: 0, red: 0, off: 0, new: 0, prov: 0 };
   CONTROLS.forEach(c => counts[state[c.id]]++);
   drawCoverage();
+  renderConfirmBar();
   renderBenchmark();
   renderVendorPanel();
   renderStack();
@@ -1662,6 +1845,9 @@ function updateStats() {
   document.getElementById('stat-blue').textContent  = '● ' + counts.blue  + ' Current';
   document.getElementById('stat-green').textContent = '● ' + counts.green + ' Planned';
   document.getElementById('stat-red').textContent   = '● ' + counts.red   + ' Gap';
+  const provPill = document.getElementById('stat-prov');
+  provPill.textContent = '◪ ' + counts.prov + ' Unconfirmed';
+  provPill.style.display = counts.prov ? '' : 'none';
   document.getElementById('stat-off').textContent   = '● ' + counts.new +
     ' Not assessed' + (counts.off ? '  ·  ' + counts.off + ' N/A' : '');
 }
@@ -1696,6 +1882,41 @@ function productIndex() {
 }
 const PRODUCT_INDEX = productIndex();
 
+/* A CISO answers "what do you run?" with what they bought, and mid-market
+   buys suites. Forcing one category on a bundle would be wrong — it spans
+   six — so it expands into its components and the consultant trims. */
+const PRODUCT_BUNDLES = {
+  'Microsoft 365 E5': ['Microsoft Defender for Endpoint', 'Microsoft Entra ID',
+    'Microsoft Purview', 'Microsoft Intune', 'Microsoft Defender for Office 365',
+    'Microsoft Defender for Cloud', 'Microsoft Defender for Identity',
+    'Microsoft Entra ID Governance']
+};
+const BUNDLE_ALIAS = { 'm365 e5': 'Microsoft 365 E5', 'o365 e5': 'Microsoft 365 E5',
+  'office 365 e5': 'Microsoft 365 E5', 'microsoft e5': 'Microsoft 365 E5',
+  'e5': 'Microsoft 365 E5' };
+
+const bundleFor = q => PRODUCT_BUNDLES[q] ? q
+  : (BUNDLE_ALIAS[q.toLowerCase()] || null);
+
+function addBundle(name) {
+  let n = 0;
+  PRODUCT_BUNDLES[name].forEach(function(sku) {
+    const e = PRODUCT_INDEX.find(x => x.name === sku);
+    if (e) n += addProduct(e.name, e.cats);
+  });
+  return n;
+}
+
+/* The picker searches what a CISO says, not what the market analyst wrote:
+   "pam", "sso", "waf", "xdr" are all aliases on a control, and every one of
+   them used to come back "No category matches". */
+const CATEGORY_INDEX = Object.keys(VENDOR_LIBRARY).sort().map(function(cat) {
+  const owners = CONTROLS.filter(c => c.vendor === cat);
+  return { cat: cat, hay: (cat + ' ' +
+    owners.map(c => c.label + ' ' + c.alias.join(' ')).join(' ') + ' ' +
+    VENDOR_LIBRARY[cat].join(' ')).toLowerCase() };
+});
+
 const controlsForCategory = cat => CONTROLS.filter(c => c.vendor === cat);
 
 /* Everything the stack currently claims, with what it covers. */
@@ -1720,12 +1941,42 @@ function addProduct(name, cats) {
     const have = productList(c.id);
     if (!have.some(x => x.toLowerCase() === name.toLowerCase()))
       meta[c.id].products = have.concat(name).join(', ');
-    if (!ASSESSED[state[c.id]]) state[c.id] = 'blue';
+    // Proposed, not asserted: a human confirms it before it scores.
+    if (!ASSESSED[state[c.id]] && state[c.id] !== 'off') state[c.id] = 'prov';
   });
   save();
   renderList();
   updateStats();
   return targets.length;
+}
+
+/* Naming a product proposes controls; this is where a human turns a proposal
+   into an assertion. It is deliberately one click for the sweep and one click
+   per control in the detail panel — confirming should be easy, automatic
+   should be impossible. */
+function unconfirmed() { return CONTROLS.filter(c => state[c.id] === 'prov'); }
+
+function confirmAll() {
+  unconfirmed().forEach(c => { state[c.id] = 'blue'; });
+  save();
+  renderList();
+  updateStats();
+}
+
+function renderConfirmBar() {
+  const bar = document.getElementById('confirm-bar');
+  const n = unconfirmed().length;
+  bar.innerHTML = '';
+  if (!n) return;
+  bar.innerHTML = '<span>' + n + ' control' + (n === 1 ? '' : 's') +
+    ' proposed by your stack — owning the product is not operating the ' +
+    'control, so ' + (n === 1 ? 'it does' : 'they do') + ' not score yet.</span>';
+  const b = document.createElement('button');
+  b.className = 'confirm-btn';
+  b.textContent = 'Confirm all ' + n;
+  b.title = 'Mark every unconfirmed control Current';
+  b.addEventListener('click', confirmAll);
+  bar.appendChild(b);
 }
 
 function removeProduct(name) {
@@ -1738,10 +1989,17 @@ function removeProduct(name) {
   updateStats();
 }
 
+/* Twenty-five tools is a normal mid-market answer, and the full list pushes
+   the coverage score off the screen. Six, then a count. */
+const STACK_SHOWN = 6;
+let stackExpanded = false;
+
 function renderStack() {
   const wrap = document.getElementById('intake-stack');
   wrap.innerHTML = '';
-  recordedStack().forEach(function(v) {
+  const all = recordedStack();
+  const shown = stackExpanded ? all : all.slice(0, STACK_SHOWN);
+  shown.forEach(function(v) {
     const li = document.createElement('li');
     li.className = 'stack-chip';
     li.title = v.name + ' answers ' + v.controls.length +
@@ -1756,12 +2014,20 @@ function renderStack() {
     li.appendChild(x);
     wrap.appendChild(li);
   });
+  if (all.length > STACK_SHOWN) {
+    const more = document.createElement('li');
+    more.className = 'stack-chip stack-more';
+    more.textContent = stackExpanded
+      ? 'show fewer' : '+' + (all.length - STACK_SHOWN) + ' more';
+    more.addEventListener('click', function() { stackExpanded = !stackExpanded; renderStack(); });
+    wrap.appendChild(more);
+  }
 }
 
 (function wireIntake() {
   const input = document.getElementById('intake-input');
   const hits  = document.getElementById('intake-hits');
-  const CATEGORIES = Object.keys(VENDOR_LIBRARY).sort();
+  const asking = document.getElementById('intake-asking');
   let active = [];        // what Enter would take
   let pending = null;     // a typed name waiting to be told its category
 
@@ -1770,8 +2036,9 @@ function renderStack() {
   function reset() {
     pending = null;
     input.value = '';
-    input.placeholder = 'CrowdStrike, Okta, Zscaler…';
+    input.placeholder = 'CrowdStrike, Okta, Microsoft 365 E5…';
     input.classList.remove('asking');
+    asking.textContent = '';
     close();
   }
 
@@ -1796,32 +2063,62 @@ function renderStack() {
   function askForCategory(name) {
     pending = name;
     input.value = '';
-    input.placeholder = 'Which category? e.g. SIEM, CNAPP, PAM…';
+    input.placeholder = 'Which category? SIEM, PAM, WAF, XDR…';
     input.classList.add('asking');
+    // Staring at an empty box with no reminder of what you typed is how a
+    // product gets filed under the wrong thing.
+    asking.textContent = 'Categorising "' + name + '"';
     input.focus();
     listCategories('');
   }
 
+  /* Substring alone puts "Business Continuity" at the top for "sso", because
+     the letters occur inside a word somewhere in its haystack. Rank by how
+     the match reads: the category's own name first, then a word that starts
+     with what was typed, then anything else. */
+  function score(e, q) {
+    if (e.cat.toLowerCase().indexOf(q) !== -1) return 0;
+    return new RegExp('\\b' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).test(e.hay) ? 1 : 2;
+  }
+
   function listCategories(q) {
     close();
-    const matches = CATEGORIES
-      .filter(c => !q || c.toLowerCase().indexOf(q) !== -1)
-      .slice(0, 8);
-    if (!matches.length) { row('No category matches "' + q + '"', '', reset); return; }
+    const matches = CATEGORY_INDEX
+      .filter(e => !q || e.hay.indexOf(q) !== -1)
+      .sort((a, b) => q ? score(a, q) - score(b, q) : 0)
+      .map(e => e.cat);
+    if (!matches.length) {
+      // Never throw the typed product away — the whole point of asking is
+      // that the answer is not in the list yet.
+      row('No category matches "' + q + '"', 'keep typing, or clear the box', function() {});
+      return;
+    }
     active = matches.map(c => ({ name: pending, cats: [c] }));
-    matches.forEach(function(cat) {
-      const tier = tierOf(cat);
-      row(cat, tier || '', () => commit(pending, [cat]));
+    matches.slice(0, 40).forEach(function(cat) {
+      row(cat, tierOf(cat) || '', () => commit(pending, [cat]));
     });
+  }
+
+  function commitBundle(name) {
+    const n = addBundle(name);
+    if (!n) flashError(name + ' resolved to no controls');
+    reset();
   }
 
   function listProducts(q) {
     close();
+    Object.keys(PRODUCT_BUNDLES).forEach(function(b) {
+      const hit = b.toLowerCase().indexOf(q) !== -1 ||
+        Object.keys(BUNDLE_ALIAS).some(a => BUNDLE_ALIAS[a] === b && a.indexOf(q) === 0);
+      if (!hit) return;
+      active.push({ name: b, bundle: true });
+      row(b, PRODUCT_BUNDLES[b].length + ' products', () => commitBundle(b));
+    });
     const found = PRODUCT_INDEX
       .filter(e => e.name.toLowerCase().indexOf(q) !== -1)
       .sort((a, b) => a.name.toLowerCase().indexOf(q) - b.name.toLowerCase().indexOf(q))
       .slice(0, 7);
-    active = found;
+    active = active.concat(found);
     found.forEach(e => row(e.name, e.cats.join(' · '), () => commit(e.name, e.cats)));
     // Always offer the typed text as its own product, so nothing is unenterable.
     const typed = input.value.trim();
@@ -1845,9 +2142,12 @@ function renderStack() {
       if (active.length) commit(pending, active[0].cats);
       return;
     }
+    const bundle = bundleFor(typed);
+    if (bundle) return commitBundle(bundle);
     const exact = PRODUCT_INDEX.find(e => e.name.toLowerCase() === typed.toLowerCase());
     if (exact) return commit(exact.name, exact.cats);
-    if (active.length === 1) return commit(active[0].name, active[0].cats);
+    if (active.length === 1) return active[0].bundle
+      ? commitBundle(active[0].name) : commit(active[0].name, active[0].cats);
     if (typed.length > 1) return askForCategory(typed);
   });
 })();
@@ -1981,6 +2281,26 @@ function buildDetail(ctl, li) {
   alias.textContent = 'Also known as: ' + ctl.alias.join(', ');
   d.appendChild(alias);
 
+  if (state[ctl.id] === 'prov') {
+    const ask = document.createElement('div');
+    ask.className = 'detail-confirm';
+    const named = productList(ctl.id).join(', ') || 'A recorded product';
+    ask.appendChild(Object.assign(document.createElement('div'),
+      { className: 'confirm-q',
+        textContent: named + ' answers this control. Is it actually operating?' }));
+    const yes = document.createElement('button');
+    yes.className = 'confirm-btn inline';
+    yes.textContent = 'Yes — Current';
+    yes.addEventListener('click', () => setStatus(ctl.id, 'blue'));
+    const no = document.createElement('button');
+    no.className = 'confirm-btn inline deny';
+    no.textContent = 'No — Gap';
+    no.addEventListener('click', () => setStatus(ctl.id, 'red'));
+    ask.appendChild(yes);
+    ask.appendChild(no);
+    d.appendChild(ask);
+  }
+
   const prow = document.createElement('div');
   prow.className = 'detail-prio';
   prow.appendChild(Object.assign(document.createElement('span'),
@@ -2006,12 +2326,22 @@ function buildDetail(ctl, li) {
     const crow = document.createElement('div');
     crow.className = 'detail-cat';
     const tier = tierOf(ctl.vendor);
+    const seen = VERIFIED_CATEGORIES.indexOf(ctl.vendor) !== -1;
     crow.innerHTML = '<span class="cat-name">' + ctl.vendor + '</span>' +
       '<span class="cat-tier tier-' + (tier || 'NONE').toLowerCase() + '">' +
-      (tier || '?') + '</span>';
-    crow.title = tier ? TIER_LABEL[tier]
-      : 'Not classified — see docs/category-provenance.md';
+      (tier || '?') + '</span>' +
+      '<span class="cat-seen' + (seen ? ' yes' : '') + '">' +
+      (seen ? '✓ verified' : 'not re-verified') + '</span>';
+    crow.title = (tier ? TIER_LABEL[tier]
+      : 'Not classified — see docs/category-provenance.md') + ' · ' +
+      (seen ? 'Checked against a published source'
+            : 'Carried from general knowledge, not checked against a current subscription');
     d.appendChild(crow);
+    // The badge alone is two letters; the gloss is what makes it usable in a
+    // room, where nobody can hover a tooltip.
+    d.appendChild(Object.assign(document.createElement('div'),
+      { className: 'cat-gloss', textContent: tier ? TIER_LABEL[tier]
+          : 'Not classified — see docs/category-provenance.md' }));
   } else {
     const crow = document.createElement('div');
     crow.className = 'detail-cat';
@@ -2055,10 +2385,13 @@ function buildDetail(ctl, li) {
   prod.type = 'text';
   prod.placeholder = 'Products in place — comma separated';
   prod.value = meta[ctl.id].products || '';
+  // Every keystroke used to re-lay-out and redraw the matrix — visible
+  // stutter while a client watches you type.
+  let prodTimer = null;
   prod.addEventListener('input', function() {
     meta[ctl.id].products = prod.value;
-    save();
-    updateStats();
+    clearTimeout(prodTimer);
+    prodTimer = setTimeout(function() { save(); updateStats(); }, 300);
   });
   d.appendChild(prod);
 
@@ -2150,7 +2483,7 @@ function renderBenchmark() {
     const li = document.createElement('li');
     li.className = 'bm-row' + (profileFilter === key ? ' on' : '');
     li.innerHTML =
-      '<span class="bm-name">' + tpl.label + '</span>' +
+      '<span class="bm-name" title="' + tpl.note + '">' + tpl.label + '</span>' +
       '<span class="bm-track">' +
         '<span class="bm-plan" style="width:' + ((cur + plan) / ids.length * 100).toFixed(1) + '%"></span>' +
         '<span class="bm-now" style="width:' + (cur / ids.length * 100).toFixed(1) + '%"></span>' +
@@ -2240,7 +2573,7 @@ document.getElementById('examples-toggle').addEventListener('change', function()
 });
 document.getElementById('overlay-select').addEventListener('change', function() {
   overlayTarget = this.value;
-  drawOverlay();
+  renderMatrix();       // rebuilds the bars, clearing the last overlay's styling
 });
 document.querySelectorAll('.view-btn').forEach(function(btn) {
   btn.addEventListener('click', () => setView(btn.dataset.view));
@@ -2264,7 +2597,8 @@ function applyTemplate(name, colorMode) {
   if (!tpl) return;
   colorMode = colorMode || document.getElementById('tpl-mode').value;
   tpl.controls.forEach(function(id) {
-    if (!ASSESSED[state[id]] && state[id] !== 'off') setStatus(id, colorMode);
+    if (!ASSESSED[state[id]] && state[id] !== 'off' && state[id] !== 'prov')
+      setStatus(id, colorMode);
   });
   renderList();
 }
@@ -2278,14 +2612,22 @@ function clearAll() {
 function getClientName() {
   return document.getElementById('client-input').value.trim() || 'CDM';
 }
+const clientLabel = () =>
+  document.getElementById('client-input').value.trim() || 'Unnamed client';
+const firmLabel = () => document.getElementById('firm-input').value.trim();
 
 /* The register a vCISO actually hands over. Priority leads, so the top of the
    list is the P1 conversation whether or not those items already have a plan;
-   within a priority, an open gap outranks something already scheduled. */
+   within a priority, an open gap outranks something already scheduled.
+
+   Every applicable control is printed, including the ones nobody has looked
+   at yet. They are already in the denominator the heading quotes, and a
+   client who counts the rows against "57 controls applicable" and finds 28
+   has found a hole in the one number the assessment turns on. */
 function register() {
-  const srank = { red: 0, green: 1, blue: 2 };
+  const srank = { red: 0, green: 1, prov: 2, blue: 3, new: 4 };
   const prank = { p1: 0, p2: 1, p3: 2, '': 3 };
-  return CONTROLS.filter(c => ASSESSED[state[c.id]]).sort(function(a, b) {
+  return CONTROLS.filter(c => state[c.id] !== 'off').sort(function(a, b) {
     if (prank[meta[a.id].priority] !== prank[meta[b.id].priority])
       return prank[meta[a.id].priority] - prank[meta[b.id].priority];
     if (srank[state[a.id]] !== srank[state[b.id]])
@@ -2318,15 +2660,29 @@ function exportCSV() {
     { type: 'text/csv;charset=utf-8' }), '-CDM-register.csv');
 }
 
-// Render the matrix (plus Mason SC header) to a canvas, then hand it to cb().
+/* The picture that survives the meeting: it gets forwarded, screenshotted and
+   read back eighteen months later by someone who was not in the room. So it
+   carries the client, the date, the numbers and a key — and it swaps the
+   continuum out for them. The continuum is a teaching aid you talk over; on a
+   static export its three full-width bars sit in the status palette directly
+   under a colour-scored grid and read as "technology 100%", which flatters
+   the client's posture in exactly the wrong direction. */
 function renderCanvas(cb) {
   const svg = document.getElementById('owasp-chart');
-  const svgStr = new XMLSerializer().serializeToString(svg);
+  const clone = svg.cloneNode(true);
+  // The live element is sized by CSS to fit the viewport; the clone is not in
+  // the document, so the export needs the intrinsic size stated on it.
+  clone.setAttribute('width', 900);
+  clone.setAttribute('height', 710);
+  const band = clone.querySelector('#continuum');
+  while (band.firstChild) band.removeChild(band.firstChild);
+  drawExportBand(band);
+  const svgStr = new XMLSerializer().serializeToString(clone);
   const url = URL.createObjectURL(new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' }));
   const img = new Image();
   img.onload = function() {
     const scale = 2; // retina quality
-    const headerHeight = 80;
+    const headerHeight = 74;
     const canvas = document.createElement('canvas');
     canvas.width  = img.naturalWidth  * scale;
     canvas.height = (img.naturalHeight + headerHeight) * scale;
@@ -2335,13 +2691,23 @@ function renderCanvas(cb) {
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, canvas.width / scale, canvas.height / scale);
 
-    // Header with Mason SC branding
-    ctx.fillStyle = '#e2e8f0';
-    ctx.font = 'bold 18px Rajdhani, sans-serif';
-    ctx.textAlign = 'right';
-    ctx.fillText('Mason SC', img.naturalWidth - 20, 30);
-    ctx.font = '12px IBM Plex Mono, monospace';
-    ctx.fillText('Cyber Defense Matrix · NIST CSF 2.0', img.naturalWidth - 20, 50);
+    // Whose assessment this is, and as of when.
+    const SANS = 'Helvetica, Arial, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#f1f5f9';
+    ctx.font = 'bold 21px ' + SANS;
+    ctx.fillText(clientLabel(), 22, 34);
+    ctx.fillStyle = '#7c8ba3';
+    ctx.font = '11.5px ' + SANS;
+    ctx.fillText('Cyber Defense Matrix  ·  NIST CSF 2.0  ·  ' +
+      new Date().toLocaleDateString(), 22, 54);
+    const firm = firmLabel();
+    if (firm) {
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#64748b';
+      ctx.font = '12px ' + SANS;
+      ctx.fillText(firm, img.naturalWidth - 22, 34);
+    }
 
     ctx.drawImage(img, 0, headerHeight);
     URL.revokeObjectURL(url);
@@ -2371,20 +2737,12 @@ function exportPNG() {
    gap needs. Named vendors deliberately stay out of the client deliverable. */
 const PDF_COLS_BASE = [
   { head: 'Control',  w: 0.17 }, { head: 'Market Category', w: 0.12 },
-  { head: 'Status',   w: 0.07 }, { head: 'Priority', w: 0.06 },
-  { head: 'Function', w: 0.09 }, { head: 'Asset',    w: 0.10 },
-  { head: 'CSF 2.0',  w: 0.11 }, { head: 'Notes',    w: 0.28 }
+  { head: 'Status',   w: 0.085 }, { head: 'Priority', w: 0.055 },
+  { head: 'Function', w: 0.085 }, { head: 'Asset',    w: 0.10 },
+  { head: 'CSF 2.0',  w: 0.105 }, { head: 'Notes',    w: 0.28 }
 ];
-// Products earn a column only on a board that records any, so a pure gap
-// assessment keeps the wider Notes column it wants.
-const PDF_COLS_PROD = [
-  { head: 'Control',  w: 0.15 }, { head: 'Market Category', w: 0.10 },
-  { head: 'Products', w: 0.13 }, { head: 'Status',   w: 0.06 },
-  { head: 'Priority', w: 0.055 }, { head: 'Function', w: 0.08 },
-  { head: 'Asset',    w: 0.09 }, { head: 'CSF 2.0',  w: 0.09 },
-  { head: 'Notes',    w: 0.245 }
-];
-const PDF_STATUS_RGB = { red: '0.98 0.45 0.45', green: '0.35 0.85 0.50', blue: '0.58 0.75 0.99' };
+const PDF_STATUS_RGB = { red: '0.98 0.45 0.45', green: '0.35 0.85 0.50',
+  blue: '0.58 0.75 0.99', prov: '0.55 0.62 0.78', new: '0.45 0.51 0.62' };
 
 // WinAnsi-safe, and the three characters that would break a PDF string.
 function pdfEsc(v) {
@@ -2425,18 +2783,15 @@ function exportPDF() {
     const pageW = drawW + 2 * margin, pageH = drawH + 2 * margin;
 
     /* ── Build the register pages ── */
-    const withProducts = CONTROLS.some(c => productList(c.id).length);
-    const cols = withProducts ? PDF_COLS_PROD : PDF_COLS_BASE;
-    const statusCol = withProducts ? 3 : 2;
+    const cols = PDF_COLS_BASE, statusCol = 2;
     const pad = 34, usable = pageW - 2 * pad;
     const xs = [];
     cols.reduce(function(x, c) { xs.push(x); c.px = c.w * usable; return x + c.px; }, pad);
 
     const rows = register().map(function(c) {
-      const cells = [c.label, c.vendor];
-      if (withProducts) cells.push(productList(c.id).join(', '));
-      cells.push(STATUS_LABEL[state[c.id]], meta[c.id].priority.toUpperCase(),
-                 GRID.functions[c.fn], assetLabel(c), c.csf.join(' '), meta[c.id].note);
+      const cells = [c.label, c.vendor,
+                 STATUS_LABEL[state[c.id]], meta[c.id].priority.toUpperCase(),
+                 GRID.functions[c.fn], assetLabel(c), c.csf.join(' '), meta[c.id].note];
       return { cells: cells, rgb: PDF_STATUS_RGB[state[c.id]] || '0.8 0.84 0.9' };
     });
     rows.forEach(function(r) {
@@ -2449,7 +2804,8 @@ function exportPDF() {
       pdfEsc(getClientName()) + ' - Cyber Defense Matrix gap register',
       'NIST CSF 2.0  |  ' + pdfEsc(new Date().toLocaleDateString()) + '  |  ' +
         all.scoped + ' controls applicable  |  ' + pct(all.now) + ' current, ' +
-        pct(all.withPlan) + ' with plan delivered',
+        pct(all.withPlan) + ' with plan delivered' +
+        (all.unconf ? '  |  ' + all.unconf + ' unconfirmed' : ''),
       GRID.functions.map(function(n, i) {
         const cv = coverageByFunction(i);
         return pdfEsc(n) + ' ' + (cv.scoped ? pct(cv.now) : '-');
@@ -2564,6 +2920,7 @@ function exportJSON() {
   const all = coverage(CONTROLS);
   const output = {
     client: clientName,
+    firm: firmLabel(),
     framework: 'NIST CSF 2.0',
     exportedAt: new Date().toISOString(),
     coverage: {
@@ -2617,16 +2974,17 @@ function loadFromJSON(event) {
       const data = JSON.parse(e.target.result);
       if (!data.controls) throw new Error('Invalid format: missing controls key');
       if (data.client) document.getElementById('client-input').value = data.client;
+      if (data.firm) document.getElementById('firm-input').value = data.firm;
 
       let loaded = 0, remapped = 0;
       Object.entries(data.controls).forEach(function(entry) {
         const rawId = entry[0], val = entry[1];
         const status = typeof val === 'string' ? val : (val.status || 'off');
-        if (status === 'off') return;
         let id = rawId;
         if (!state.hasOwnProperty(id) && LEGACY_IDS[id]) { id = LEGACY_IDS[id]; remapped++; }
         if (!state.hasOwnProperty(id)) return;
-        setStatus(id, status);
+        if (!STATUS_LABEL[status]) return;
+        state[id] = status;
         if (val && typeof val === 'object') {
           meta[id].note = val.note || '';
           if (Array.isArray(val.products)) meta[id].products = val.products.join(', ');
@@ -2635,7 +2993,9 @@ function loadFromJSON(event) {
         }
         loaded++;
       });
+      save();
       renderList();
+      updateStats();      // the stack chips are derived, and were a step stale
 
       const statusEl = document.getElementById('export-status');
       const errEl = document.getElementById('export-error');
