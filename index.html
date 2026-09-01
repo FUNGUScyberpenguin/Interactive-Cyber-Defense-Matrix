@@ -142,6 +142,104 @@
     /* Sidebar hover highlights the matching bar in the matrix */
     #labels g.bar-hover rect { stroke: #fbbf24; stroke-width: 2; }
 
+    /* ── Control rows expand into an assessment detail panel ── */
+    #solution-checkboxes li:not(.group-head) { flex-direction: column; align-items: stretch; padding: 0; }
+    .sol-main {
+      display: flex; align-items: center; gap: 6px; padding: 4px 12px;
+    }
+    .sol-text { cursor: pointer; }
+    .sol-title { display: flex; align-items: center; gap: 5px; min-width: 0; }
+    .prio-chip:empty { display: none; }
+    .prio-chip {
+      font-size: 9.5px; font-weight: 600; letter-spacing: 0.5px;
+      background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.4);
+      color: #fbbf24; border-radius: 3px; padding: 0 4px; flex-shrink: 0;
+    }
+    li.has-note .sol-label::after { content: ' ✎'; color: #fbbf24; font-size: 11px; }
+
+    .sol-detail { display: none; padding: 2px 12px 10px; }
+    li.open .sol-detail { display: block; }
+    li.open { background: rgba(30,58,138,0.14); }
+    .detail-meta {
+      font-size: 10px; letter-spacing: 1px; color: #64748b;
+      text-transform: uppercase; margin-bottom: 5px;
+    }
+    .detail-csf { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+    .csf-tag {
+      font-size: 10px; background: rgba(59,130,246,0.14);
+      border: 1px solid rgba(59,130,246,0.3); color: #93c5fd;
+      border-radius: 3px; padding: 1px 5px;
+    }
+    .detail-alias { font-size: 10.5px; color: #64748b; line-height: 1.45; margin-bottom: 7px; }
+    .detail-prio { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
+    .detail-tag { font-size: 10px; letter-spacing: 1px; color: #475569; text-transform: uppercase; margin-right: 2px; }
+    .prio-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
+      background: transparent; border: 1px solid rgba(148,163,184,0.25);
+      color: #64748b; border-radius: 3px; padding: 2px 7px; cursor: pointer;
+      transition: all 0.12s;
+    }
+    .prio-btn:hover { border-color: rgba(251,191,36,0.5); color: #fbbf24; }
+    .prio-btn.on { background: rgba(251,191,36,0.16); border-color: #fbbf24; color: #fbbf24; }
+    .note-input {
+      width: 100%; resize: vertical; background: rgba(2,6,23,0.7);
+      border: 1px solid rgba(59,130,246,0.2); border-radius: 3px;
+      color: #cbd5e1; font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      padding: 5px 7px; outline: none; line-height: 1.4;
+    }
+    .note-input:focus { border-color: #3b82f6; }
+    .note-input::placeholder { color: #334155; }
+
+    /* ── Active "missing from profile" filter ── */
+    #filter-note { display: none; align-items: center; gap: 6px; margin-top: 7px; }
+    #filter-note.on { display: flex; }
+    #filter-note-text {
+      font-size: 11px; color: #fbbf24; flex: 1;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    #filter-clear {
+      font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
+      background: transparent; border: 1px solid rgba(251,191,36,0.4);
+      color: #fbbf24; border-radius: 3px; padding: 2px 7px; cursor: pointer;
+    }
+    #filter-clear:hover { background: rgba(251,191,36,0.15); }
+
+    /* ── Benchmark panel ── */
+    #benchmark { margin-top: 18px; max-width: 980px; }
+    .bm-head {
+      font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 15px;
+      letter-spacing: 2px; text-transform: uppercase; color: #cbd5e1; margin-bottom: 8px;
+    }
+    .bm-hint {
+      font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: 11px;
+      letter-spacing: 0; text-transform: none; color: #64748b;
+    }
+    #benchmark-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .bm-row {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(59,130,246,0.15);
+      border-radius: 4px; padding: 7px 12px;
+    }
+    .bm-row.on { border-color: rgba(251,191,36,0.5); }
+    .bm-name { font-size: 12.5px; color: #cbd5e1; width: 150px; flex-shrink: 0; }
+    .bm-track {
+      flex: 1; height: 8px; border-radius: 4px; background: #16233c;
+      position: relative; overflow: hidden; min-width: 80px;
+    }
+    .bm-track > span { position: absolute; left: 0; top: 0; height: 100%; border-radius: 4px; }
+    .bm-plan { background: rgba(34,197,94,0.5); }
+    .bm-now  { background: #3b82f6; }
+    .bm-num { font-size: 13px; color: #e2e8f0; width: 42px; text-align: right; flex-shrink: 0; }
+    .bm-detail { font-size: 11px; color: #64748b; width: 86px; flex-shrink: 0; }
+    .bm-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      background: transparent; border: 1px solid rgba(59,130,246,0.3);
+      color: #93c5fd; border-radius: 3px; padding: 3px 10px; cursor: pointer;
+      width: 142px; flex-shrink: 0; transition: all 0.12s;
+    }
+    .bm-btn:hover:not(:disabled) { background: rgba(30,58,138,0.4); }
+    .bm-btn:disabled { border-color: rgba(34,197,94,0.3); color: #4ade80; cursor: default; }
+
     /* Radio dots */
     .radio-group { display: flex; gap: 4px; flex-shrink: 0; }
     .radio-group input[type="radio"] { display: none; }
@@ -165,7 +263,7 @@
     #title-bar span { font-size: 13px; color: #cbd5e1; letter-spacing: 2px; }
 
     #templates-bar {
-      margin-bottom: 16px; display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; max-width: 920px;
+      margin-bottom: 16px; display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; max-width: 980px;
     }
     .template-group {
       display: flex; flex-direction: column; gap: 6px;
@@ -202,11 +300,11 @@
     #svg-wrap {
       background: #000;
       border: 1px solid rgba(59,130,246,0.2);
-      border-radius: 4px; overflow: visible; max-width: 920px;
+      border-radius: 4px; overflow: visible; max-width: 980px;
     }
 
     #stats-bar {
-      margin-top: 12px; display: flex; gap: 40px; align-items: flex-start; justify-content: space-between; max-width: 920px;
+      margin-top: 12px; display: flex; gap: 40px; align-items: flex-start; justify-content: space-between; max-width: 980px;
     }
     .clear-all-btn {
       font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 700;
@@ -249,7 +347,7 @@
     #export-error.show { display: inline; }
     @media print {
       body { grid-template-columns: 1fr; background: #000; }
-      #sidebar, #stats-bar, #export-bar, #title-bar { display: none !important; }
+      #sidebar, #stats-bar, #export-bar, #title-bar, #benchmark { display: none !important; }
       #main { padding: 10px; }
       #svg-wrap { border: none; }
     }
@@ -281,6 +379,7 @@
       <button class="group-btn"    data-mode="asset" title="Group by asset class">Asset</button>
       <button class="group-btn"    data-mode="az"    title="Flat A–Z list">A–Z</button>
     </div>
+    <div id="filter-note"><span id="filter-note-text"></span><button id="filter-clear">clear</button></div>
   </div>
 
   <ul id="solution-checkboxes"></ul>
@@ -329,9 +428,9 @@
   </div>
 
   <div id="svg-wrap">
-    <svg cursor="default" height="594.50000" id="owasp-chart" width="889.51752" version="1.1"
+    <svg cursor="default" height="642" id="owasp-chart" width="974" version="1.1"
       preserveAspectRatio="xMidYMid" style="background-color: black"
-      viewBox="0 0 889.51752 594.50000" xmlns="http://www.w3.org/2000/svg">
+      viewBox="0 -44 974 642" xmlns="http://www.w3.org/2000/svg">
       <title>Cyber Defense Matrix</title>
       <defs/>
 
@@ -363,6 +462,9 @@
       <!-- CONTROLS -->
       <!-- Control bars are generated from CONTROLS by layoutControls(). -->
       <g id="labels"></g>
+
+      <!-- Coverage scoreboard, redrawn by drawCoverage() on every change. -->
+      <g id="coverage"></g>
     </svg>
   </div>
 
@@ -378,7 +480,8 @@
       <div id="export-bar-inner">
         <span class="export-label">Export:</span>
         <button class="export-btn" onclick="exportPNG()">&#11015; PNG</button>
-        <button class="export-btn" onclick="exportPDF()">&#11015; PDF</button>
+        <button class="export-btn" onclick="exportPDF()" title="Matrix plus a written gap register">&#11015; PDF Report</button>
+        <button class="export-btn" onclick="exportCSV()" title="Gap register for Excel">&#11015; CSV</button>
         <button class="export-btn" onclick="exportJSON()">&#11015; JSON</button>
         <button class="export-btn" onclick="triggerLoadJSON()">&#11014; Load JSON</button>
         <input type="file" id="json-file-input" accept=".json" style="display:none" onchange="loadFromJSON(event)">
@@ -386,6 +489,13 @@
         <span id="export-error"></span>
       </div>
     </div>
+  </div>
+
+  <div id="benchmark">
+    <div class="bm-head">Benchmark
+      <span class="bm-hint">— current (+&thinsp;planned) against each profile</span>
+    </div>
+    <ul id="benchmark-list"></ul>
   </div>
 
 </main>
@@ -781,18 +891,149 @@ const PLACED = layoutControls();
   });
 })();
 
+/* ── Coverage scoreboard ────────────────────────────────────────────────────
+   Drawn inside the SVG rather than in the page chrome, so the percentages
+   travel with the PNG/PDF the client actually gets handed.
+   ─────────────────────────────────────────────────────────────────────────── */
+const SVG_FONT = 'Helvetica, Arial, sans-serif';
+const COV_TRACK = '#16233c', COV_NOW = '#3b82f6', COV_PLAN = '#22c55e';
+
+function svgEl(name, attrs, text) {
+  const el = document.createElementNS(SVG_NS, name);
+  Object.keys(attrs).forEach(k => el.setAttribute(k, attrs[k]));
+  if (text != null) el.textContent = text;
+  return el;
+}
+
+// Track, then the planned total, then current on top: the gap between the
+// blue and green edges is exactly what the roadmap still has to deliver.
+function covBar(x, y, w, h, cov) {
+  const g = document.createElementNS(SVG_NS, 'g');
+  g.appendChild(svgEl('rect', { x: x, y: y, width: w, height: h, rx: h / 2, fill: COV_TRACK }));
+  if (cov.scoped) {
+    const wp = w * cov.withPlan, wn = w * cov.now;
+    if (wp > 0.5) g.appendChild(svgEl('rect', { x: x, y: y, width: wp.toFixed(2),
+      height: h, rx: h / 2, fill: COV_PLAN, opacity: 0.5 }));
+    if (wn > 0.5) g.appendChild(svgEl('rect', { x: x, y: y, width: wn.toFixed(2),
+      height: h, rx: h / 2, fill: COV_NOW }));
+  }
+  return g;
+}
+
+function drawCoverage() {
+  const layer = document.getElementById('coverage');
+  while (layer.firstChild) layer.removeChild(layer.firstChild);
+
+  GRID.functions.forEach(function(name, c) {
+    const cov = coverageByFunction(c);
+    const cx = GRID.x0 + c * GRID.colW + GRID.colW / 2, bw = 96;
+    layer.appendChild(svgEl('text', { x: cx.toFixed(2), y: -25, 'text-anchor': 'middle',
+      'font-family': SVG_FONT, 'font-size': 15,
+      fill: cov.scoped ? '#e2e8f0' : '#475569' }, cov.scoped ? pct(cov.now) : '—'));
+    layer.appendChild(covBar(cx - bw / 2, -18, bw, 7, cov));
+    layer.appendChild(svgEl('text', { x: cx.toFixed(2), y: -4, 'text-anchor': 'middle',
+      'font-family': SVG_FONT, 'font-size': 9.5, fill: '#64748b' },
+      cov.scoped ? cov.cur + ' of ' + cov.scoped + ' in scope' : 'not scoped'));
+  });
+
+  const rx = GRID.x0 + 6 * GRID.colW + 12;
+  GRID.assets.forEach(function(name, r) {
+    const cov = coverageByAsset(r);
+    const cy = GRID.y0 + r * GRID.rowH + GRID.rowH / 2;
+    layer.appendChild(svgEl('text', { x: rx.toFixed(2), y: (cy - 6).toFixed(2),
+      'font-family': SVG_FONT, 'font-size': 14,
+      fill: cov.scoped ? '#e2e8f0' : '#475569' }, cov.scoped ? pct(cov.now) : '—'));
+    layer.appendChild(covBar(rx, cy + 2, 62, 7, cov));
+    layer.appendChild(svgEl('text', { x: rx.toFixed(2), y: (cy + 22).toFixed(2),
+      'font-family': SVG_FONT, 'font-size': 9, fill: '#64748b' },
+      cov.scoped ? cov.cur + ' of ' + cov.scoped : ''));
+  });
+  layer.appendChild(svgEl('text', { x: rx.toFixed(2), y: -6, 'font-family': SVG_FONT,
+    'font-size': 8.5, fill: '#64748b' }, 'BY ASSET CLASS'));
+
+  const all = coverage(CONTROLS);
+  layer.appendChild(svgEl('text', { x: 12, y: -27, 'font-family': SVG_FONT,
+    'font-size': 9.5, fill: '#64748b', 'letter-spacing': '1.5' }, 'COVERAGE'));
+  layer.appendChild(svgEl('text', { x: 12, y: -8, 'font-family': SVG_FONT,
+    'font-size': 18, fill: '#e2e8f0' }, all.scoped ? pct(all.now) : '—'));
+  if (all.scoped && all.plan)
+    layer.appendChild(svgEl('text', { x: 58, y: -8, 'font-family': SVG_FONT,
+      'font-size': 10, fill: '#22c55e' }, '\u2192 ' + pct(all.withPlan) + ' planned'));
+}
+
+function coverageByFunction(f) { return coverage(CONTROLS.filter(c => c.fn === f)); }
+function coverageByAsset(r)    { return coverage(CONTROLS.filter(c => inRow(c, r))); }
+
 const COLOR_FILLS   = { green: '#166534', blue: '#1e3a8a', red: '#7f1d1d' };
 const COLOR_STROKES = { green: '#4ade80', blue: '#93c5fd', red: '#fca5a5' };
 
 /* ── State ──────────────────────────────────────────────────────────────── */
-const state = {};
-CONTROLS.forEach(c => state[c.id] = 'off');
-try { Object.assign(state, JSON.parse(localStorage.getItem('cdm-csf2-v1') || '{}')); } catch (e) {}
-CONTROLS.forEach(c => { if (!COLOR_FILLS[state[c.id]]) state[c.id] = 'off'; });
+const STATUS_LABEL = { blue: 'Current', green: 'Planned', red: 'Gap', off: 'Out of scope' };
+const PRIORITIES = [
+  { val: 'p1', label: 'P1', title: 'P1 — do now' },
+  { val: 'p2', label: 'P2', title: 'P2 — next' },
+  { val: 'p3', label: 'P3', title: 'P3 — later' }
+];
+const STORE_KEY = 'cdm-csf2-v2', LEGACY_STORE_KEY = 'cdm-csf2-v1';
+
+const state = {};   // control id -> 'off' | 'blue' | 'green' | 'red'
+const meta  = {};   // control id -> { note, priority } — the assessment detail
+CONTROLS.forEach(function(c) {
+  state[c.id] = 'off';
+  meta[c.id] = { note: '', priority: '' };
+});
+
+(function restore() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+    if (saved && saved.status) {
+      Object.assign(state, saved.status);
+      Object.keys(saved.meta || {}).forEach(function(id) {
+        if (meta[id]) meta[id] = {
+          note: saved.meta[id].note || '', priority: saved.meta[id].priority || ''
+        };
+      });
+      return;
+    }
+    // v1 kept a flat id -> status map with no notes or priorities.
+    const legacy = JSON.parse(localStorage.getItem(LEGACY_STORE_KEY) || 'null');
+    if (legacy) Object.assign(state, legacy);
+  } catch (e) {}
+})();
+CONTROLS.forEach(function(c) {
+  if (!COLOR_FILLS[state[c.id]]) state[c.id] = 'off';
+  if (!PRIORITIES.some(p => p.val === meta[c.id].priority)) meta[c.id].priority = '';
+});
 
 function save() {
-  try { localStorage.setItem('cdm-csf2-v1', JSON.stringify(state)); } catch (e) {}
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify({ v: 2, status: state, meta: meta }));
+  } catch (e) {}
 }
+
+/* ── Coverage ───────────────────────────────────────────────────────────────
+   Scored over the controls the engagement actually scoped in. A control left
+   "off" is out of scope for this client, not a silent zero — otherwise every
+   matrix would score badly for owning no OT and no mainframe.
+   ─────────────────────────────────────────────────────────────────────────── */
+function inRow(ctl, r) {
+  return ctl.rows === 'all' || (ctl.rows[0] <= r && r <= ctl.rows[1]);
+}
+
+function coverage(list) {
+  let cur = 0, plan = 0, gap = 0;
+  list.forEach(function(c) {
+    if (state[c.id] === 'blue') cur++;
+    else if (state[c.id] === 'green') plan++;
+    else if (state[c.id] === 'red') gap++;
+  });
+  const scoped = cur + plan + gap;
+  return { cur: cur, plan: plan, gap: gap, scoped: scoped,
+           now: scoped ? cur / scoped : 0,
+           withPlan: scoped ? (cur + plan) / scoped : 0 };
+}
+
+const pct = v => Math.round(v * 100) + '%';
 
 function applyState(id) {
   const color = state[id], g = document.getElementById(id);
@@ -813,6 +1054,8 @@ function applyState(id) {
 function updateStats() {
   const counts = { green: 0, blue: 0, red: 0, off: 0 };
   CONTROLS.forEach(c => counts[state[c.id]]++);
+  drawCoverage();
+  renderBenchmark();
   document.getElementById('stat-blue').textContent  = '● ' + counts.blue  + ' Current';
   document.getElementById('stat-green').textContent = '● ' + counts.green + ' Planned';
   document.getElementById('stat-red').textContent   = '● ' + counts.red   + ' Gap';
@@ -849,25 +1092,49 @@ function groupsFor(mode) {
     items: CONTROLS.filter(c => c.fn === i) })).filter(g => g.items.length);
 }
 
+function rowClass(ctl) {
+  const cls = [];
+  if (state[ctl.id] !== 'off') cls.push('active-' + state[ctl.id]);
+  if (meta[ctl.id].note) cls.push('has-note');
+  if (openControls[ctl.id]) cls.push('open');
+  return cls.join(' ');
+}
+
+/* Expanded rows persist across re-renders so typing a note never collapses. */
+const openControls = {};
+
 function buildRow(ctl) {
   const li = document.createElement('li');
   li.id = 'li-' + ctl.id;
-  li.className = state[ctl.id] !== 'off' ? 'active-' + state[ctl.id] : '';
-  li.title = ctl.label + '\n' + GRID.functions[ctl.fn].toUpperCase() + ' · ' +
-    assetLabel(ctl) + '\nCSF 2.0: ' + ctl.csf.join(', ') +
-    '\nAlso known as: ' + ctl.alias.join(', ');
+  li.className = rowClass(ctl);
+
+  const main = document.createElement('div');
+  main.className = 'sol-main';
 
   const txt = document.createElement('div');
   txt.className = 'sol-text';
+  txt.title = 'Click for CSF mapping, priority and notes';
+  const title = document.createElement('div');
+  title.className = 'sol-title';
   const lbl = document.createElement('span');
   lbl.className = 'sol-label';
   lbl.textContent = ctl.label;
+  title.appendChild(lbl);
+  const chip = document.createElement('span');
+  chip.className = 'prio-chip';
+  chip.textContent = meta[ctl.id].priority.toUpperCase();
+  title.appendChild(chip);
   const sub = document.createElement('span');
   sub.className = 'sol-alias';
   sub.textContent = ctl.alias.slice(0, 3).join(' · ');
-  txt.appendChild(lbl);
+  txt.appendChild(title);
   txt.appendChild(sub);
-  li.appendChild(txt);
+  txt.addEventListener('click', function() {
+    openControls[ctl.id] = !openControls[ctl.id];
+    li.className = rowClass(ctl);
+    if (openControls[ctl.id]) li.querySelector('.note-input').focus();
+  });
+  main.appendChild(txt);
 
   const rg = document.createElement('div');
   rg.className = 'radio-group';
@@ -886,12 +1153,76 @@ function buildRow(ctl) {
     rg.appendChild(inp);
     rg.appendChild(dot);
   });
-  li.appendChild(rg);
+  main.appendChild(rg);
+  li.appendChild(main);
+
+  li.appendChild(buildDetail(ctl, li));
 
   const bar = document.getElementById(ctl.id);
-  li.addEventListener('mouseenter', () => bar && bar.classList.add('bar-hover'));
-  li.addEventListener('mouseleave', () => bar && bar.classList.remove('bar-hover'));
+  main.addEventListener('mouseenter', () => bar && bar.classList.add('bar-hover'));
+  main.addEventListener('mouseleave', () => bar && bar.classList.remove('bar-hover'));
   return li;
+}
+
+/* The detail panel is where an assessment stops being a colour and starts
+   being a finding: what the client actually has, and when it gets fixed. */
+function buildDetail(ctl, li) {
+  const d = document.createElement('div');
+  d.className = 'sol-detail';
+
+  const where = document.createElement('div');
+  where.className = 'detail-meta';
+  where.textContent = GRID.functions[ctl.fn].toUpperCase() + ' · ' + assetLabel(ctl);
+  d.appendChild(where);
+
+  const csf = document.createElement('div');
+  csf.className = 'detail-csf';
+  ctl.csf.forEach(function(code) {
+    const tag = document.createElement('span');
+    tag.className = 'csf-tag';
+    tag.textContent = code;
+    csf.appendChild(tag);
+  });
+  d.appendChild(csf);
+
+  const alias = document.createElement('div');
+  alias.className = 'detail-alias';
+  alias.textContent = 'Also known as: ' + ctl.alias.join(', ');
+  d.appendChild(alias);
+
+  const prow = document.createElement('div');
+  prow.className = 'detail-prio';
+  prow.appendChild(Object.assign(document.createElement('span'),
+    { className: 'detail-tag', textContent: 'Priority' }));
+  PRIORITIES.forEach(function(p) {
+    const b = document.createElement('button');
+    b.className = 'prio-btn' + (meta[ctl.id].priority === p.val ? ' on' : '');
+    b.textContent = p.label;
+    b.title = p.title;
+    b.addEventListener('click', function() {
+      meta[ctl.id].priority = meta[ctl.id].priority === p.val ? '' : p.val;
+      save();
+      prow.querySelectorAll('.prio-btn').forEach(function(x) {
+        x.classList.toggle('on', x.textContent.toLowerCase() === meta[ctl.id].priority);
+      });
+      li.querySelector('.prio-chip').textContent = meta[ctl.id].priority.toUpperCase();
+    });
+    prow.appendChild(b);
+  });
+  d.appendChild(prow);
+
+  const note = document.createElement('textarea');
+  note.className = 'note-input';
+  note.rows = 2;
+  note.placeholder = 'Findings, scope caveats, owner, evidence…';
+  note.value = meta[ctl.id].note;
+  note.addEventListener('input', function() {
+    meta[ctl.id].note = note.value;
+    li.classList.toggle('has-note', !!note.value.trim());
+    save();
+  });
+  d.appendChild(note);
+  return d;
 }
 
 function renderList() {
@@ -924,13 +1255,62 @@ function setStatus(id, val) {
   save();
 }
 
+/* A profile is "met" by a control that is already Current or on the plan. */
+function profileMissing(key) {
+  return TEMPLATES[key].controls.filter(
+    id => state[id] !== 'blue' && state[id] !== 'green');
+}
+
+let profileFilter = null;
+
+function renderBenchmark() {
+  const wrap = document.getElementById('benchmark-list');
+  wrap.innerHTML = '';
+  Object.keys(TEMPLATES).forEach(function(key) {
+    const tpl = TEMPLATES[key], ids = tpl.controls;
+    let cur = 0, plan = 0;
+    ids.forEach(function(id) {
+      if (state[id] === 'blue') cur++;
+      else if (state[id] === 'green') plan++;
+    });
+    const missing = ids.length - cur - plan;
+    const li = document.createElement('li');
+    li.className = 'bm-row' + (profileFilter === key ? ' on' : '');
+    li.innerHTML =
+      '<span class="bm-name">' + tpl.label + '</span>' +
+      '<span class="bm-track">' +
+        '<span class="bm-plan" style="width:' + ((cur + plan) / ids.length * 100).toFixed(1) + '%"></span>' +
+        '<span class="bm-now" style="width:' + (cur / ids.length * 100).toFixed(1) + '%"></span>' +
+      '</span>' +
+      '<span class="bm-num">' + Math.round(cur / ids.length * 100) + '%</span>' +
+      '<span class="bm-detail">' + cur + (plan ? ' +' + plan : '') + ' of ' + ids.length + '</span>';
+    const btn = document.createElement('button');
+    btn.className = 'bm-btn';
+    btn.textContent = missing ? 'Show ' + missing + ' missing' : '✓ Met';
+    btn.disabled = !missing;
+    btn.addEventListener('click', function() {
+      profileFilter = profileFilter === key ? null : key;
+      renderBenchmark();
+      applyFilter();
+    });
+    li.appendChild(btn);
+    wrap.appendChild(li);
+  });
+}
+
 function applyFilter() {
   const q = document.getElementById('search').value.trim().toLowerCase();
+  const only = profileFilter ? new Set(profileMissing(profileFilter)) : null;
+  const noteEl = document.getElementById('filter-note');
+  noteEl.classList.toggle('on', !!profileFilter);
+  if (profileFilter)
+    document.getElementById('filter-note-text').textContent =
+      'Missing for ' + TEMPLATES[profileFilter].label;
   const shown = {};
   CONTROLS.forEach(function(c) {
     const hay = (c.label + ' ' + c.alias.join(' ') + ' ' + c.csf.join(' ') + ' ' +
       GRID.functions[c.fn] + ' ' + assetLabel(c)).toLowerCase();
-    const hit = !q || hay.indexOf(q) !== -1;
+    const hit = (!q || hay.indexOf(q) !== -1) && (!only || only.has(c.id));
     shown[c.id] = hit;
     const li = document.getElementById('li-' + c.id);
     if (li) li.classList.toggle('hidden-item', !hit);
@@ -946,6 +1326,11 @@ function applyFilter() {
 }
 
 document.getElementById('search').addEventListener('input', applyFilter);
+document.getElementById('filter-clear').addEventListener('click', function() {
+  profileFilter = null;
+  renderBenchmark();
+  applyFilter();
+});
 document.querySelectorAll('.group-btn').forEach(function(btn) {
   btn.addEventListener('click', function() {
     document.querySelectorAll('.group-btn').forEach(b => b.classList.remove('on'));
@@ -977,6 +1362,44 @@ function clearAll() {
 /* ── Export / import ────────────────────────────────────────────────────── */
 function getClientName() {
   return document.getElementById('client-input').value.trim() || 'CDM';
+}
+
+/* The register a vCISO actually hands over. Priority leads, so the top of the
+   list is the P1 conversation whether or not those items already have a plan;
+   within a priority, an open gap outranks something already scheduled. */
+function register() {
+  const srank = { red: 0, green: 1, blue: 2 };
+  const prank = { p1: 0, p2: 1, p3: 2, '': 3 };
+  return CONTROLS.filter(c => state[c.id] !== 'off').sort(function(a, b) {
+    if (prank[meta[a.id].priority] !== prank[meta[b.id].priority])
+      return prank[meta[a.id].priority] - prank[meta[b.id].priority];
+    if (srank[state[a.id]] !== srank[state[b.id]])
+      return srank[state[a.id]] - srank[state[b.id]];
+    if (a.fn !== b.fn) return a.fn - b.fn;
+    return a.label.localeCompare(b.label);
+  });
+}
+
+function download(blob, filename) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = getClientName().replace(/\s+/g, '-') + filename;
+  a.click();
+  flashStatus();
+}
+
+function exportCSV() {
+  const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const lines = [['Control', 'Status', 'Priority', 'CSF Function', 'Asset Class',
+    'CSF 2.0 Categories', 'Also Known As', 'Notes'].map(q).join(',')];
+  register().forEach(function(c) {
+    lines.push([c.label, STATUS_LABEL[state[c.id]], meta[c.id].priority.toUpperCase(),
+      GRID.functions[c.fn], assetLabel(c), c.csf.join('; '), c.alias.join('; '),
+      meta[c.id].note].map(q).join(','));
+  });
+  // BOM so Excel opens the UTF-8 correctly on Windows.
+  download(new Blob(['\ufeff' + lines.join('\r\n')],
+    { type: 'text/csv;charset=utf-8' }), '-CDM-register.csv');
 }
 
 // Render the matrix (plus Mason SC header) to a canvas, then hand it to cb().
@@ -1023,28 +1446,163 @@ function exportPNG() {
   });
 }
 
-// Wrap the rendered matrix image in a single-page PDF (self-contained,
-// embeds the picture as a JPEG image XObject — no print dialog, no libraries).
+/* ── PDF report ─────────────────────────────────────────────────────────────
+   Page 1 is the matrix picture; the pages after it are the written gap
+   register, so the export is a deliverable rather than a screenshot.
+   Self-contained: a JPEG XObject plus base-14 Helvetica, no libraries.
+   ─────────────────────────────────────────────────────────────────────────── */
+const PDF_COLS = [
+  { head: 'Control',  w: 0.20 }, { head: 'Status',  w: 0.08 },
+  { head: 'Priority', w: 0.07 }, { head: 'Function', w: 0.10 },
+  { head: 'Asset',    w: 0.11 }, { head: 'CSF 2.0', w: 0.12 },
+  { head: 'Notes',    w: 0.32 }
+];
+const PDF_STATUS_RGB = { red: '0.98 0.45 0.45', green: '0.35 0.85 0.50', blue: '0.58 0.75 0.99' };
+
+// WinAnsi-safe, and the three characters that would break a PDF string.
+function pdfEsc(v) {
+  return String(v == null ? '' : v)
+    .replace(/[‐-―]/g, '-').replace(/[‘’]/g, "'")
+    .replace(/[“”]/g, '"').replace(/…/g, '...')
+    .replace(/[×✕]/g, 'x').replace(/[·•]/g, '-')
+    .replace(/→/g, '->').replace(/[^\x20-\x7E]/g, '')
+    .replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+}
+
+const pdfTextW = (t, size) => t.length * size * 0.52;
+
+function pdfWrap(text, width, size) {
+  const words = pdfEsc(text).split(/\s+/).filter(Boolean);
+  if (!words.length) return [''];
+  const lines = [];
+  let line = '';
+  words.forEach(function(w) {
+    const next = line ? line + ' ' + w : w;
+    if (pdfTextW(next, size) <= width || !line) line = next;
+    else { lines.push(line); line = w; }
+  });
+  lines.push(line);
+  return lines;
+}
+
+const pdfText = (x, y, size, rgb, str, font) =>
+  'BT /' + (font || 'F1') + ' ' + size + ' Tf ' + rgb + ' rg ' +
+  x.toFixed(2) + ' ' + y.toFixed(2) + ' Td (' + str + ') Tj ET\n';
+
 function exportPDF() {
   renderCanvas(function(canvas) {
-    const jpeg = atob(canvas.toDataURL('image/jpeg', 0.95).split(',')[1]); // binary string, 1 char/byte
+    const jpeg = atob(canvas.toDataURL('image/jpeg', 0.95).split(',')[1]); // 1 char/byte
     const iw = canvas.width, ih = canvas.height;
-    const margin = 18;
+    const margin = 24;
     const drawW = 760, drawH = drawW * ih / iw;
     const pageW = drawW + 2 * margin, pageH = drawH + 2 * margin;
 
-    const objs = [
-      '<< /Type /Catalog /Pages 2 0 R >>',
-      '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
-      '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + pageW.toFixed(2) + ' ' + pageH.toFixed(2) +
-        '] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>',
-      '<< /Type /XObject /Subtype /Image /Width ' + iw + ' /Height ' + ih +
-        ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + jpeg.length +
-        ' >>\nstream\n' + jpeg + '\nendstream'
+    /* ── Build the register pages ── */
+    const pad = 34, usable = pageW - 2 * pad;
+    const xs = [];
+    PDF_COLS.reduce(function(x, c) { xs.push(x); c.px = c.w * usable; return x + c.px; }, pad);
+
+    const rows = register().map(function(c) {
+      return {
+        cells: [c.label, STATUS_LABEL[state[c.id]], meta[c.id].priority.toUpperCase(),
+                GRID.functions[c.fn], assetLabel(c), c.csf.join(' '), meta[c.id].note],
+        rgb: PDF_STATUS_RGB[state[c.id]] || '0.8 0.84 0.9'
+      };
+    });
+    rows.forEach(function(r) {
+      r.lines = r.cells.map((v, i) => pdfWrap(v, PDF_COLS[i].px - 8, 7.5));
+      r.h = Math.max.apply(null, r.lines.map(l => l.length)) * 9.5 + 7;
+    });
+
+    const all = coverage(CONTROLS);
+    const heading = [
+      pdfEsc(getClientName()) + ' - Cyber Defense Matrix gap register',
+      'NIST CSF 2.0  |  ' + pdfEsc(new Date().toLocaleDateString()) + '  |  ' +
+        all.scoped + ' controls in scope  |  ' + pct(all.now) + ' current, ' +
+        pct(all.withPlan) + ' with plan delivered',
+      GRID.functions.map(function(n, i) {
+        const cv = coverageByFunction(i);
+        return pdfEsc(n) + ' ' + (cv.scoped ? pct(cv.now) : '-');
+      }).join('   ')
     ];
-    const content = '0 0 0 rg 0 0 ' + pageW.toFixed(2) + ' ' + pageH.toFixed(2) + ' re f\n' +
+
+    const pages = [];
+    let page = null, y = 0;
+    function newPage() {
+      page = { rows: [], top: 0 };
+      y = pageH - pad;
+      if (!pages.length) {
+        page.heading = heading;
+        y -= 20;                       // title
+        y -= 14; y -= 13;              // the two summary lines
+        y -= 12;
+      }
+      page.headerY = y;
+      y -= 15;                         // column headings
+      pages.push(page);
+    }
+    newPage();
+    rows.forEach(function(r) {
+      if (y - r.h < pad + 14) newPage();
+      r.y = y;
+      page.rows.push(r);
+      y -= r.h;
+    });
+
+    /* ── Assemble the file ── */
+    const objs = [];
+    const put = body => (objs.push(body), objs.length);
+    const N_CATALOG = 1, N_PAGES = 2, N_FONT = 3, N_BOLD = 4, N_IMG = 5, N_PAGE1 = 6, N_CONT1 = 7;
+    const kids = [N_PAGE1];
+    let next = 8;
+    pages.forEach(() => { kids.push(next); next += 2; });
+
+    put('<< /Type /Catalog /Pages ' + N_PAGES + ' 0 R >>');
+    put('<< /Type /Pages /Kids [' + kids.map(k => k + ' 0 R').join(' ') +
+        '] /Count ' + kids.length + ' >>');
+    put('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
+    put('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
+    put('<< /Type /XObject /Subtype /Image /Width ' + iw + ' /Height ' + ih +
+        ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' +
+        jpeg.length + ' >>\nstream\n' + jpeg + '\nendstream');
+
+    const box = '/MediaBox [0 0 ' + pageW.toFixed(2) + ' ' + pageH.toFixed(2) + ']';
+    const fonts = '/Font << /F1 ' + N_FONT + ' 0 R /F2 ' + N_BOLD + ' 0 R >>';
+    put('<< /Type /Page /Parent ' + N_PAGES + ' 0 R ' + box +
+        ' /Resources << /XObject << /Im0 ' + N_IMG + ' 0 R >> >> /Contents ' + N_CONT1 + ' 0 R >>');
+    const cover = '0 0 0 rg 0 0 ' + pageW.toFixed(2) + ' ' + pageH.toFixed(2) + ' re f\n' +
       'q ' + drawW.toFixed(2) + ' 0 0 ' + drawH.toFixed(2) + ' ' + margin + ' ' + margin + ' cm /Im0 Do Q';
-    objs.push('<< /Length ' + content.length + ' >>\nstream\n' + content + '\nendstream');
+    put('<< /Length ' + cover.length + ' >>\nstream\n' + cover + '\nendstream');
+
+    pages.forEach(function(pg, pi) {
+      let c = '0.024 0.031 0.063 rg 0 0 ' + pageW.toFixed(2) + ' ' + pageH.toFixed(2) + ' re f\n';
+      if (pg.heading) {
+        c += pdfText(pad, pageH - pad - 14, 15, '0.89 0.91 0.94', pg.heading[0], 'F2');
+        c += pdfText(pad, pageH - pad - 32, 8.5, '0.55 0.64 0.76', pg.heading[1]);
+        c += pdfText(pad, pageH - pad - 45, 8.5, '0.42 0.52 0.66', pg.heading[2]);
+      }
+      PDF_COLS.forEach(function(col, i) {
+        c += pdfText(xs[i], pg.headerY, 8, '0.49 0.62 0.81', pdfEsc(col.head), 'F2');
+      });
+      c += '0.16 0.22 0.34 RG 0.6 w ' + pad + ' ' + (pg.headerY - 5).toFixed(2) + ' m ' +
+           (pageW - pad).toFixed(2) + ' ' + (pg.headerY - 5).toFixed(2) + ' l S\n';
+      pg.rows.forEach(function(r) {
+        r.lines.forEach(function(lines, i) {
+          lines.forEach(function(line, li) {
+            if (!line) return;
+            c += pdfText(xs[i], r.y - 9 - li * 9.5, 7.5,
+              i === 0 ? '0.86 0.89 0.94' : (i === 1 ? r.rgb : '0.60 0.68 0.80'), line);
+          });
+        });
+        c += '0.10 0.14 0.22 RG 0.4 w ' + pad + ' ' + (r.y - r.h + 2).toFixed(2) + ' m ' +
+             (pageW - pad).toFixed(2) + ' ' + (r.y - r.h + 2).toFixed(2) + ' l S\n';
+      });
+      c += pdfText(pageW - pad - 60, pad - 8, 7.5, '0.35 0.42 0.55',
+        'Page ' + (pi + 2) + ' of ' + (pages.length + 1));
+      put('<< /Type /Page /Parent ' + N_PAGES + ' 0 R ' + box + ' /Resources << ' + fonts +
+          ' >> /Contents ' + (kids[pi + 1] + 1) + ' 0 R >>');
+      put('<< /Length ' + c.length + ' >>\nstream\n' + c + '\nendstream');
+    });
 
     let pdf = '%PDF-1.4\n%\xFF\xFF\xFF\xFF\n';
     const offsets = [];
@@ -1055,15 +1613,12 @@ function exportPDF() {
     const xref = pdf.length;
     pdf += 'xref\n0 ' + (objs.length + 1) + '\n0000000000 65535 f \n';
     for (const o of offsets) pdf += String(o).padStart(10, '0') + ' 00000 n \n';
-    pdf += 'trailer\n<< /Size ' + (objs.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + xref + '\n%%EOF';
+    pdf += 'trailer\n<< /Size ' + (objs.length + 1) + ' /Root ' + N_CATALOG +
+           ' 0 R >>\nstartxref\n' + xref + '\n%%EOF';
 
     const bytes = new Uint8Array(pdf.length);
     for (let i = 0; i < pdf.length; i++) bytes[i] = pdf.charCodeAt(i) & 0xff;
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
-    a.download = getClientName().replace(/\s+/g, '-') + '-CDM.pdf';
-    a.click();
-    flashStatus();
+    download(new Blob([bytes], { type: 'application/pdf' }), '-CDM-report.pdf');
   });
 }
 
@@ -1075,28 +1630,41 @@ function flashStatus() {
 
 function exportJSON() {
   const clientName = getClientName();
+  const all = coverage(CONTROLS);
   const output = {
     client: clientName,
     framework: 'NIST CSF 2.0',
     exportedAt: new Date().toISOString(),
+    coverage: {
+      overall: { inScope: all.scoped, current: all.cur, planned: all.plan, gap: all.gap,
+                 currentPct: Math.round(all.now * 100), withPlanPct: Math.round(all.withPlan * 100) },
+      byFunction: GRID.functions.reduce(function(o, name, i) {
+        const cv = coverageByFunction(i);
+        o[name] = { inScope: cv.scoped, current: cv.cur, currentPct: Math.round(cv.now * 100) };
+        return o;
+      }, {}),
+      byAssetClass: GRID.assets.reduce(function(o, name, i) {
+        const cv = coverageByAsset(i);
+        o[name] = { inScope: cv.scoped, current: cv.cur, currentPct: Math.round(cv.now * 100) };
+        return o;
+      }, {})
+    },
     controls: {}
   };
   CONTROLS.forEach(function(c) {
     output.controls[c.id] = {
       label: c.label,
       status: state[c.id],
+      priority: meta[c.id].priority,
+      note: meta[c.id].note,
       function: GRID.functions[c.fn],
       assetClass: assetLabel(c),
       csf: c.csf,
       alias: c.alias
     };
   });
-  const blob = new Blob([JSON.stringify(output, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = clientName.replace(/\s+/g, '-') + '-CDM.json';
-  a.click();
-  flashStatus();
+  download(new Blob([JSON.stringify(output, null, 2)],
+    { type: 'application/json' }), '-CDM.json');
 }
 
 function triggerLoadJSON() {
@@ -1122,6 +1690,10 @@ function loadFromJSON(event) {
         if (!state.hasOwnProperty(id) && LEGACY_IDS[id]) { id = LEGACY_IDS[id]; remapped++; }
         if (!state.hasOwnProperty(id)) return;
         setStatus(id, status);
+        if (val && typeof val === 'object') {
+          meta[id].note = val.note || '';
+          if (PRIORITIES.some(p => p.val === val.priority)) meta[id].priority = val.priority;
+        }
         loaded++;
       });
       renderList();
