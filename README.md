@@ -2,8 +2,15 @@
 
 An interactive version of the Cyber Defense Matrix, aligned to **NIST CSF 2.0**.
 
-Open `index.html` — everything (layout, export, persistence) runs client-side
-with no build step and no dependencies.
+## ▶ [Try it live](https://funguscyberpenguin.github.io/Interactive-Cyber-Defense-Matrix/)
+
+No install and no sign-in — it runs entirely in your browser, and your board is
+kept in that browser's local storage. Use **Export → JSON** to save or share a
+board, and **Load JSON** to pick it back up.
+
+To run it locally instead, clone the repo and open `index.html` — everything
+(layout, export, persistence) is client-side with no build step and no
+dependencies.
 
 ## Structure
 
