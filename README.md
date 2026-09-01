@@ -150,9 +150,22 @@ controls that profile still wants.
 
 ## Vendor lookup
 
-Each control carries a **market category** — the term a buyer actually searches
-(`CNAPP`, `ITDR`, `SASE`, `Privileged Access Management`) — shown in the detail
-panel next to a link to the
+Each control carries the **analyst market category** a CISO already reads in
+(`CNAPP`, `WAAP`, `ITDR`, `DSPM`, `PTaaS`), tagged with how much weight that
+name carries — Magic Quadrant market, Market Guide, emerging Hype Cycle entry,
+or merely a common industry term with no analyst market behind it. Four
+controls carry no category at all, because security leadership, zero trust,
+breach notification and network restoration are advisory or process work
+rather than a product purchase.
+
+Three **sample vendors** per category make the matrix answerable by recognition
+rather than recall — a CISO knows their own stack cold and a control taxonomy
+only vaguely. These are samples in Gartner's sense of the word: not a ranking,
+not a shortlist, not exhaustive, not an endorsement. `docs/category-provenance.md`
+records which category names were verified against a published source and which
+were carried from general knowledge.
+
+The detail panel also links to the
 [Charting Cyber vendor catalog](https://www.chartingcyber.com/vendors), along
 with a few adjacent category names worth a look.
 
