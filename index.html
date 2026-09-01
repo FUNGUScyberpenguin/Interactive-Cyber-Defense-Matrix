@@ -220,7 +220,33 @@
     #filter-clear:hover { background: rgba(251,191,36,0.15); }
 
     /* ── Benchmark panel ── */
-    #benchmark { margin-top: 18px; max-width: 980px; }
+    #view-switch { display: flex; gap: 4px; margin-left: auto; }
+    .view-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+      background: transparent; border: 1px solid rgba(59,130,246,0.25);
+      color: #64748b; border-radius: 4px; padding: 4px 14px; cursor: pointer;
+      transition: all 0.12s;
+    }
+    .view-btn:hover { border-color: rgba(59,130,246,0.5); color: #93c5fd; }
+    .view-btn.on { background: rgba(30,58,138,0.45); border-color: #3b82f6; color: #bfdbfe; }
+    .product-input { margin-bottom: 6px; }
+
+    #vendor-empty {
+      font-size: 12px; color: #64748b; line-height: 1.6; max-width: 620px;
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(59,130,246,0.15);
+      border-radius: 4px; padding: 10px 14px;
+    }
+    #vendor-empty strong { color: #93c5fd; font-weight: 500; }
+    #vendor-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .fn-dots { display: flex; gap: 3px; flex-shrink: 0; }
+    .fn-dot {
+      width: 16px; height: 16px; border-radius: 3px; font-size: 9px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(30,41,59,0.8); color: #334155; border: 1px solid transparent;
+    }
+    .fn-dot.on { background: rgba(59,130,246,0.25); border-color: #3b82f6; color: #bfdbfe; }
+
+    #benchmark, #vendor-panel { margin-top: 18px; max-width: 980px; }
     .bm-head {
       font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 15px;
       letter-spacing: 2px; text-transform: uppercase; color: #cbd5e1; margin-bottom: 8px;
@@ -362,7 +388,7 @@
     #export-error.show { display: inline; }
     @media print {
       body { grid-template-columns: 1fr; background: #000; }
-      #sidebar, #stats-bar, #export-bar, #title-bar, #benchmark { display: none !important; }
+      #sidebar, #stats-bar, #export-bar, #title-bar, #benchmark, #vendor-panel { display: none !important; }
       #main { padding: 10px; }
       #svg-wrap { border: none; }
     }
@@ -405,6 +431,10 @@
   <div id="title-bar">
     <h2>CYBER DEFENSE MATRIX</h2>
     <span>NIST CSF 2.0 × ASSET CLASS</span>
+    <div id="view-switch">
+      <button class="view-btn on" data-view="controls" title="Controls you have assessed">Controls</button>
+      <button class="view-btn"    data-view="vendors"  title="The products in place, plotted on the grid">Vendors</button>
+    </div>
   </div>
 
   <div id="templates-bar">
@@ -443,9 +473,9 @@
   </div>
 
   <div id="svg-wrap">
-    <svg cursor="default" height="642" id="owasp-chart" width="974" version="1.1"
+    <svg cursor="default" height="730" id="owasp-chart" width="974" version="1.1"
       preserveAspectRatio="xMidYMid" style="background-color: black"
-      viewBox="0 -44 974 642" xmlns="http://www.w3.org/2000/svg">
+      viewBox="0 -44 974 730" xmlns="http://www.w3.org/2000/svg">
       <title>Cyber Defense Matrix</title>
       <defs/>
 
@@ -478,8 +508,14 @@
       <!-- Control bars are generated from CONTROLS by layoutControls(). -->
       <g id="labels"></g>
 
-      <!-- Coverage scoreboard, redrawn by drawCoverage() on every change. -->
+      <!-- Vendor bars: the same grid, named after products instead. -->
+      <g id="vendors"></g>
+
+      <!-- Scoreboard, redrawn on every change; contents depend on the view. -->
       <g id="coverage"></g>
+
+      <!-- Sounil Yu's dependency continuum and structural/situational split. -->
+      <g id="continuum"></g>
     </svg>
   </div>
 
@@ -504,6 +540,16 @@
         <span id="export-error"></span>
       </div>
     </div>
+  </div>
+
+  <div id="vendor-panel" style="display:none">
+    <div class="bm-head">Stack concentration
+      <span class="bm-hint">— how much of the matrix each product covers</span>
+    </div>
+    <ul id="vendor-list"></ul>
+    <p id="vendor-empty">No products recorded yet. Open a control in the sidebar and
+      fill in <strong>Products in place</strong> — each one is plotted at that
+      control's position on the grid.</p>
   </div>
 
   <div id="benchmark">
@@ -794,15 +840,15 @@ function fitText(label, w) {
   return { lines: lines, font: Math.max(MIN_FONT, Math.min(MAX_FONT, f)) };
 }
 
-function layoutControls() {
+function layoutControls(items) {
   const nCols = GRID.functions.length, nRows = GRID.assets.length;
   const placed = [], vZone = new Array(nCols).fill(null);
 
   // 1 — program-wide controls become vertical bands.
   for (let c = 0; c < nCols; c++) {
-    const bands = CONTROLS.filter(k => k.fn === c && k.rows === 'all');
+    const bands = items.filter(k => k.fn === c && k.rows === 'all');
     if (!bands.length) continue;
-    const hasRowBars = CONTROLS.some(k => k.fn === c && k.rows !== 'all');
+    const hasRowBars = items.some(k => k.fn === c && k.rows !== 'all');
     const left = GRID.x0 + c * GRID.colW + PAD;
     const pitch = hasRowBars ? V_BAR_W + V_GAP : (GRID.colW - 2 * PAD) / bands.length;
     const barW  = hasRowBars ? V_BAR_W : pitch - V_GAP;
@@ -852,7 +898,7 @@ function layoutControls() {
     return 0;
   }
 
-  CONTROLS.filter(k => k.rows !== 'all').forEach(function(k) {
+  items.filter(k => k.rows !== 'all').forEach(function(k) {
     const cols = Array.isArray(k.fn) ? k.fn : [k.fn, k.fn];
     const span = freeSpan(cols[0], cols[1]);
     const text = fitText(k.label, span[1] - span[0]);
@@ -888,13 +934,16 @@ function layoutControls() {
 
 /* ── Draw the bars into the SVG ─────────────────────────────────────────── */
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const PLACED = layoutControls();
+const SVG_FONT = 'Helvetica, Arial, sans-serif';
+const PLACED = layoutControls(CONTROLS);
 
-(function drawBars() {
-  const layer = document.getElementById('labels');
-  PLACED.forEach(function(p) {
+/* Draw a laid-out set of bars into a layer. Shared by the control view and
+   the vendor view, which differ only in what the bars are named after. */
+function renderBars(layer, placed, idFor) {
+  while (layer.firstChild) layer.removeChild(layer.firstChild);
+  placed.forEach(function(p) {
     const g = document.createElementNS(SVG_NS, 'g');
-    g.setAttribute('id', p.ctl.id);
+    g.setAttribute('id', idFor(p));
     g.setAttribute('class', 'ctl-bar');
 
     const rect = document.createElementNS(SVG_NS, 'rect');
@@ -907,7 +956,7 @@ const PLACED = layoutControls();
     g.appendChild(rect);
 
     const text = document.createElementNS(SVG_NS, 'text');
-    text.setAttribute('font-family', 'Helvetica, Arial, sans-serif');
+    text.setAttribute('font-family', SVG_FONT);
     text.setAttribute('font-size', p.text.font.toFixed(2));
     text.setAttribute('text-anchor', 'middle');
     const cx = p.x + p.w / 2, cy = p.y + p.h / 2, lh = p.text.font * 1.15;
@@ -932,13 +981,14 @@ const PLACED = layoutControls();
     g.appendChild(text);
     layer.appendChild(g);
   });
-})();
+}
+
+renderBars(document.getElementById('labels'), PLACED, p => p.ctl.id);
 
 /* ── Coverage scoreboard ────────────────────────────────────────────────────
    Drawn inside the SVG rather than in the page chrome, so the percentages
    travel with the PNG/PDF the client actually gets handed.
    ─────────────────────────────────────────────────────────────────────────── */
-const SVG_FONT = 'Helvetica, Arial, sans-serif';
 const COV_TRACK = '#16233c', COV_NOW = '#3b82f6', COV_PLAN = '#22c55e';
 
 function svgEl(name, attrs, text) {
@@ -966,6 +1016,8 @@ function covBar(x, y, w, h, cov) {
 function drawCoverage() {
   const layer = document.getElementById('coverage');
   while (layer.firstChild) layer.removeChild(layer.firstChild);
+  drawContinuum();
+  if (viewMode === 'vendors') return drawVendorBoard(layer);
 
   GRID.functions.forEach(function(name, c) {
     const cov = coverageByFunction(c);
@@ -1004,8 +1056,178 @@ function drawCoverage() {
       'font-size': 10, fill: '#22c55e' }, '\u2192 ' + pct(all.withPlan) + ' planned'));
 }
 
+/* In the vendor view the scoreboard counts distinct products rather than
+   coverage: the useful reading is where the stack is dense and where it is
+   empty, which is what plotting the landscape was always for. */
+function drawVendorBoard(layer) {
+  const entries = vendorEntries(), all = vendorSummary();
+  const distinct = (test) => {
+    const set = {};
+    entries.forEach(e => { if (test(e)) set[e.label.toLowerCase()] = 1; });
+    return Object.keys(set).length;
+  };
+
+  GRID.functions.forEach(function(name, c) {
+    const n = distinct(e => e.fn === c);
+    const cx = GRID.x0 + c * GRID.colW + GRID.colW / 2;
+    layer.appendChild(svgEl('text', { x: cx.toFixed(2), y: -25, 'text-anchor': 'middle',
+      'font-family': SVG_FONT, 'font-size': 15,
+      fill: n ? '#e2e8f0' : '#475569' }, n || '—'));
+    layer.appendChild(svgEl('text', { x: cx.toFixed(2), y: -8, 'text-anchor': 'middle',
+      'font-family': SVG_FONT, 'font-size': 9.5, fill: '#64748b' },
+      n ? (n === 1 ? 'product' : 'products') : 'nothing recorded'));
+  });
+
+  const rx = GRID.x0 + 6 * GRID.colW + 12;
+  GRID.assets.forEach(function(name, r) {
+    const n = distinct(e => inRow(e, r));
+    const cy = GRID.y0 + r * GRID.rowH + GRID.rowH / 2;
+    layer.appendChild(svgEl('text', { x: rx.toFixed(2), y: (cy + 2).toFixed(2),
+      'font-family': SVG_FONT, 'font-size': 14,
+      fill: n ? '#e2e8f0' : '#475569' }, n || '—'));
+  });
+  layer.appendChild(svgEl('text', { x: rx.toFixed(2), y: -6, 'font-family': SVG_FONT,
+    'font-size': 8.5, fill: '#64748b' }, 'BY ASSET CLASS'));
+
+  layer.appendChild(svgEl('text', { x: 12, y: -27, 'font-family': SVG_FONT,
+    'font-size': 9.5, fill: '#64748b', 'letter-spacing': '1.5' }, 'PRODUCTS'));
+  layer.appendChild(svgEl('text', { x: 12, y: -8, 'font-family': SVG_FONT,
+    'font-size': 18, fill: '#e2e8f0' }, all.length || '—'));
+  if (all.length)
+    layer.appendChild(svgEl('text', { x: 46, y: -8, 'font-family': SVG_FONT,
+      'font-size': 10, fill: '#7dd3fc' }, 'across ' + entries.length + ' placements'));
+}
+
 function coverageByFunction(f) { return coverage(CONTROLS.filter(c => c.fn === f)); }
 function coverageByAsset(r)    { return coverage(CONTROLS.filter(c => inRow(c, r))); }
+
+/* ── Dependency continuum ───────────────────────────────────────────────────
+   Sounil Yu's original matrix carries a continuum beneath the grid: reliance
+   on technology is heaviest at the left and falls away to the right, reliance
+   on people does the reverse, and process stays roughly level throughout. The
+   left-hand functions are structural — always running — while the right-hand
+   ones are situational, invoked by an event. Both are properties of the
+   framework, so they show in either view.
+   ─────────────────────────────────────────────────────────────────────────── */
+const CONTINUUM = [
+  { label: 'TECHNOLOGY', from: 19, to: 3,  fill: '#2563eb' },
+  { label: 'PROCESS',    from: 11, to: 11, fill: '#7c3aed' },
+  { label: 'PEOPLE',     from: 3,  to: 19, fill: '#059669' }
+];
+
+function drawContinuum() {
+  const layer = document.getElementById('continuum');
+  while (layer.firstChild) layer.removeChild(layer.firstChild);
+  const x1 = GRID.x0, x2 = GRID.x0 + 6 * GRID.colW, mid = x1 + (x2 - x1) / 2;
+
+  // Structural vs situational, split where continuous control gives way to
+  // event-driven response.
+  const bracket = 600;
+  [['STRUCTURAL — always on', x1, mid], ['SITUATIONAL — event driven', mid, x2]]
+    .forEach(function(b) {
+      layer.appendChild(svgEl('path', {
+        d: 'M' + (b[1] + 3) + ' ' + (bracket + 6) + ' L' + (b[1] + 3) + ' ' + bracket +
+           ' L' + (b[2] - 3) + ' ' + bracket + ' L' + (b[2] - 3) + ' ' + (bracket + 6),
+        fill: 'none', stroke: '#334155', 'stroke-width': 1
+      }));
+      layer.appendChild(svgEl('text', { x: (b[1] + b[2]) / 2, y: bracket - 5,
+        'text-anchor': 'middle', 'font-family': SVG_FONT, 'font-size': 9,
+        fill: '#64748b' }, b[0]));
+    });
+
+  CONTINUUM.forEach(function(band, i) {
+    const cy = 626 + i * 23;
+    layer.appendChild(svgEl('polygon', {
+      points: [[x1, cy - band.from / 2], [x2, cy - band.to / 2],
+               [x2, cy + band.to / 2], [x1, cy + band.from / 2]]
+        .map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' '),
+      fill: band.fill, opacity: 0.5
+    }));
+    layer.appendChild(svgEl('text', { x: GRID.x0 - 10, y: cy + 3.5, 'text-anchor': 'end',
+      'font-family': SVG_FONT, 'font-size': 9, fill: '#64748b' }, band.label));
+  });
+  layer.appendChild(svgEl('text', { x: x2 + 12, y: 645, 'font-family': SVG_FONT,
+    'font-size': 8.5, fill: '#475569' }, 'Degree of'));
+  layer.appendChild(svgEl('text', { x: x2 + 12, y: 656, 'font-family': SVG_FONT,
+    'font-size': 8.5, fill: '#475569' }, 'dependency'));
+  layer.appendChild(svgEl('text', { x: x2 + 12, y: 672, 'font-family': SVG_FONT,
+    'font-size': 7.5, fill: '#334155' }, 'after Sounil Yu'));
+}
+
+/* ── Vendor view ────────────────────────────────────────────────────────────
+   The matrix was built to plot the product landscape onto the grid. Products
+   are recorded against the control they deliver, so they inherit that
+   control's position and the two views stay one dataset rather than two.
+   ─────────────────────────────────────────────────────────────────────────── */
+const productList = id => (meta[id].products || '')
+  .split(/[,;\n]/).map(t => t.trim()).filter(Boolean);
+
+const STATUS_RANK = { blue: 0, green: 1, red: 2, off: 3 };
+
+function vendorEntries() {
+  const seen = {}, out = [];
+  CONTROLS.forEach(function(c) {
+    productList(c.id).forEach(function(name) {
+      const key = name.toLowerCase() + '|' + c.fn + '|' +
+        (c.rows === 'all' ? 'all' : c.rows.join('-'));
+      if (seen[key]) {
+        // Same product, same cell, via another control: keep the best status.
+        if (STATUS_RANK[state[c.id]] < STATUS_RANK[seen[key].status])
+          seen[key].status = state[c.id];
+        return;
+      }
+      const e = { id: 'vendor-' + out.length, label: name, fn: c.fn, rows: c.rows,
+                  status: state[c.id], csf: [], alias: [] };
+      seen[key] = e;
+      out.push(e);
+    });
+  });
+  return out;
+}
+
+/* One row per distinct product: how much of the matrix it covers. Broad
+   coverage is the consolidation conversation, and the concentration risk. */
+function vendorSummary() {
+  const map = {};
+  CONTROLS.forEach(function(c) {
+    productList(c.id).forEach(function(name) {
+      const k = name.toLowerCase();
+      map[k] = map[k] || { name: name, controls: 0, fns: {}, rows: {} };
+      map[k].controls++;
+      map[k].fns[c.fn] = true;
+      for (let r = 0; r < GRID.assets.length; r++) if (inRow(c, r)) map[k].rows[r] = true;
+    });
+  });
+  return Object.keys(map).map(k => map[k]).sort(
+    (a, b) => b.controls - a.controls || a.name.localeCompare(b.name));
+}
+
+function drawVendors() {
+  const entries = vendorEntries();
+  const layer = document.getElementById('vendors');
+  renderBars(layer, layoutControls(entries), p => p.ctl.id);
+  entries.forEach(function(e) {
+    const g = document.getElementById(e.id);
+    if (!g) return;
+    const c = e.status === 'off' ? 'blue' : e.status;
+    g.querySelector('rect').setAttribute('fill', COLOR_FILLS[c]);
+    g.querySelector('rect').setAttribute('stroke', COLOR_STROKES[c]);
+    g.querySelector('text').style.fill = '#f8fafc';
+  });
+}
+
+let viewMode = 'controls';
+
+function setView(mode) {
+  viewMode = mode;
+  document.getElementById('labels').style.display  = mode === 'controls' ? '' : 'none';
+  document.getElementById('vendors').style.display = mode === 'vendors' ? '' : 'none';
+  document.getElementById('benchmark').style.display = mode === 'controls' ? '' : 'none';
+  document.getElementById('vendor-panel').style.display = mode === 'vendors' ? '' : 'none';
+  document.querySelectorAll('.view-btn').forEach(
+    b => b.classList.toggle('on', b.dataset.view === mode));
+  updateStats();
+}
 
 const COLOR_FILLS   = { green: '#166534', blue: '#1e3a8a', red: '#7f1d1d' };
 const COLOR_STROKES = { green: '#4ade80', blue: '#93c5fd', red: '#fca5a5' };
@@ -1023,7 +1245,7 @@ const state = {};   // control id -> 'off' | 'blue' | 'green' | 'red'
 const meta  = {};   // control id -> { note, priority } — the assessment detail
 CONTROLS.forEach(function(c) {
   state[c.id] = 'off';
-  meta[c.id] = { note: '', priority: '' };
+  meta[c.id] = { note: '', priority: '', products: '' };
 });
 
 (function restore() {
@@ -1033,7 +1255,8 @@ CONTROLS.forEach(function(c) {
       Object.assign(state, saved.status);
       Object.keys(saved.meta || {}).forEach(function(id) {
         if (meta[id]) meta[id] = {
-          note: saved.meta[id].note || '', priority: saved.meta[id].priority || ''
+          note: saved.meta[id].note || '', priority: saved.meta[id].priority || '',
+          products: saved.meta[id].products || ''
         };
       });
       return;
@@ -1099,6 +1322,8 @@ function updateStats() {
   CONTROLS.forEach(c => counts[state[c.id]]++);
   drawCoverage();
   renderBenchmark();
+  renderVendorPanel();
+  if (viewMode === 'vendors') drawVendors();
   document.getElementById('stat-blue').textContent  = '● ' + counts.blue  + ' Current';
   document.getElementById('stat-green').textContent = '● ' + counts.green + ' Planned';
   document.getElementById('stat-red').textContent   = '● ' + counts.red   + ' Gap';
@@ -1285,6 +1510,19 @@ function buildDetail(ctl, li) {
   });
   d.appendChild(vrow);
 
+  const prod = document.createElement('input');
+  prod.className = 'note-input product-input';
+  prod.type = 'text';
+  prod.placeholder = 'Products in place — comma separated';
+  prod.value = meta[ctl.id].products || '';
+  prod.addEventListener('input', function() {
+    meta[ctl.id].products = prod.value;
+    save();
+    if (viewMode === 'vendors') drawVendors();
+    updateStats();
+  });
+  d.appendChild(prod);
+
   const note = document.createElement('textarea');
   note.className = 'note-input';
   note.rows = 2;
@@ -1372,6 +1610,30 @@ function renderBenchmark() {
   });
 }
 
+function renderVendorPanel() {
+  const wrap = document.getElementById('vendor-list');
+  const rows = vendorSummary();
+  document.getElementById('vendor-empty').style.display = rows.length ? 'none' : '';
+  wrap.innerHTML = '';
+  const most = rows.length ? rows[0].controls : 1;
+  rows.forEach(function(v) {
+    const li = document.createElement('li');
+    li.className = 'bm-row';
+    const fns = GRID.functions.map(function(name, i) {
+      return '<span class="fn-dot' + (v.fns[i] ? ' on' : '') + '" title="' + name + '">' +
+        name.charAt(0) + '</span>';
+    }).join('');
+    li.innerHTML =
+      '<span class="bm-name">' + v.name.replace(/[<>&]/g, '') + '</span>' +
+      '<span class="bm-track"><span class="bm-now" style="width:' +
+        (v.controls / most * 100).toFixed(1) + '%"></span></span>' +
+      '<span class="bm-num">' + v.controls + '</span>' +
+      '<span class="bm-detail">' + (v.controls === 1 ? 'control' : 'controls') + '</span>' +
+      '<span class="fn-dots">' + fns + '</span>';
+    wrap.appendChild(li);
+  });
+}
+
 function applyFilter() {
   const q = document.getElementById('search').value.trim().toLowerCase();
   const only = profileFilter ? new Set(profileMissing(profileFilter)) : null;
@@ -1405,6 +1667,9 @@ document.getElementById('filter-clear').addEventListener('click', function() {
   renderBenchmark();
   applyFilter();
 });
+document.querySelectorAll('.view-btn').forEach(function(btn) {
+  btn.addEventListener('click', () => setView(btn.dataset.view));
+});
 document.querySelectorAll('.group-btn').forEach(function(btn) {
   btn.addEventListener('click', function() {
     document.querySelectorAll('.group-btn').forEach(b => b.classList.remove('on'));
@@ -1416,7 +1681,7 @@ document.querySelectorAll('.group-btn').forEach(function(btn) {
 
 CONTROLS.forEach(c => applyState(c.id));
 renderList();
-updateStats();
+setView('controls');
 
 /* ── Templates & bulk actions ───────────────────────────────────────────── */
 function applyTemplate(name, colorMode) {
@@ -1465,11 +1730,12 @@ function download(blob, filename) {
 function exportCSV() {
   const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
   const lines = [['Control', 'Status', 'Priority', 'CSF Function', 'Asset Class',
-    'CSF 2.0 Categories', 'Also Known As', 'Notes', 'Market Category'].map(q).join(',')];
+    'CSF 2.0 Categories', 'Also Known As', 'Notes', 'Market Category',
+    'Products In Place'].map(q).join(',')];
   register().forEach(function(c) {
     lines.push([c.label, STATUS_LABEL[state[c.id]], meta[c.id].priority.toUpperCase(),
       GRID.functions[c.fn], assetLabel(c), c.csf.join('; '), c.alias.join('; '),
-      meta[c.id].note, c.vendor].map(q).join(','));
+      meta[c.id].note, c.vendor, productList(c.id).join('; ')].map(q).join(','));
   });
   // BOM so Excel opens the UTF-8 correctly on Windows.
   download(new Blob(['\ufeff' + lines.join('\r\n')],
@@ -1527,13 +1793,21 @@ function exportPNG() {
    ─────────────────────────────────────────────────────────────────────────── */
 /* Market Category rides along so the client can see what class of product a
    gap needs. Named vendors deliberately stay out of the client deliverable. */
-const PDF_COLS = [
+const PDF_COLS_BASE = [
   { head: 'Control',  w: 0.17 }, { head: 'Market Category', w: 0.12 },
   { head: 'Status',   w: 0.07 }, { head: 'Priority', w: 0.06 },
   { head: 'Function', w: 0.09 }, { head: 'Asset',    w: 0.10 },
   { head: 'CSF 2.0',  w: 0.11 }, { head: 'Notes',    w: 0.28 }
 ];
-const PDF_STATUS_COL = 2;   // index of the Status column, which gets colour
+// Products earn a column only on a board that records any, so a pure gap
+// assessment keeps the wider Notes column it wants.
+const PDF_COLS_PROD = [
+  { head: 'Control',  w: 0.15 }, { head: 'Market Category', w: 0.10 },
+  { head: 'Products', w: 0.13 }, { head: 'Status',   w: 0.06 },
+  { head: 'Priority', w: 0.055 }, { head: 'Function', w: 0.08 },
+  { head: 'Asset',    w: 0.09 }, { head: 'CSF 2.0',  w: 0.09 },
+  { head: 'Notes',    w: 0.245 }
+];
 const PDF_STATUS_RGB = { red: '0.98 0.45 0.45', green: '0.35 0.85 0.50', blue: '0.58 0.75 0.99' };
 
 // WinAnsi-safe, and the three characters that would break a PDF string.
@@ -1575,20 +1849,22 @@ function exportPDF() {
     const pageW = drawW + 2 * margin, pageH = drawH + 2 * margin;
 
     /* ── Build the register pages ── */
+    const withProducts = CONTROLS.some(c => productList(c.id).length);
+    const cols = withProducts ? PDF_COLS_PROD : PDF_COLS_BASE;
+    const statusCol = withProducts ? 3 : 2;
     const pad = 34, usable = pageW - 2 * pad;
     const xs = [];
-    PDF_COLS.reduce(function(x, c) { xs.push(x); c.px = c.w * usable; return x + c.px; }, pad);
+    cols.reduce(function(x, c) { xs.push(x); c.px = c.w * usable; return x + c.px; }, pad);
 
     const rows = register().map(function(c) {
-      return {
-        cells: [c.label, c.vendor, STATUS_LABEL[state[c.id]],
-                meta[c.id].priority.toUpperCase(), GRID.functions[c.fn],
-                assetLabel(c), c.csf.join(' '), meta[c.id].note],
-        rgb: PDF_STATUS_RGB[state[c.id]] || '0.8 0.84 0.9'
-      };
+      const cells = [c.label, c.vendor];
+      if (withProducts) cells.push(productList(c.id).join(', '));
+      cells.push(STATUS_LABEL[state[c.id]], meta[c.id].priority.toUpperCase(),
+                 GRID.functions[c.fn], assetLabel(c), c.csf.join(' '), meta[c.id].note);
+      return { cells: cells, rgb: PDF_STATUS_RGB[state[c.id]] || '0.8 0.84 0.9' };
     });
     rows.forEach(function(r) {
-      r.lines = r.cells.map((v, i) => pdfWrap(v, PDF_COLS[i].px - 8, 7.5));
+      r.lines = r.cells.map((v, i) => pdfWrap(v, cols[i].px - 8, 7.5));
       r.h = Math.max.apply(null, r.lines.map(l => l.length)) * 9.5 + 7;
     });
 
@@ -1659,7 +1935,7 @@ function exportPDF() {
         c += pdfText(pad, pageH - pad - 32, 8.5, '0.55 0.64 0.76', pg.heading[1]);
         c += pdfText(pad, pageH - pad - 45, 8.5, '0.42 0.52 0.66', pg.heading[2]);
       }
-      PDF_COLS.forEach(function(col, i) {
+      cols.forEach(function(col, i) {
         c += pdfText(xs[i], pg.headerY, 8, '0.49 0.62 0.81', pdfEsc(col.head), 'F2');
       });
       c += '0.16 0.22 0.34 RG 0.6 w ' + pad + ' ' + (pg.headerY - 5).toFixed(2) + ' m ' +
@@ -1670,7 +1946,7 @@ function exportPDF() {
             if (!line) return;
             c += pdfText(xs[i], r.y - 9 - li * 9.5, 7.5,
               i === 0 ? '0.86 0.89 0.94'
-                      : (i === PDF_STATUS_COL ? r.rgb : '0.60 0.68 0.80'), line);
+                      : (i === statusCol ? r.rgb : '0.60 0.68 0.80'), line);
           });
         });
         c += '0.10 0.14 0.22 RG 0.4 w ' + pad + ' ' + (r.y - r.h + 2).toFixed(2) + ' m ' +
@@ -1728,6 +2004,10 @@ function exportJSON() {
         return o;
       }, {})
     },
+    stack: vendorSummary().map(v => ({
+      product: v.name, controls: v.controls,
+      functions: Object.keys(v.fns).map(i => GRID.functions[i])
+    })),
     controls: {}
   };
   CONTROLS.forEach(function(c) {
@@ -1736,6 +2016,7 @@ function exportJSON() {
       status: state[c.id],
       priority: meta[c.id].priority,
       note: meta[c.id].note,
+      products: productList(c.id),
       function: GRID.functions[c.fn],
       assetClass: assetLabel(c),
       csf: c.csf,
@@ -1772,6 +2053,8 @@ function loadFromJSON(event) {
         setStatus(id, status);
         if (val && typeof val === 'object') {
           meta[id].note = val.note || '';
+          if (Array.isArray(val.products)) meta[id].products = val.products.join(', ');
+          else if (typeof val.products === 'string') meta[id].products = val.products;
           if (PRIORITIES.some(p => p.val === val.priority)) meta[id].priority = val.priority;
         }
         loaded++;

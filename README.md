@@ -48,6 +48,42 @@ controls are horizontal bars inside their cell.
 * State persists in `localStorage`; boards from the earlier control list are
   migrated on first load.
 
+## Two views
+
+A toggle in the header switches what the grid is populated with.
+
+**Controls** — the assessed control set, coloured by status. This is the gap
+analysis.
+
+**Vendors** — the same grid populated with the products actually in place.
+Plotting the product landscape onto the matrix is what Sounil Yu built it for:
+it shows at a glance where the stack is dense, where it is empty, and which
+vendors span half the board.
+
+Products are recorded against the control they deliver (open a control,
+fill in *Products in place*), so they inherit that control's position and the
+two views stay one dataset rather than two. A product answering several
+controls appears in each of their cells, and **Stack concentration** below the
+matrix ranks products by how much of the board each one covers — the
+consolidation conversation, and the concentration risk.
+
+## The dependency continuum
+
+Beneath the grid, in both views, is the continuum from the original matrix:
+reliance on **technology** is heaviest at the left and falls away to the right,
+reliance on **people** does the reverse, and **process** stays level throughout.
+The left-hand functions are *structural* — always running — while the
+right-hand ones are *situational*, invoked by an event.
+
+It is there because it changes how the coverage numbers read. A thin Recover
+column is not a shopping list; that end of the matrix is where people and
+rehearsal matter more than product.
+
+The Cyber Defense Matrix is Sounil Yu's framework — see
+[cyberdefensematrix.com](https://cyberdefensematrix.com/) and his book
+*Cyber Defense Matrix: The Essential Guide to Navigating the Cybersecurity
+Landscape*. This repository is an independent interactive implementation.
+
 ## Coverage
 
 The matrix carries a scoreboard: coverage per CSF Function above each column,
