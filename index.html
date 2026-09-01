@@ -181,6 +181,16 @@
     }
     .prio-btn:hover { border-color: rgba(251,191,36,0.5); color: #fbbf24; }
     .prio-btn.on { background: rgba(251,191,36,0.16); border-color: #fbbf24; color: #fbbf24; }
+    .detail-vendors { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-bottom: 7px; }
+    .vendor-link {
+      font-size: 10.5px; text-decoration: none;
+      background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.25);
+      color: #7dd3fc; border-radius: 3px; padding: 1px 6px; transition: all 0.12s;
+    }
+    .vendor-link:hover { background: rgba(56,189,248,0.2); border-color: #38bdf8; }
+    .vendor-link.primary { background: rgba(56,189,248,0.16); border-color: rgba(56,189,248,0.45); }
+    .vendor-link::after { content: ' ↗'; opacity: 0.5; }
+
     .note-input {
       width: 100%; resize: vertical; background: rgba(2,6,23,0.7);
       border: 1px solid rgba(59,130,246,0.2); border-radius: 3px;
@@ -519,134 +529,160 @@
 const CONTROLS = [
   /* ── GOVERN ───────────────────────────────────────────────────────── */
   { id:'securityLeadership', label:'Security Leadership', fn:0, rows:'all',
-    alias:['vCISO','CISO-as-a-Service','Security Program Management','Roles & Responsibilities'], csf:['GV.OC','GV.RR'] },
+    alias:['vCISO','CISO-as-a-Service','Security Program Management','Roles & Responsibilities'], csf:['GV.OC','GV.RR'], vendor:'vCISO Services' },
   { id:'cyberRiskMgmt', label:'Cyber Risk Management', fn:0, rows:'all',
-    alias:['Risk Register','Cyber Risk Quantification (CRQ)','FAIR','Risk Appetite','Risk Assessment'], csf:['GV.RM','ID.RA'] },
+    alias:['Risk Register','Cyber Risk Quantification (CRQ)','FAIR','Risk Appetite','Risk Assessment'], csf:['GV.RM','ID.RA'], vendor:'Cyber Risk Quantification' },
   { id:'policyStandards', label:'Policy & Standards', fn:0, rows:'all',
-    alias:['Policy Management','Control Framework','Standards & Baselines','Exception Management'], csf:['GV.PO'] },
+    alias:['Policy Management','Control Framework','Standards & Baselines','Exception Management'], csf:['GV.PO'], vendor:'Policy Management' },
   { id:'grcAssurance', label:'GRC & Assurance', fn:0, rows:'all',
-    alias:['Integrated Risk Management (IRM)','Compliance Automation','Continuous Control Monitoring','Audit Readiness','Controls Assurance'], csf:['GV.OV','GV.PO'] },
+    alias:['Integrated Risk Management (IRM)','Compliance Automation','Continuous Control Monitoring','Audit Readiness','Controls Assurance'], csf:['GV.OV','GV.PO'], vendor:'GRC Platform' },
   { id:'supplyChainRisk', label:'Third-Party & Supply Chain Risk', fn:0, rows:'all',
-    alias:['TPRM','C-SCRM','Vendor Risk Management','Fourth-Party Risk','SIG / CAIQ'], csf:['GV.SC'] },
+    alias:['TPRM','C-SCRM','Vendor Risk Management','Fourth-Party Risk','SIG / CAIQ'], csf:['GV.SC'], vendor:'Third-Party Risk Management' },
 
   /* ── IDENTIFY ─────────────────────────────────────────────────────── */
   { id:'attackSurfaceMgmt', label:'Attack Surface Management', fn:1, rows:'all',
-    alias:['EASM','CAASM','ASM','Shadow IT Discovery','External Exposure'], csf:['ID.AM','ID.RA'] },
+    alias:['EASM','CAASM','ASM','Shadow IT Discovery','External Exposure'], csf:['ID.AM','ID.RA'], vendor:'Attack Surface Management' },
   { id:'exposureManagement', label:'Exposure Management', fn:1, rows:'all',
-    alias:['CTEM','Risk-Based Vulnerability Management (RBVM)','Vulnerability Scanning','Prioritization','Reachability Analysis'], csf:['ID.RA'] },
+    alias:['CTEM','Risk-Based Vulnerability Management (RBVM)','Vulnerability Scanning','Prioritization','Reachability Analysis'], csf:['ID.RA'], vendor:'Vulnerability Management' },
   { id:'offensiveTesting', label:'Offensive Security Testing', fn:1, rows:'all',
-    alias:['Penetration Testing','PTaaS','Red Team','Purple Team','Breach & Attack Simulation (BAS)','Bug Bounty','Adversarial Emulation'], csf:['ID.IM','ID.RA'] },
+    alias:['Penetration Testing','PTaaS','Red Team','Purple Team','Breach & Attack Simulation (BAS)','Bug Bounty','Adversarial Emulation'], csf:['ID.IM','ID.RA'], vendor:'Penetration Testing' },
   { id:'threatIntelligence', label:'Threat Intelligence', fn:1, rows:'all',
-    alias:['CTI','Threat Intel Platform (TIP)','IOC / TTP Feeds','Threat Modeling','Dark Web Recon'], csf:['ID.RA-02','ID.RA-03'] },
+    alias:['CTI','Threat Intel Platform (TIP)','IOC / TTP Feeds','Threat Modeling','Dark Web Recon'], csf:['ID.RA-02','ID.RA-03'], vendor:'Threat Intelligence' },
   { id:'assetInventory', label:'Asset Inventory', fn:1, rows:[0,0],
-    alias:['CMDB','IT Asset Management','Device Inventory','Endpoint Discovery','Unmanaged Device Detection'], csf:['ID.AM-01'] },
+    alias:['CMDB','IT Asset Management','Device Inventory','Endpoint Discovery','Unmanaged Device Detection'], csf:['ID.AM-01'], vendor:'IT Asset Management' },
   { id:'appApiDiscovery', label:'App & API Discovery', fn:1, rows:[1,1],
-    alias:['API Discovery','SaaS Discovery','Shadow SaaS','Software Inventory','SBOM'], csf:['ID.AM-02','ID.AM-08'] },
+    alias:['API Discovery','SaaS Discovery','Shadow SaaS','Software Inventory','SBOM'], csf:['ID.AM-02','ID.AM-08'], vendor:'API Discovery' },
   { id:'networkMapping', label:'Network Mapping', fn:1, rows:[2,2],
-    alias:['Topology Discovery','Flow Visibility','OT / IoT Asset Discovery','Network Inventory'], csf:['ID.AM-03'] },
+    alias:['Topology Discovery','Flow Visibility','OT / IoT Asset Discovery','Network Inventory'], csf:['ID.AM-03'], vendor:'Network Discovery' },
   { id:'dataDiscovery', label:'Data Discovery', fn:1, rows:[3,3],
-    alias:['Data Classification','Data Mapping','Data Catalog','Sensitive Data Discovery','Records of Processing'], csf:['ID.AM-07','ID.AM-08'] },
+    alias:['Data Classification','Data Mapping','Data Catalog','Sensitive Data Discovery','Records of Processing'], csf:['ID.AM-07','ID.AM-08'], vendor:'Data Classification' },
   { id:'identityInventory', label:'Identity Inventory', fn:1, rows:[4,4],
-    alias:['Account Discovery','Non-Human Identity (NHI) Inventory','Entitlement Mapping','Joiner-Mover-Leaver Baseline'], csf:['ID.AM-05'] },
+    alias:['Account Discovery','Non-Human Identity (NHI) Inventory','Entitlement Mapping','Joiner-Mover-Leaver Baseline'], csf:['ID.AM-05'], vendor:'Identity Governance' },
 
   /* ── PROTECT ──────────────────────────────────────────────────────── */
   { id:'zeroTrustArchitecture', label:'Zero Trust Architecture', fn:2, rows:'all',
-    alias:['Zero Trust Strategy','Least Privilege','Policy Enforcement Point','Continuous Verification'], csf:['PR.AA','PR.IR'] },
+    alias:['Zero Trust Strategy','Least Privilege','Policy Enforcement Point','Continuous Verification'], csf:['PR.AA','PR.IR'], vendor:'Zero Trust' },
   { id:'endpointProtection', label:'Endpoint Protection (EPP)', fn:2, rows:[0,0],
-    alias:['NGAV','Anti-Malware','Application Control','Device Control','Host Firewall'], csf:['PR.PS'] },
+    alias:['NGAV','Anti-Malware','Application Control','Device Control','Host Firewall'], csf:['PR.PS'], vendor:'Endpoint Protection' },
   { id:'patchConfigMgmt', label:'Patch & Config Mgmt', fn:2, rows:[0,0],
-    alias:['Managed Patching','Hardening','CIS Benchmarks','UEM / MDM','Secure Baselines'], csf:['PR.PS-01','PR.PS-02'] },
+    alias:['Managed Patching','Hardening','CIS Benchmarks','UEM / MDM','Secure Baselines'], csf:['PR.PS-01','PR.PS-02'], vendor:'Patch Management' },
   { id:'otIotSecurity', label:'OT / IoT Security', fn:2, rows:[0,0],
-    alias:['ICS / SCADA Security','Cyber-Physical Systems (CPS)','XIoT','Purdue Model Segmentation'], csf:['PR.IR','PR.PS'] },
+    alias:['ICS / SCADA Security','Cyber-Physical Systems (CPS)','XIoT','Purdue Model Segmentation'], csf:['PR.IR','PR.PS'], vendor:'OT Security' },
   { id:'secureSdlc', label:'Secure SDLC & Testing', fn:2, rows:[1,1],
-    alias:['SAST','DAST','IAST','SCA','ASPM','Secrets Scanning','IaC Scanning','Pipeline Security'], csf:['PR.PS-06'] },
+    alias:['SAST','DAST','IAST','SCA','ASPM','Secrets Scanning','IaC Scanning','Pipeline Security'], csf:['PR.PS-06'], vendor:'Application Security Testing' },
   { id:'cloudSecurity', label:'Cloud Security (CNAPP)', fn:2, rows:[1,1],
-    alias:['CSPM','CWPP','KSPM','CIEM','Container & Kubernetes Security','Cloud Workload Protection'], csf:['PR.PS','PR.IR'] },
+    alias:['CSPM','CWPP','KSPM','CIEM','Container & Kubernetes Security','Cloud Workload Protection'], csf:['PR.PS','PR.IR'], vendor:'CNAPP' },
   { id:'saasSecurity', label:'SaaS Security (SSPM)', fn:2, rows:[1,1],
-    alias:['SaaS Posture Management','OAuth / App Governance','CASB Posture','Tenant Hardening'], csf:['PR.PS','PR.AA'] },
+    alias:['SaaS Posture Management','OAuth / App Governance','CASB Posture','Tenant Hardening'], csf:['PR.PS','PR.AA'], vendor:'SSPM' },
   { id:'waapApiProtection', label:'WAF & API Protection', fn:2, rows:[1,1],
-    alias:['WAAP','Web Application Firewall','API Security','Bot Management','Client-Side Protection'], csf:['PR.IR','PR.PS'] },
+    alias:['WAAP','Web Application Firewall','API Security','Bot Management','Client-Side Protection'], csf:['PR.IR','PR.PS'], vendor:'WAF' },
   { id:'saseSse', label:'SASE / SSE', fn:2, rows:[2,2],
-    alias:['Secure Service Edge','SWG','CASB','FWaaS','SD-WAN','Protective DNS','DNS Filtering'], csf:['PR.IR','PR.AA'] },
+    alias:['Secure Service Edge','SWG','CASB','FWaaS','SD-WAN','Protective DNS','DNS Filtering'], csf:['PR.IR','PR.AA'], vendor:'SASE' },
   { id:'ztnaRemoteAccess', label:'ZTNA & Remote Access', fn:2, rows:[2,2],
-    alias:['Zero Trust Network Access','VPN','Remote Access Broker','Device Posture Check'], csf:['PR.AA-05','PR.IR'] },
+    alias:['Zero Trust Network Access','VPN','Remote Access Broker','Device Posture Check'], csf:['PR.AA-05','PR.IR'], vendor:'ZTNA' },
   { id:'networkSegmentation', label:'Microsegmentation', fn:2, rows:[2,2],
-    alias:['Network Segmentation','Network Zoning','East-West Controls','NGFW','IPS / IDS','Managed Firewall'], csf:['PR.IR-01'] },
+    alias:['Network Segmentation','Network Zoning','East-West Controls','NGFW','IPS / IDS','Managed Firewall'], csf:['PR.IR-01'], vendor:'Microsegmentation' },
   { id:'ddosProtection', label:'DDoS Protection', fn:2, rows:[2,2],
-    alias:['DDoS Mitigation','Scrubbing Centers','Rate Limiting','DDoS Testing'], csf:['PR.IR-04'] },
+    alias:['DDoS Mitigation','Scrubbing Centers','Rate Limiting','DDoS Testing'], csf:['PR.IR-04'], vendor:'DDoS Protection' },
   { id:'dataProtectionDlp', label:'Data Loss Prevention', fn:2, rows:[3,3],
-    alias:['DLP','Insider Risk Management','Data Exfiltration Prevention','GenAI Data Controls'], csf:['PR.DS'] },
+    alias:['DLP','Insider Risk Management','Data Exfiltration Prevention','GenAI Data Controls'], csf:['PR.DS'], vendor:'DLP' },
   { id:'encryptionKeyMgmt', label:'Encryption & Key Mgmt', fn:2, rows:[3,3],
-    alias:['KMS','HSM','PKI','Certificate Lifecycle Management','Tokenization','Post-Quantum Readiness'], csf:['PR.DS-01','PR.DS-02'] },
+    alias:['KMS','HSM','PKI','Certificate Lifecycle Management','Tokenization','Post-Quantum Readiness'], csf:['PR.DS-01','PR.DS-02'], vendor:'Encryption Key Management' },
   { id:'dspm', label:'Data Security Posture', fn:2, rows:[3,3],
-    alias:['DSPM','Data Access Governance','Data Minimization','Privacy Engineering','Data Residency'], csf:['PR.DS','PR.AA-05'] },
+    alias:['DSPM','Data Access Governance','Data Minimization','Privacy Engineering','Data Residency'], csf:['PR.DS','PR.AA-05'], vendor:'DSPM' },
   { id:'mfaSso', label:'MFA & SSO', fn:2, rows:[4,4],
-    alias:['Phishing-Resistant MFA','Passkeys','FIDO2','Passwordless','Single Sign-On','Adaptive Authentication'], csf:['PR.AA-03'] },
+    alias:['Phishing-Resistant MFA','Passkeys','FIDO2','Passwordless','Single Sign-On','Adaptive Authentication'], csf:['PR.AA-03'], vendor:'Multi-Factor Authentication' },
   { id:'iamIga', label:'Identity Governance', fn:2, rows:[4,4],
-    alias:['IAM','IGA','Access Certification','Joiner-Mover-Leaver','Directory Services','NHI Management'], csf:['PR.AA-01','PR.AA-05'] },
+    alias:['IAM','IGA','Access Certification','Joiner-Mover-Leaver','Directory Services','NHI Management'], csf:['PR.AA-01','PR.AA-05'], vendor:'Identity and Access Management' },
   { id:'pamSecrets', label:'PAM & Secrets', fn:2, rows:[4,4],
-    alias:['Privileged Access Management','Credential Vaulting','Just-in-Time Access','Session Recording','CIEM'], csf:['PR.AA-05'] },
+    alias:['Privileged Access Management','Credential Vaulting','Just-in-Time Access','Session Recording','CIEM'], csf:['PR.AA-05'], vendor:'Privileged Access Management' },
   { id:'emailCollabSecurity', label:'Email Security', fn:2, rows:[4,4],
-    alias:['ICES','Secure Email Gateway','Anti-Phishing','BEC / Impersonation Defense','DMARC','Collaboration & Chat Protection'], csf:['PR.IR','DE.CM'] },
+    alias:['ICES','Secure Email Gateway','Anti-Phishing','BEC / Impersonation Defense','DMARC','Collaboration & Chat Protection'], csf:['PR.IR','DE.CM'], vendor:'Email Security' },
   { id:'awarenessHumanRisk', label:'Awareness & Training', fn:2, rows:[4,4],
-    alias:['Human Risk Management (HRM)','Phishing Simulation','Security Culture','Role-Based Training'], csf:['PR.AT'] },
+    alias:['Human Risk Management (HRM)','Phishing Simulation','Security Culture','Role-Based Training'], csf:['PR.AT'], vendor:'Security Awareness Training' },
 
   /* ── DETECT ───────────────────────────────────────────────────────── */
   { id:'siemLogging', label:'SIEM & Log Management', fn:3, rows:'all',
-    alias:['Managed SIEM','Security Data Lake','Telemetry Pipeline','Log Retention','Audit Logging'], csf:['DE.AE','PR.PS-04'] },
+    alias:['Managed SIEM','Security Data Lake','Telemetry Pipeline','Log Retention','Audit Logging'], csf:['DE.AE','PR.PS-04'], vendor:'SIEM' },
   { id:'socMdr', label:'SOC / MDR (24×7)', fn:3, rows:'all',
-    alias:['Managed Detection & Response','Managed SOC','MSSP','Co-Managed SOC','Triage & Escalation'], csf:['DE.CM','DE.AE'] },
+    alias:['Managed Detection & Response','Managed SOC','MSSP','Co-Managed SOC','Triage & Escalation'], csf:['DE.CM','DE.AE'], vendor:'MDR' },
   { id:'detectionEngineering', label:'Detection Engineering & Hunting', fn:3, rows:'all',
-    alias:['Threat Hunting','Detection-as-Code','Sigma / MITRE ATT&CK Mapping','Deception Technology','Content Tuning'], csf:['DE.AE','ID.IM'] },
+    alias:['Threat Hunting','Detection-as-Code','Sigma / MITRE ATT&CK Mapping','Deception Technology','Content Tuning'], csf:['DE.AE','ID.IM'], vendor:'Threat Hunting' },
   { id:'edrXdr', label:'EDR / XDR', fn:3, rows:[0,0],
-    alias:['Endpoint Detection & Response','Extended Detection & Response','Managed EDR','Host Telemetry'], csf:['DE.CM-01'] },
+    alias:['Endpoint Detection & Response','Extended Detection & Response','Managed EDR','Host Telemetry'], csf:['DE.CM-01'], vendor:'EDR' },
   { id:'appDetectionResponse', label:'App Detection (ADR)', fn:3, rows:[1,1],
-    alias:['ADR','RASP','Runtime Application Security','Cloud Runtime Detection','eBPF Sensors'], csf:['DE.CM-09'] },
+    alias:['ADR','RASP','Runtime Application Security','Cloud Runtime Detection','eBPF Sensors'], csf:['DE.CM-09'], vendor:'Runtime Application Security' },
   { id:'ndr', label:'Network Detection', fn:3, rows:[2,2],
-    alias:['NDR','Network Traffic Analysis','Network Intelligence','Encrypted Traffic Analysis','Full Packet Capture'], csf:['DE.CM-01'] },
+    alias:['NDR','Network Traffic Analysis','Network Intelligence','Encrypted Traffic Analysis','Full Packet Capture'], csf:['DE.CM-01'], vendor:'NDR' },
   { id:'dataDetectionResponse', label:'Data Detection (DDR)', fn:3, rows:[3,3],
-    alias:['DDR','Database Activity Monitoring','Data Access Anomaly Detection','File Integrity Monitoring'], csf:['DE.CM-09','DE.AE'] },
+    alias:['DDR','Database Activity Monitoring','Data Access Anomaly Detection','File Integrity Monitoring'], csf:['DE.CM-09','DE.AE'], vendor:'Database Activity Monitoring' },
   { id:'itdrUeba', label:'ITDR / UEBA', fn:3, rows:[4,4],
-    alias:['Identity Threat Detection & Response','User & Entity Behavior Analytics','Session Anomaly Detection','MFA Fatigue Detection'], csf:['DE.CM-03'] },
+    alias:['Identity Threat Detection & Response','User & Entity Behavior Analytics','Session Anomaly Detection','MFA Fatigue Detection'], csf:['DE.CM-03'], vendor:'ITDR' },
   { id:'digitalRiskMonitoring', label:'Brand & Leak Monitoring', fn:3, rows:[4,4],
-    alias:['Digital Risk Protection','Dark Web Scanning','Credential Leak Monitoring','Impersonation & Typosquat Detection','Takedown Services'], csf:['DE.CM-06','ID.RA-02'] },
+    alias:['Digital Risk Protection','Dark Web Scanning','Credential Leak Monitoring','Impersonation & Typosquat Detection','Takedown Services'], csf:['DE.CM-06','ID.RA-02'], vendor:'Digital Risk Protection' },
 
   /* ── RESPOND ──────────────────────────────────────────────────────── */
   { id:'incidentResponse', label:'Incident Response & DFIR', fn:4, rows:'all',
-    alias:['IR Retainer','Digital Forensics','CSIRT','Breach Investigation','Root Cause Analysis'], csf:['RS.MA','RS.AN'] },
+    alias:['IR Retainer','Digital Forensics','CSIRT','Breach Investigation','Root Cause Analysis'], csf:['RS.MA','RS.AN'], vendor:'Incident Response' },
   { id:'soarAutomation', label:'Response Automation (SOAR)', fn:4, rows:'all',
-    alias:['Playbooks','Auto-Containment','Case Management','Hyperautomation','Agentic Triage'], csf:['RS.MA','RS.MI'] },
+    alias:['Playbooks','Auto-Containment','Case Management','Hyperautomation','Agentic Triage'], csf:['RS.MA','RS.MI'], vendor:'SOAR' },
   { id:'crisisComms', label:'Crisis Mgmt & Comms', fn:4, rows:'all',
-    alias:['Breach Notification','Legal & PR Counsel','Ransomware Negotiation','Tabletop Exercises','Regulatory Reporting'], csf:['RS.CO','RS.MA'] },
+    alias:['Breach Notification','Legal & PR Counsel','Ransomware Negotiation','Tabletop Exercises','Regulatory Reporting'], csf:['RS.CO','RS.MA'], vendor:'Breach Response' },
   { id:'endpointContainment', label:'Endpoint Containment', fn:4, rows:[0,0],
-    alias:['Host Isolation','Quarantine','Remote Remediation','Kill Process / Rollback'], csf:['RS.MI-01'] },
+    alias:['Host Isolation','Quarantine','Remote Remediation','Kill Process / Rollback'], csf:['RS.MI-01'], vendor:'Endpoint Detection and Response' },
   { id:'appRemediation', label:'App Remediation', fn:4, rows:[1,1],
-    alias:['Virtual Patching','Emergency Hotfix','WAF Rule Deployment','Deployment Rollback'], csf:['RS.MI-02'] },
+    alias:['Virtual Patching','Emergency Hotfix','WAF Rule Deployment','Deployment Rollback'], csf:['RS.MI-02'], vendor:'Virtual Patching' },
   { id:'networkContainment', label:'Network Containment', fn:4, rows:[2,2],
-    alias:['Blocklists & Sinkholing','Emergency Segmentation','Egress Blocking','ACL Enforcement'], csf:['RS.MI-01'] },
+    alias:['Blocklists & Sinkholing','Emergency Segmentation','Egress Blocking','ACL Enforcement'], csf:['RS.MI-01'], vendor:'Network Security' },
   { id:'dataBreachResponse', label:'Data Breach Response', fn:4, rows:[3,3],
-    alias:['Impacted-Record Analysis','Legal Hold','Data Subject Notification','eDiscovery'], csf:['RS.CO-02','RS.AN'] },
+    alias:['Impacted-Record Analysis','Legal Hold','Data Subject Notification','eDiscovery'], csf:['RS.CO-02','RS.AN'], vendor:'Breach Notification' },
   { id:'identityResponse', label:'Account Takeover Response', fn:4, rows:[4,4],
-    alias:['Credential Reset','Session & Token Revocation','Privilege Rollback','ITDR Response'], csf:['RS.MI-01'] },
+    alias:['Credential Reset','Session & Token Revocation','Privilege Rollback','ITDR Response'], csf:['RS.MI-01'], vendor:'ITDR' },
 
   /* ── RECOVER ──────────────────────────────────────────────────────── */
   { id:'cyberResilience', label:'Cyber Resilience & BCDR', fn:5, rows:'all',
-    alias:['Business Continuity','Business Impact Analysis','Minimum Viable Company','Lessons Learned','Post-Incident Improvement'], csf:['RC.RP','ID.IM'] },
+    alias:['Business Continuity','Business Impact Analysis','Minimum Viable Company','Lessons Learned','Post-Incident Improvement'], csf:['RC.RP','ID.IM'], vendor:'Business Continuity' },
   { id:'drPlanRehearsals', label:'DR Plan & Rehearsals', fn:5, rows:'all',
-    alias:['DR Testing','Failover Drills','RTO / RPO Validation','Recovery Runbooks'], csf:['RC.RP-01','RC.RP-05'] },
+    alias:['DR Testing','Failover Drills','RTO / RPO Validation','Recovery Runbooks'], csf:['RC.RP-01','RC.RP-05'], vendor:'Disaster Recovery' },
   { id:'cyberInsurance', label:'Cyber Insurance Readiness', fn:5, rows:'all',
-    alias:['Coverage Review','Claims Readiness','Underwriting Requirements','Risk Transfer'], csf:['GV.RM-06','RC.CO'] },
+    alias:['Coverage Review','Claims Readiness','Underwriting Requirements','Risk Transfer'], csf:['GV.RM-06','RC.CO'], vendor:'Cyber Insurance' },
   { id:'endpointRecovery', label:'Endpoint Recovery', fn:5, rows:[0,0],
-    alias:['Device Backups','Golden Images','Bare-Metal Restore','Mass Reimaging','Endpoint Rebuild'], csf:['RC.RP-03'] },
+    alias:['Device Backups','Golden Images','Bare-Metal Restore','Mass Reimaging','Endpoint Rebuild'], csf:['RC.RP-03'], vendor:'Endpoint Backup' },
   { id:'appRecovery', label:'App & Config Restore', fn:5, rows:[1,1],
-    alias:['IaC Rebuild','Pipeline Restore','Configuration Backup','Blue-Green Failback'], csf:['RC.RP-03'] },
+    alias:['IaC Rebuild','Pipeline Restore','Configuration Backup','Blue-Green Failback'], csf:['RC.RP-03'], vendor:'Backup and Recovery' },
   { id:'networkRecovery', label:'Network Restoration', fn:5, rows:[2,2],
-    alias:['Device Config Backup','Out-of-Band Access','Failover Circuits','DNS Failover'], csf:['RC.RP-03'] },
+    alias:['Device Config Backup','Out-of-Band Access','Failover Circuits','DNS Failover'], csf:['RC.RP-03'], vendor:'Network Configuration Management' },
   { id:'immutableBackup', label:'Immutable Backup', fn:5, rows:[3,3],
-    alias:['Air-Gapped Backup','VM / DB Backup','Tape Backup','DRaaS','Cloud Recovery','Isolated Recovery Environment','Immutable Snapshots'], csf:['RC.RP-03','PR.DS-11'] },
+    alias:['Air-Gapped Backup','VM / DB Backup','Tape Backup','DRaaS','Cloud Recovery','Isolated Recovery Environment','Immutable Snapshots'], csf:['RC.RP-03','PR.DS-11'], vendor:'Immutable Backup' },
   { id:'identityRecovery', label:'Directory Recovery', fn:5, rows:[4,4],
-    alias:['AD / Entra Forest Recovery','Identity Recovery','Break-Glass Accounts','Tier-0 Rebuild'], csf:['RC.RP-03'] },
+    alias:['AD / Entra Forest Recovery','Identity Recovery','Break-Glass Accounts','Tier-0 Rebuild'], csf:['RC.RP-03'], vendor:'Active Directory Recovery' },
 ];
+
+/* ── Vendor lookup ──────────────────────────────────────────────────────────
+   Each control carries a market category term rather than a baked-in vendor
+   list: the category is what a buyer actually searches, it needs no upkeep,
+   and it keeps the tool from reading as a recommendation.
+
+   Deep links are built from SEARCH below. /vendors is the confirmed catalog
+   entry point; the ?q= parameter is an assumption — if Charting Cyber filters
+   on a different key, change this one line and every control follows.
+   ─────────────────────────────────────────────────────────────────────────── */
+const VENDOR_SOURCE = {
+  label: 'Charting Cyber',
+  home: 'https://chartingcyber.com/vendors',
+  SEARCH: term => 'https://chartingcyber.com/vendors?q=' + encodeURIComponent(term)
+};
+
+// The control's own term first, then adjacent category names worth a look.
+function vendorTerms(ctl) {
+  const seen = [], add = t => {
+    const k = t.toLowerCase();
+    if (t && !seen.some(x => x.toLowerCase() === k)) seen.push(t);
+  };
+  add(ctl.vendor);
+  ctl.alias.slice(0, 4).forEach(a => add(a.replace(/\s*\(.*?\)\s*/g, ' ').trim()));
+  return seen.slice(0, 4);
+}
 
 /* Legacy ids from the pre-CSF-2.0 control list, so saved JSON still loads. */
 const LEGACY_IDS = {
@@ -1211,6 +1247,22 @@ function buildDetail(ctl, li) {
   });
   d.appendChild(prow);
 
+  const vrow = document.createElement('div');
+  vrow.className = 'detail-vendors';
+  vrow.appendChild(Object.assign(document.createElement('span'),
+    { className: 'detail-tag', textContent: 'Vendors' }));
+  vendorTerms(ctl).forEach(function(term, i) {
+    const a = document.createElement('a');
+    a.className = 'vendor-link' + (i ? '' : ' primary');
+    a.href = VENDOR_SOURCE.SEARCH(term);
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.textContent = term;
+    a.title = 'Find ' + term + ' vendors on ' + VENDOR_SOURCE.label;
+    vrow.appendChild(a);
+  });
+  d.appendChild(vrow);
+
   const note = document.createElement('textarea');
   note.className = 'note-input';
   note.rows = 2;
@@ -1391,11 +1443,12 @@ function download(blob, filename) {
 function exportCSV() {
   const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
   const lines = [['Control', 'Status', 'Priority', 'CSF Function', 'Asset Class',
-    'CSF 2.0 Categories', 'Also Known As', 'Notes'].map(q).join(',')];
+    'CSF 2.0 Categories', 'Also Known As', 'Notes', 'Market Category',
+    'Vendor Lookup'].map(q).join(',')];
   register().forEach(function(c) {
     lines.push([c.label, STATUS_LABEL[state[c.id]], meta[c.id].priority.toUpperCase(),
       GRID.functions[c.fn], assetLabel(c), c.csf.join('; '), c.alias.join('; '),
-      meta[c.id].note].map(q).join(','));
+      meta[c.id].note, c.vendor, VENDOR_SOURCE.SEARCH(c.vendor)].map(q).join(','));
   });
   // BOM so Excel opens the UTF-8 correctly on Windows.
   download(new Blob(['\ufeff' + lines.join('\r\n')],
@@ -1660,7 +1713,8 @@ function exportJSON() {
       function: GRID.functions[c.fn],
       assetClass: assetLabel(c),
       csf: c.csf,
-      alias: c.alias
+      alias: c.alias,
+      marketCategory: c.vendor
     };
   });
   download(new Blob([JSON.stringify(output, null, 2)],

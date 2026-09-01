@@ -64,6 +64,26 @@ client gets handed rather than in someone's notes.
 plan would add — and **Show N missing** filters the sidebar down to exactly the
 controls that profile still wants.
 
+## Vendor lookup
+
+Each control carries a **market category** — the term a buyer actually searches
+(`CNAPP`, `ITDR`, `SASE`, `Privileged Access Management`) — and the detail panel
+turns that into links into the
+[Charting Cyber vendor catalog](https://chartingcyber.com/vendors), plus a few
+adjacent category names worth a look.
+
+Categories rather than a baked-in vendor list, deliberately: the list needs no
+upkeep as the market churns, and the tool never reads as a recommendation.
+
+**Vendor links stay off the client-facing exports.** They appear in the working
+UI and in the CSV, but not on the PNG or in the PDF report. An assessment that
+arrives with product names already on it reads as a sales document and costs the
+assessment its credibility; the vendor conversation is a separate one, after the
+gaps are agreed.
+
+To point the links somewhere else, change `VENDOR_SOURCE.SEARCH` in
+`index.html` — one line, and every control follows.
+
 ## Exports
 
 * **PNG** — the matrix, coverage scoreboard included.
