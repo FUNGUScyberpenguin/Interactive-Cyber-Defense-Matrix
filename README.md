@@ -31,6 +31,22 @@ Controls that apply to every asset class (governance, SIEM, incident response)
 are drawn as vertical bands spanning their Function column. Asset-specific
 controls are horizontal bars inside their cell.
 
+## Getting a board populated
+
+Start with **What do you run?** in the sidebar. Type a product, pick it, and the
+matrix marks every control that product answers as Current and records it there.
+Nine products fills a quarter of the board in under three seconds — a CISO knows
+their stack cold and would need an hour to click through fifty-nine controls.
+
+Every control starts **not assessed**: visible on the grid in neutral, carrying
+no judgement. That way the matrix teaches the framework the moment it opens
+rather than showing an empty six-column box. Mark a control *not applicable*
+and it drops off the grid; that is the only thing that hides one.
+
+Coverage is scored over every **applicable** control, so an unassessed control
+counts as not covered. A board with fifty controls untouched reads 27%, not
+100% — the number a client sees is the real one.
+
 ## Using it
 
 * **Status** — mark each control Current (blue), Planned (green), Gap (red), or
