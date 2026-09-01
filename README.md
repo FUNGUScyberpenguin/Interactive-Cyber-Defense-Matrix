@@ -67,6 +67,53 @@ controls appears in each of their cells, and **Stack concentration** below the
 matrix ranks products by how much of the board each one covers — the
 consolidation conversation, and the concentration risk.
 
+## Vendor overlay
+
+The **Overlay** picker in the header lays product coverage over the control
+matrix rather than replacing it. Pick *all products* to see where the stack
+reaches; pick a single product to see how far that one vendor spans. Covered
+controls stay lit, everything else falls back, and a caption is drawn into the
+matrix naming the overlay — so a PNG or PDF says what it is showing.
+
+A single-vendor overlay is the consolidation conversation and the
+concentration-risk conversation at once: one product lighting up nine controls
+is either good consolidation or a single point of failure, depending on which
+nine.
+
+## Where the vendor mapping comes from
+
+Each control carries a market category, and `VENDOR_LIBRARY` lists well-known
+products per category, offered as one-click suggestions when you fill in
+*Products in place*. The chain is:
+
+    vendor → market category → control → grid cell
+
+Those two halves rest on very different ground, and it is worth being clear
+about which is which.
+
+**Category to cell is standards-backed.** The grid is Sounil Yu's Cyber Defense
+Matrix over NIST CSF 2.0 Functions and asset classes, every control is tagged
+with the CSF 2.0 Categories it supports, and
+[CIS Controls v8.1](https://www.cisecurity.org/controls/v8-1) — which realigned
+to CSF 2.0 and added Govern — publishes an
+[official mapping](https://www.cisecurity.org/insights/white-papers/cis-controls-v8-1-mapping-to-nist-csf-2-0)
+to the same framework.
+
+**Vendor to category is not.** There is no free authoritative register of which
+vendor sells into which category. The comprehensive ones are commercial:
+[IT-Harvest](https://it-harvest.com/) tracks 4,000+ vendors and 11,300+
+products mapped to CSF 2.0, MITRE ATT&CK and CIS Controls by subscription, and
+Gartner and Forrester define the category names most of the industry uses.
+
+So `VENDOR_LIBRARY` is a **starting point, not a source of truth**: common
+examples per category, not a ranking, not an endorsement, not exhaustive.
+Vendors get acquired, renamed and repositioned constantly — check it before it
+goes in front of a client, and edit it freely. Typing a product that is not in
+the list works exactly as well; the library only saves typing.
+
+Categories that are advisory or architectural rather than a product purchase —
+vCISO services, zero trust, breach notification — are deliberately left empty.
+
 ## The dependency continuum
 
 Beneath the grid, in both views, is the continuum from the original matrix:
