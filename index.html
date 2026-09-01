@@ -221,6 +221,7 @@
 
     /* ── Benchmark panel ── */
     #view-switch { display: flex; gap: 4px; margin-left: auto; }
+    #title-bar { flex-wrap: wrap; }
     .view-btn {
       font-family: 'IBM Plex Mono', monospace; font-size: 12px;
       background: transparent; border: 1px solid rgba(59,130,246,0.25);
@@ -229,7 +230,35 @@
     }
     .view-btn:hover { border-color: rgba(59,130,246,0.5); color: #93c5fd; }
     .view-btn.on { background: rgba(30,58,138,0.45); border-color: #3b82f6; color: #bfdbfe; }
-    .product-input { margin-bottom: 6px; }
+    .product-input { margin-bottom: 5px; }
+    .detail-picks { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 7px; }
+    .pick-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+      background: transparent; border: 1px dashed rgba(148,163,184,0.3);
+      color: #64748b; border-radius: 3px; padding: 1px 6px; cursor: pointer;
+      transition: all 0.12s;
+    }
+    .pick-btn:hover { border-style: solid; border-color: #38bdf8; color: #7dd3fc; }
+    .pick-btn::before { content: '+ '; opacity: 0.6; }
+
+    #overlay-wrap {
+      display: flex; align-items: center; gap: 6px; margin-left: 10px;
+      font-size: 11px; letter-spacing: 1px; color: #475569; text-transform: uppercase;
+      transition: opacity 0.15s;
+    }
+    #overlay-select {
+      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      background: rgba(15,23,42,0.9); border: 1px solid rgba(59,130,246,0.25);
+      color: #93c5fd; border-radius: 4px; padding: 4px 8px; outline: none;
+      max-width: 190px; cursor: pointer;
+    }
+    #overlay-select:disabled { color: #334155; cursor: default; }
+    #overlay-select:focus { border-color: #3b82f6; }
+
+    /* Overlay: covered controls stay lit, the rest fall back. */
+    #labels.overlay g.ctl-bar { opacity: 0.22; }
+    #labels.overlay g.ctl-bar.covered { opacity: 1; }
+    #labels.overlay g.ctl-bar.covered rect { stroke: #38bdf8; stroke-width: 2.2; }
 
     #vendor-empty {
       font-size: 12px; color: #64748b; line-height: 1.6; max-width: 620px;
@@ -435,6 +464,10 @@
       <button class="view-btn on" data-view="controls" title="Controls you have assessed">Controls</button>
       <button class="view-btn"    data-view="vendors"  title="The products in place, plotted on the grid">Vendors</button>
     </div>
+    <label id="overlay-wrap" title="Lay product coverage over the control matrix">
+      <span>Overlay</span>
+      <select id="overlay-select"><option value="">off</option></select>
+    </label>
   </div>
 
   <div id="templates-bar">
@@ -473,9 +506,9 @@
   </div>
 
   <div id="svg-wrap">
-    <svg cursor="default" height="730" id="owasp-chart" width="974" version="1.1"
+    <svg cursor="default" height="754" id="owasp-chart" width="974" version="1.1"
       preserveAspectRatio="xMidYMid" style="background-color: black"
-      viewBox="0 -44 974 730" xmlns="http://www.w3.org/2000/svg">
+      viewBox="0 -44 974 754" xmlns="http://www.w3.org/2000/svg">
       <title>Cyber Defense Matrix</title>
       <defs/>
 
@@ -516,6 +549,9 @@
 
       <!-- Sounil Yu's dependency continuum and structural/situational split. -->
       <g id="continuum"></g>
+
+      <!-- Caption naming the active overlay, so exports say what they show. -->
+      <g id="overlay-note"></g>
     </svg>
   </div>
 
@@ -708,6 +744,94 @@ const CONTROLS = [
   { id:'identityRecovery', label:'Directory Recovery', fn:5, rows:[4,4],
     alias:['AD / Entra Forest Recovery','Identity Recovery','Break-Glass Accounts','Tier-0 Rebuild'], csf:['RC.RP-03'], vendor:'Active Directory Recovery' },
 ];
+
+/* ── Vendor library ─────────────────────────────────────────────────────────
+   Which vendors sit in which part of the matrix, keyed by the market category
+   each control already carries. The chain is
+       vendor -> market category -> control -> cell
+   so nothing here duplicates a grid position; it hangs off the mapping that
+   NIST CSF 2.0 and the control set already establish.
+
+   Sourcing note. The category-to-cell half of that chain rests on published
+   standards: NIST CSF 2.0 Functions and Categories, and CIS Controls v8.1,
+   which realigned to CSF 2.0 and added Govern. The vendor-to-category half
+   does not: there is no free authoritative register of it. The commercial
+   ones are IT-Harvest (4,000+ vendors and 11,300+ products mapped to CSF 2.0,
+   ATT&CK and CIS Controls, by subscription), Gartner and Forrester.
+
+   So this list is a starting point, not a source of truth: well-known
+   examples per category, not a ranking, not an endorsement, and not
+   exhaustive. Vendors get acquired, renamed and repositioned constantly —
+   check it before it goes in front of a client, and edit freely. Typing a
+   product that is not listed here works exactly as well.
+   ─────────────────────────────────────────────────────────────────────────── */
+const VENDOR_LIBRARY = {
+  'GRC Platform': ['Vanta', 'Drata', 'AuditBoard', 'LogicGate', 'ServiceNow IRM', 'Archer'],
+  'Policy Management': ['Vanta', 'Drata', 'AuditBoard', 'LogicGate'],
+  'Cyber Risk Quantification': ['Safe Security', 'Axio', 'Kovrr', 'X-Analytics'],
+  'Third-Party Risk Management': ['Bitsight', 'SecurityScorecard', 'Panorays', 'OneTrust', 'Prevalent'],
+
+  'Attack Surface Management': ['Censys', 'Cortex Xpanse', 'CyCognito', 'runZero', 'Bitsight'],
+  'Vulnerability Management': ['Tenable', 'Qualys', 'Rapid7', 'Nucleus Security'],
+  'Penetration Testing': ['Cobalt', 'HackerOne', 'Bugcrowd', 'Synack', 'Pentera'],
+  'Threat Intelligence': ['Recorded Future', 'Mandiant', 'Flashpoint', 'Intel 471'],
+  'IT Asset Management': ['Axonius', 'Lansweeper', 'ServiceNow', 'runZero'],
+  'API Discovery': ['Salt Security', 'Traceable', 'Akamai API Security', 'Noname Security'],
+  'Network Discovery': ['runZero', 'Forescout', 'Lansweeper'],
+  'Data Classification': ['Microsoft Purview', 'BigID', 'Varonis', 'OneTrust'],
+  'Identity Governance': ['SailPoint', 'Saviynt', 'Okta', 'Microsoft Entra ID Governance'],
+
+  'Endpoint Protection': ['CrowdStrike Falcon', 'Microsoft Defender for Endpoint', 'SentinelOne', 'Sophos Intercept X', 'ESET'],
+  'Patch Management': ['Microsoft Intune', 'Automox', 'Tanium', 'Ivanti', 'ManageEngine'],
+  'OT Security': ['Claroty', 'Nozomi Networks', 'Dragos', 'Armis'],
+  'Application Security Testing': ['Snyk', 'Veracode', 'Checkmarx', 'GitHub Advanced Security', 'Semgrep'],
+  'CNAPP': ['Wiz', 'Prisma Cloud', 'Orca Security', 'Microsoft Defender for Cloud', 'Sysdig'],
+  'SSPM': ['AppOmni', 'Obsidian Security', 'Valence Security', 'Adaptive Shield'],
+  'WAF': ['Cloudflare', 'Akamai', 'F5', 'Imperva', 'AWS WAF'],
+  'SASE': ['Zscaler', 'Netskope', 'Prisma Access', 'Cloudflare One', 'Cisco Umbrella'],
+  'ZTNA': ['Zscaler Private Access', 'Cloudflare Access', 'Netskope Private Access', 'Tailscale', 'Twingate'],
+  'Microsegmentation': ['Illumio', 'Akamai Guardicore', 'Cisco Secure Workload', 'Zscaler Workload Segmentation'],
+  'DDoS Protection': ['Cloudflare', 'Akamai Prolexic', 'AWS Shield', 'Radware', 'Imperva'],
+  'DLP': ['Microsoft Purview', 'Netskope', 'Forcepoint', 'Zscaler', 'Symantec'],
+  'Encryption Key Management': ['HashiCorp Vault', 'Thales CipherTrust', 'AWS KMS', 'Azure Key Vault', 'Entrust'],
+  'DSPM': ['Cyera', 'Varonis', 'BigID', 'Wiz', 'Securiti'],
+  'Multi-Factor Authentication': ['Okta', 'Microsoft Entra ID', 'Cisco Duo', 'Yubico', 'Ping Identity'],
+  'Identity and Access Management': ['Okta', 'Microsoft Entra ID', 'Ping Identity', 'JumpCloud'],
+  'Privileged Access Management': ['CyberArk', 'BeyondTrust', 'Delinea', 'HashiCorp Vault', 'One Identity'],
+  'Email Security': ['Proofpoint', 'Abnormal Security', 'Mimecast', 'Microsoft Defender for Office 365', 'Sublime Security'],
+  'Security Awareness Training': ['KnowBe4', 'Hoxhunt', 'Proofpoint', 'Living Security'],
+
+  'SIEM': ['Splunk', 'Microsoft Sentinel', 'Google SecOps', 'Elastic Security', 'Panther'],
+  'MDR': ['Arctic Wolf', 'Expel', 'Red Canary', 'Huntress', 'eSentire', 'Sophos MDR'],
+  'Threat Hunting': ['Red Canary', 'CrowdStrike Falcon OverWatch', 'Splunk'],
+  'EDR': ['CrowdStrike Falcon', 'Microsoft Defender for Endpoint', 'SentinelOne', 'Cortex XDR', 'Trellix'],
+  'Endpoint Detection and Response': ['CrowdStrike Falcon', 'Microsoft Defender for Endpoint', 'SentinelOne', 'Cortex XDR'],
+  'Runtime Application Security': ['Sysdig', 'Aqua Security', 'Contrast Security', 'Oligo Security'],
+  'NDR': ['Darktrace', 'ExtraHop', 'Vectra AI', 'Corelight', 'Arista NDR'],
+  'Database Activity Monitoring': ['Imperva', 'IBM Guardium', 'Varonis'],
+  'ITDR': ['Silverfort', 'Semperis', 'Microsoft Defender for Identity', 'CrowdStrike Falcon Identity', 'Push Security'],
+  'Digital Risk Protection': ['Recorded Future', 'ZeroFox', 'Doppel', 'Bitsight'],
+
+  'Incident Response': ['Mandiant', 'Unit 42', 'CrowdStrike Services', 'Kroll', 'Arete'],
+  'SOAR': ['Cortex XSOAR', 'Splunk SOAR', 'Tines', 'Torq', 'Swimlane'],
+  'Breach Response': ['Kroll', 'Mandiant', 'Arete', 'Coveware'],
+  'Virtual Patching': ['Imperva', 'Akamai', 'Trend Micro'],
+  'Network Security': ['Palo Alto Networks', 'Fortinet', 'Cisco', 'Check Point', 'Juniper'],
+
+  'Business Continuity': ['Fusion Risk Management', 'Riskonnect', 'Archer'],
+  'Disaster Recovery': ['Zerto', 'Veeam', 'Commvault', 'Rubrik'],
+  'Cyber Insurance': ['Coalition', 'At-Bay', 'Corvus', 'Resilience', 'Chubb'],
+  'Endpoint Backup': ['Druva', 'Veeam', 'CrashPlan', 'Microsoft 365 Backup'],
+  'Backup and Recovery': ['Veeam', 'Rubrik', 'Cohesity', 'Commvault', 'Druva'],
+  'Immutable Backup': ['Rubrik', 'Cohesity', 'Veeam', 'Commvault', 'Druva'],
+  'Network Configuration Management': ['SolarWinds', 'BackBox', 'Ansible'],
+  'Active Directory Recovery': ['Semperis', 'Quest', 'Cayosoft', 'Commvault']
+};
+
+// Categories deliberately left empty are advisory or architectural rather
+// than a product purchase: vCISO Services, Zero Trust, Breach Notification.
+
+const librarySuggestions = ctl => VENDOR_LIBRARY[ctl.vendor] || [];
 
 /* ── Vendor lookup ──────────────────────────────────────────────────────────
    Each control carries a market category term rather than a baked-in vendor
@@ -990,6 +1114,7 @@ renderBars(document.getElementById('labels'), PLACED, p => p.ctl.id);
    travel with the PNG/PDF the client actually gets handed.
    ─────────────────────────────────────────────────────────────────────────── */
 const COV_TRACK = '#16233c', COV_NOW = '#3b82f6', COV_PLAN = '#22c55e';
+const OVERLAY_EDGE = '#38bdf8';
 
 function svgEl(name, attrs, text) {
   const el = document.createElementNS(SVG_NS, name);
@@ -1216,6 +1341,65 @@ function drawVendors() {
   });
 }
 
+/* ── Vendor overlay ─────────────────────────────────────────────────────────
+   Lays product coverage over the control matrix instead of replacing it, so
+   the assessment stays on screen. "All products" answers where the stack
+   reaches; a single product answers how far that one vendor spans, which is
+   the consolidation and concentration-risk question.
+   ─────────────────────────────────────────────────────────────────────────── */
+let overlayTarget = '';   // '' off | '*' all products | a product name
+
+function overlayCovers(ctl) {
+  const list = productList(ctl.id);
+  if (!list.length) return false;
+  if (overlayTarget === '*') return true;
+  return list.some(p => p.toLowerCase() === overlayTarget);
+}
+
+function refreshOverlayOptions() {
+  const sel = document.getElementById('overlay-select');
+  const names = vendorSummary().map(v => v.name);
+  const keep = overlayTarget;
+  sel.innerHTML = '';
+  const add = (val, text) => sel.appendChild(
+    Object.assign(document.createElement('option'), { value: val, textContent: text }));
+  add('', 'off');
+  if (names.length) {
+    add('*', 'all products');
+    names.forEach(n => add(n.toLowerCase(), n));
+  }
+  sel.value = keep;
+  if (sel.value !== keep) overlayTarget = sel.value = '';
+  sel.disabled = !names.length;
+}
+
+function drawOverlay() {
+  const layer = document.getElementById('labels');
+  const note = document.getElementById('overlay-note');
+  while (note.firstChild) note.removeChild(note.firstChild);
+  const on = !!overlayTarget && viewMode === 'controls';
+  layer.classList.toggle('overlay', on);
+
+  let hit = 0, scoped = 0;
+  CONTROLS.forEach(function(c) {
+    const g = document.getElementById(c.id);
+    if (!g) return;
+    const covered = on && overlayCovers(c);
+    g.classList.toggle('covered', covered);
+    if (state[c.id] !== 'off') scoped++;
+    if (covered) hit++;
+  });
+  if (!on) return;
+
+  const who = overlayTarget === '*' ? 'All products'
+    : (vendorSummary().find(v => v.name.toLowerCase() === overlayTarget) || {}).name || overlayTarget;
+  note.appendChild(svgEl('rect', { x: 12, y: 688, width: 9, height: 9, rx: 2,
+    fill: 'none', stroke: OVERLAY_EDGE, 'stroke-width': 2 }));
+  note.appendChild(svgEl('text', { x: 28, y: 697, 'font-family': SVG_FONT,
+    'font-size': 10.5, fill: '#7dd3fc' },
+    'Overlay: ' + who + ' — covers ' + hit + ' of ' + scoped + ' controls in scope'));
+}
+
 let viewMode = 'controls';
 
 function setView(mode) {
@@ -1226,6 +1410,7 @@ function setView(mode) {
   document.getElementById('vendor-panel').style.display = mode === 'vendors' ? '' : 'none';
   document.querySelectorAll('.view-btn').forEach(
     b => b.classList.toggle('on', b.dataset.view === mode));
+  document.getElementById('overlay-wrap').style.opacity = mode === 'controls' ? '' : '0.35';
   updateStats();
 }
 
@@ -1323,6 +1508,8 @@ function updateStats() {
   drawCoverage();
   renderBenchmark();
   renderVendorPanel();
+  refreshOverlayOptions();
+  drawOverlay();
   if (viewMode === 'vendors') drawVendors();
   document.getElementById('stat-blue').textContent  = '● ' + counts.blue  + ' Current';
   document.getElementById('stat-green').textContent = '● ' + counts.green + ' Planned';
@@ -1523,6 +1710,29 @@ function buildDetail(ctl, li) {
   });
   d.appendChild(prod);
 
+  const picks = librarySuggestions(ctl);
+  if (picks.length) {
+    const srow = document.createElement('div');
+    srow.className = 'detail-picks';
+    picks.forEach(function(name) {
+      const b = document.createElement('button');
+      b.className = 'pick-btn';
+      b.textContent = name;
+      b.title = 'Add ' + name + ' — a common ' + ctl.vendor + ' product';
+      b.addEventListener('click', function() {
+        const have = productList(ctl.id);
+        if (have.some(p => p.toLowerCase() === name.toLowerCase())) return;
+        meta[ctl.id].products = have.concat(name).join(', ');
+        prod.value = meta[ctl.id].products;
+        save();
+        updateStats();
+        if (viewMode === 'vendors') drawVendors();
+      });
+      srow.appendChild(b);
+    });
+    d.appendChild(srow);
+  }
+
   const note = document.createElement('textarea');
   note.className = 'note-input';
   note.rows = 2;
@@ -1666,6 +1876,10 @@ document.getElementById('filter-clear').addEventListener('click', function() {
   profileFilter = null;
   renderBenchmark();
   applyFilter();
+});
+document.getElementById('overlay-select').addEventListener('change', function() {
+  overlayTarget = this.value;
+  drawOverlay();
 });
 document.querySelectorAll('.view-btn').forEach(function(btn) {
   btn.addEventListener('click', () => setView(btn.dataset.view));
