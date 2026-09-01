@@ -300,7 +300,87 @@
     }
     .fn-dot.on { background: rgba(59,130,246,0.25); border-color: #3b82f6; color: #bfdbfe; }
 
-    #benchmark, #vendor-panel { margin-top: 18px; max-width: 980px; }
+    #intake { padding: 9px 12px 10px; border-bottom: 1px solid rgba(59,130,246,0.12); flex-shrink: 0; }
+    #intake label {
+      display: block; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+      color: #7dd3fc; margin-bottom: 5px;
+    }
+    #intake-input {
+      width: 100%; background: rgba(2,6,23,0.8);
+      border: 1px solid rgba(56,189,248,0.3); border-radius: 4px;
+      padding: 7px 10px; color: #e2e8f0;
+      font-family: 'IBM Plex Mono', monospace; font-size: 13px; outline: none;
+    }
+    #intake-input:focus { border-color: #38bdf8; }
+    #intake-input::placeholder { color: #334155; }
+    #intake-error { display: none; font-size: 10.5px; color: #fca5a5; margin-top: 5px; }
+    #intake-error.on { display: block; }
+
+    #intake-hits { list-style: none; margin-top: 4px; }
+    .intake-hit {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+      padding: 4px 8px; border-radius: 3px; cursor: pointer;
+      font-size: 12px; color: #cbd5e1;
+    }
+    .intake-hit:hover { background: rgba(56,189,248,0.16); }
+    .hit-cat { font-size: 9.5px; color: #64748b; text-align: right; }
+
+    #intake-stack { list-style: none; display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+    .stack-chip {
+      display: flex; align-items: center; gap: 4px;
+      background: rgba(30,58,138,0.4); border: 1px solid rgba(59,130,246,0.45);
+      border-radius: 3px; padding: 1px 3px 1px 6px; font-size: 10.5px; color: #bfdbfe;
+    }
+    .stack-n {
+      font-size: 9px; color: #93c5fd; background: rgba(2,6,23,0.5);
+      border-radius: 2px; padding: 0 3px;
+    }
+    .stack-x {
+      background: none; border: none; color: #64748b; cursor: pointer;
+      font-size: 13px; line-height: 1; padding: 0 2px;
+    }
+    .stack-x:hover { color: #fca5a5; }
+
+    #scoreboard {
+      padding: 8px 12px 9px; border-bottom: 1px solid rgba(59,130,246,0.12); flex-shrink: 0;
+    }
+    .sb-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+      color: #64748b; margin-bottom: 6px;
+    }
+    #sb-overall { font-size: 14px; letter-spacing: 0; color: #e2e8f0; text-transform: none; }
+    #sb-rows { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .sb-row { display: flex; align-items: center; gap: 7px; }
+    .sb-name { font-size: 10.5px; color: #94a3b8; width: 58px; flex-shrink: 0; }
+    .sb-track {
+      flex: 1; height: 6px; border-radius: 3px; background: #16233c;
+      position: relative; overflow: hidden;
+    }
+    .sb-track > span { position: absolute; left: 0; top: 0; height: 100%; border-radius: 3px; }
+    .sb-plan { background: rgba(34,197,94,0.5); }
+    .sb-now  { background: #3b82f6; }
+    .sb-num { font-size: 10.5px; color: #cbd5e1; width: 32px; text-align: right; flex-shrink: 0; }
+    #sb-note { font-size: 10px; color: #475569; margin-top: 6px; }
+
+    .tpl-label {
+      font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #475569;
+    }
+    #tpl-mode {
+      font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+      background: rgba(15,23,42,0.9); border: 1px solid rgba(59,130,246,0.25);
+      color: #93c5fd; border-radius: 4px; padding: 5px 8px; outline: none; cursor: pointer;
+    }
+    #bm-toggle {
+      font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 15px;
+      letter-spacing: 2px; text-transform: uppercase; color: #cbd5e1;
+      background: none; border: none; cursor: pointer; padding: 0;
+    }
+    #bm-toggle::before { content: '▾ '; color: #64748b; }
+    #benchmark.collapsed #bm-toggle::before { content: '▸ '; }
+    #benchmark.collapsed #benchmark-list { display: none; }
+
+    #benchmark, #vendor-panel { margin-top: 18px; max-width: 920px; }
     .bm-head {
       font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 15px;
       letter-spacing: 2px; text-transform: uppercase; color: #cbd5e1; margin-bottom: 8px;
@@ -395,7 +475,7 @@
     #svg-wrap {
       background: #000;
       border: 1px solid rgba(59,130,246,0.2);
-      border-radius: 4px; overflow: visible; max-width: 980px;
+      border-radius: 4px; overflow: visible; max-width: 920px;
     }
 
     #stats-bar {
@@ -466,6 +546,24 @@
     <div class="leg"><div class="leg-swatch red"></div>Gap</div>
   </div>
 
+  <div id="intake">
+    <label for="intake-input">What do you run?</label>
+    <input id="intake-input" type="text" autocomplete="off" spellcheck="false"
+           placeholder="CrowdStrike, Okta, Zscaler…" />
+    <div id="intake-error"></div>
+    <ul id="intake-hits"></ul>
+    <ul id="intake-stack"></ul>
+  </div>
+
+  <div id="scoreboard">
+    <div class="sb-head">
+      <span>Coverage</span>
+      <span id="sb-overall">—</span>
+    </div>
+    <ul id="sb-rows"></ul>
+    <div id="sb-note">Scored over every applicable control.</div>
+  </div>
+
   <div id="search-wrap">
     <input id="search" type="text" placeholder="Filter by control, category, vendor or CSF ID…" />
     <div id="group-switch">
@@ -501,44 +599,23 @@
   </div>
 
   <div id="templates-bar">
-    <div class="template-group">
-      <button class="template-btn" onclick="applyTemplate('tableStakes', 'red')">Table Stakes</button>
-      <div class="template-colors">
-        <button class="color-btn current-btn" onclick="applyTemplate('tableStakes', 'blue')" title="Current">Current</button>
-        <button class="color-btn planned-btn" onclick="applyTemplate('tableStakes', 'green')" title="Planned">Planned</button>
-        <button class="color-btn gap-btn" onclick="applyTemplate('tableStakes', 'red')" title="Gap">Gap</button>
-      </div>
-    </div>
-    <div class="template-group">
-      <button class="template-btn" onclick="applyTemplate('gettingInsurance', 'red')">Insurance Ready</button>
-      <div class="template-colors">
-        <button class="color-btn current-btn" onclick="applyTemplate('gettingInsurance', 'blue')" title="Current">Current</button>
-        <button class="color-btn planned-btn" onclick="applyTemplate('gettingInsurance', 'green')" title="Planned">Planned</button>
-        <button class="color-btn gap-btn" onclick="applyTemplate('gettingInsurance', 'red')" title="Gap">Gap</button>
-      </div>
-    </div>
-    <div class="template-group">
-      <button class="template-btn" onclick="applyTemplate('industryAverage', 'red')">Industry Average</button>
-      <div class="template-colors">
-        <button class="color-btn current-btn" onclick="applyTemplate('industryAverage', 'blue')" title="Current">Current</button>
-        <button class="color-btn planned-btn" onclick="applyTemplate('industryAverage', 'green')" title="Planned">Planned</button>
-        <button class="color-btn gap-btn" onclick="applyTemplate('industryAverage', 'red')" title="Gap">Gap</button>
-      </div>
-    </div>
-    <div class="template-group">
-      <button class="template-btn" onclick="applyTemplate('regionalBankStandard', 'red')">Regulated / Bank</button>
-      <div class="template-colors">
-        <button class="color-btn current-btn" onclick="applyTemplate('regionalBankStandard', 'blue')" title="Current">Current</button>
-        <button class="color-btn planned-btn" onclick="applyTemplate('regionalBankStandard', 'green')" title="Planned">Planned</button>
-        <button class="color-btn gap-btn" onclick="applyTemplate('regionalBankStandard', 'red')" title="Gap">Gap</button>
-      </div>
-    </div>
+    <span class="tpl-label">Apply profile as</span>
+    <select id="tpl-mode">
+      <option value="blue" selected>Current</option>
+      <option value="green">Planned</option>
+      <option value="red">Gap</option>
+    </select>
+    <button class="template-btn" onclick="applyTemplate('tableStakes')">Table Stakes</button>
+    <button class="template-btn" onclick="applyTemplate('gettingInsurance')">Insurance Ready</button>
+    <button class="template-btn" onclick="applyTemplate('industryAverage')">Industry Average</button>
+    <button class="template-btn" onclick="applyTemplate('regionalBankStandard')">Regulated / Bank</button>
+  </div>
   </div>
 
   <div id="svg-wrap">
-    <svg cursor="default" height="754" id="owasp-chart" width="974" version="1.1"
+    <svg cursor="default" height="710" id="owasp-chart" width="900" version="1.1"
       preserveAspectRatio="xMidYMid" style="background-color: black"
-      viewBox="0 -44 974 754" xmlns="http://www.w3.org/2000/svg">
+      viewBox="0 0 900 710" xmlns="http://www.w3.org/2000/svg">
       <title>Cyber Defense Matrix</title>
       <defs/>
 
@@ -615,8 +692,9 @@
       control's position on the grid.</p>
   </div>
 
-  <div id="benchmark">
-    <div class="bm-head">Benchmark
+  <div id="benchmark" class="collapsed">
+    <div class="bm-head">
+      <button id="bm-toggle" aria-expanded="false">Benchmark</button>
       <span class="bm-hint">— current (+&thinsp;planned) against each profile</span>
     </div>
     <ul id="benchmark-list"></ul>
@@ -1019,114 +1097,108 @@ function fitOneLine(label, w) {
   return { lines: [label.slice(0, max - 1).replace(/[\s·]+$/, '') + '…'], font: font };
 }
 
+/* ── Which cells a control actually covers ──────────────────────────────────
+   `rows` on a control is either 'all' or a contiguous [first, last] range, and
+   four controls do not fit that shape: attack surface management and exposure
+   management stop at Networks because vulnerabilities and internet-facing
+   assets are not data stores or identities, while offensive testing and zero
+   trust reach Users but skip Data. COVERAGE_FIX states those as explicit sets.
+   ─────────────────────────────────────────────────────────────────────────── */
+const COVERAGE_FIX = {
+  attackSurfaceMgmt:    [0, 1, 2],
+  exposureManagement:   [0, 1, 2],
+  offensiveTesting:     [0, 1, 2, 4],
+  zeroTrustArchitecture:[0, 1, 2, 4]
+};
+const ALL_ROWS = [0, 1, 2, 3, 4];
+
+function rowsOf(ctl) {
+  if (COVERAGE_FIX[ctl.id]) return COVERAGE_FIX[ctl.id];
+  if (ctl.rows === 'all') return ALL_ROWS;
+  const out = [];
+  for (let r = ctl.rows[0]; r <= ctl.rows[1]; r++) out.push(r);
+  return out;
+}
+
+/* ── Cell layout ────────────────────────────────────────────────────────────
+   Controls are chips that flow inside their cell, the way Sounil Yu's own
+   matrix puts a comma-separated list of capabilities in each square. Chips
+   wrap at a uniform size and the cell simply holds what it holds, so nothing
+   shrinks to fit and nothing overflows — which is what the old lane-packing
+   engine spent all its effort failing to guarantee.
+
+   Only a control that genuinely spans every asset class keeps a vertical
+   band. A control covering some rows repeats its chip in each, exactly as
+   XDR and UEBA repeat across Devices, Networks and Users on his slide.
+   ─────────────────────────────────────────────────────────────────────────── */
+const CHIP_FONT = 8.2, CHIP_LINE = 10, CHIP_PADY = 6, CHIP_GAP = 3, CHIP_MIN = 6.6;
+
+// Wrap a label to the chip width, shrinking only if a single word will not fit.
+function chipText(label, w) {
+  const usable = w - 8;
+  let font = CHIP_FONT;
+  const longest = Math.max.apply(null, label.split(/\s+/).map(t => t.length));
+  if (longest * CHAR_W * font > usable)
+    font = Math.max(CHIP_MIN, usable / (CHAR_W * longest));
+  const words = label.split(/\s+/), lines = [];
+  let cur = '';
+  words.forEach(function(word) {
+    const t = cur ? cur + ' ' + word : word;
+    if (t.length * CHAR_W * font <= usable || !cur) cur = t;
+    else { lines.push(cur); cur = word; }
+  });
+  lines.push(cur);
+  return { lines: lines, font: font };
+}
+
 function layoutControls(items) {
   const nCols = GRID.functions.length, nRows = GRID.assets.length;
-  const placed = [], vZone = new Array(nCols).fill(null);
+  const placed = [], zoneEnd = new Array(nCols).fill(null);
 
-  // 1 — program-wide controls become vertical bands.
+  // 1 — controls covering every asset class become one vertical band.
   for (let c = 0; c < nCols; c++) {
-    const bands = items.filter(k => k.fn === c && k.rows === 'all');
+    const bands = items.filter(k => k.fn === c && rowsOf(k).length === nRows);
     if (!bands.length) continue;
-    const hasRowBars = items.some(k => k.fn === c && k.rows !== 'all');
     const left = GRID.x0 + c * GRID.colW + PAD;
-    const pitch = hasRowBars ? V_BAR_W + V_GAP : (GRID.colW - 2 * PAD) / bands.length;
-    const barW  = hasRowBars ? V_BAR_W : pitch - V_GAP;
+    const pitch = V_BAR_W + V_GAP;
     const y = GRID.y0 + V_INSET, h = nRows * GRID.rowH - 2 * V_INSET;
     bands.forEach((k, i) => placed.push({
-      ctl: k, vertical: true, x: left + i * pitch, y: y, w: barW, h: h,
-      text: fitText(k.label, h * 0.85)
+      ctl: k, vertical: true, x: left + i * pitch, y: y, w: V_BAR_W, h: h,
+      text: { lines: [k.label], font: 8.5 }
     }));
-    vZone[c] = { x1: left, x2: left + bands.length * pitch - V_GAP };
+    zoneEnd[c] = left + bands.length * pitch;
   }
 
-  // 2 — asset-specific controls take the widest run of their column span
-  //     that no vertical band already occupies.
-  function freeSpan(c1, c2) {
-    const full = [GRID.x0 + c1 * GRID.colW + PAD, GRID.x0 + (c2 + 1) * GRID.colW - PAD];
-    let segs = [full];
-    for (let c = c1; c <= c2; c++) {
-      const b = vZone[c];
-      if (!b) continue;
-      const next = [];
-      segs.forEach(function(s) {
-        if (b.x2 <= s[0] || b.x1 >= s[1]) { next.push(s); return; }
-        if (b.x1 - 2 > s[0]) next.push([s[0], b.x1 - 2]);
-        if (b.x2 + 2 < s[1]) next.push([b.x2 + 2, s[1]]);
+  // 2 — everything else is a chip in each cell it covers.
+  for (let c = 0; c < nCols; c++) {
+    const x1 = (zoneEnd[c] || GRID.x0 + c * GRID.colW + PAD) + (zoneEnd[c] ? 2 : 0);
+    const x2 = GRID.x0 + (c + 1) * GRID.colW - PAD;
+    const w = x2 - x1;
+    if (w < 24) continue;                       // column fully taken by bands
+    for (let r = 0; r < nRows; r++) {
+      const here = items.filter(k => k.fn === c && rowsOf(k).length !== nRows &&
+                                     rowsOf(k).indexOf(r) !== -1);
+      if (!here.length) continue;
+      const laid = here.map(function(k) {
+        const t = chipText(k.label, w);
+        return { ctl: k, text: t, h: t.lines.length * CHIP_LINE + CHIP_PADY };
       });
-      segs = next;
+      const total = laid.reduce((a, b) => a + b.h + CHIP_GAP, -CHIP_GAP);
+      let y = GRID.y0 + r * GRID.rowH + (GRID.rowH - total) / 2;
+      laid.forEach(function(L) {
+        placed.push({ ctl: L.ctl, vertical: false, x: x1, y: y, w: w, h: L.h,
+                      text: L.text, row: r });
+        y += L.h + CHIP_GAP;
+      });
     }
-    segs.sort((p, q) => (q[1] - q[0]) - (p[1] - p[0]));
-    return segs[0] || full;
   }
-
-  const lanes = [];
-  for (let r = 0; r < nRows; r++) lanes.push([]);
-  function claim(r1, r2, n, x1, x2) {
-    for (let L = 0; L < 40; L++) {
-      let ok = true;
-      for (let r = r1; r <= r2 && ok; r++)
-        for (let l = L; l < L + n && ok; l++) {
-          lanes[r][l] = lanes[r][l] || [];
-          if (lanes[r][l].some(s => !(x2 <= s[0] || x1 >= s[1]))) ok = false;
-        }
-      if (!ok) continue;
-      for (let r = r1; r <= r2; r++)
-        for (let l = L; l < L + n; l++) lanes[r][l].push([x1, x2]);
-      return L;
-    }
-    return 0;
-  }
-
-  items.filter(k => k.rows !== 'all').forEach(function(k) {
-    const cols = Array.isArray(k.fn) ? k.fn : [k.fn, k.fn];
-    const span = freeSpan(cols[0], cols[1]);
-    const w = span[1] - span[0];
-    const text = fitText(k.label, w);
-    // A subtitle (the products answering this control) takes its own lanes.
-    const sub = k.sub ? fitOneLine(k.sub, w) : null;
-    if (sub) sub.font = Math.min(sub.font, text.font * 0.92);
-    const lines = text.lines.length + (sub ? sub.lines.length : 0);
-    placed.push({
-      ctl: k, vertical: false, x: span[0], w: w,
-      r1: k.rows[0], r2: k.rows[1], cell: cols[0] + '-' + cols[1],
-      lane: claim(k.rows[0], k.rows[1], lines, span[0], span[1]),
-      span: lines, text: text, sub: sub, subMuted: !!k.subMuted
-    });
-  });
-
-  // 3 — lane height is uniform per asset row so bars line up across the
-  //     matrix; each cell's own stack is then centred inside its row.
-  const rowLaneH = lanes.map(ls =>
-    Math.min(MAX_LANE_H, (GRID.rowH - 2 * ROW_PAD) / (ls.length || 1)));
-  const bars = placed.filter(p => !p.vertical), cellLanes = {};
-  bars.forEach(function(p) {
-    for (let r = p.r1; r <= p.r2; r++) {
-      const key = r + ':' + p.cell;
-      cellLanes[key] = Math.max(cellLanes[key] || 0, p.lane + p.span);
-    }
-  });
-  const cellTop = (r, cell) =>
-    GRID.y0 + r * GRID.rowH + (GRID.rowH - cellLanes[r + ':' + cell] * rowLaneH[r]) / 2;
-  bars.forEach(function(p) {
-    const yTop = cellTop(p.r1, p.cell) + p.lane * rowLaneH[p.r1];
-    const yBot = cellTop(p.r2, p.cell) + (p.lane + p.span) * rowLaneH[p.r2];
-    p.h = Math.min(yBot - yTop - LANE_GAP, p.span * BAR_LINE_H);
-    p.y = yTop + (yBot - yTop - p.h) / 2;
-    // A crowded cell can leave a bar shorter than its text; shrink to fit
-    // rather than spill over the bar below.
-    const block = p.text.font + (p.text.lines.length - 1) * p.text.font * 1.15 +
-                  (p.sub ? p.sub.font * 1.2 : 0);
-    if (block > p.h - 2) {
-      const k = (p.h - 2) / block;
-      p.text.font = Math.max(5.5, p.text.font * k);
-      if (p.sub) p.sub.font = Math.max(5, p.sub.font * k);
-    }
-  });
   return placed;
 }
 
 /* ── Draw the bars into the SVG ─────────────────────────────────────────── */
 const SVG_NS = 'http://www.w3.org/2000/svg';
+// A control can occupy several cells, so it has several nodes.
+const nodesFor = id => document.querySelectorAll('[data-ctl="' + id + '"]');
 const SVG_FONT = 'Helvetica, Arial, sans-serif';
 
 /* Draw a laid-out set of bars into a layer. Shared by the control view and
@@ -1136,6 +1208,7 @@ function renderBars(layer, placed, idFor) {
   placed.forEach(function(p) {
     const g = document.createElementNS(SVG_NS, 'g');
     g.setAttribute('id', idFor(p));
+    g.setAttribute('data-ctl', p.ctl.id);
     g.setAttribute('class', 'ctl-bar');
 
     const rect = document.createElementNS(SVG_NS, 'rect');
@@ -1220,94 +1293,36 @@ function covBar(x, y, w, h, cov) {
 function drawCoverage() {
   const layer = document.getElementById('coverage');
   while (layer.firstChild) layer.removeChild(layer.firstChild);
-  drawContinuum();
-  if (viewMode === 'vendors') return drawVendorBoard(layer);
-
-  GRID.functions.forEach(function(name, c) {
-    const cov = coverageByFunction(c);
-    const cx = GRID.x0 + c * GRID.colW + GRID.colW / 2, bw = 96;
-    layer.appendChild(svgEl('text', { x: cx.toFixed(2), y: -25, 'text-anchor': 'middle',
-      'font-family': SVG_FONT, 'font-size': 15,
-      fill: cov.scoped ? '#e2e8f0' : '#475569' }, cov.scoped ? pct(cov.now) : '—'));
-    layer.appendChild(covBar(cx - bw / 2, -18, bw, 7, cov));
-    layer.appendChild(svgEl('text', { x: cx.toFixed(2), y: -4, 'text-anchor': 'middle',
-      'font-family': SVG_FONT, 'font-size': 9.5, fill: '#64748b' },
-      cov.scoped ? cov.cur + ' of ' + cov.scoped + ' in scope' : 'not scoped'));
-  });
-
-  const rx = GRID.x0 + 6 * GRID.colW + 12;
-  GRID.assets.forEach(function(name, r) {
-    const cov = coverageByAsset(r);
-    const cy = GRID.y0 + r * GRID.rowH + GRID.rowH / 2;
-    layer.appendChild(svgEl('text', { x: rx.toFixed(2), y: (cy - 6).toFixed(2),
-      'font-family': SVG_FONT, 'font-size': 14,
-      fill: cov.scoped ? '#e2e8f0' : '#475569' }, cov.scoped ? pct(cov.now) : '—'));
-    layer.appendChild(covBar(rx, cy + 2, 62, 7, cov));
-    layer.appendChild(svgEl('text', { x: rx.toFixed(2), y: (cy + 22).toFixed(2),
-      'font-family': SVG_FONT, 'font-size': 9, fill: '#64748b' },
-      cov.scoped ? cov.cur + ' of ' + cov.scoped : ''));
-  });
-  layer.appendChild(svgEl('text', { x: rx.toFixed(2), y: -6, 'font-family': SVG_FONT,
-    'font-size': 8.5, fill: '#64748b' }, 'BY ASSET CLASS'));
-
-  const all = coverage(CONTROLS);
-  layer.appendChild(svgEl('text', { x: 12, y: -27, 'font-family': SVG_FONT,
-    'font-size': 9.5, fill: '#64748b', 'letter-spacing': '1.5' }, 'COVERAGE'));
-  layer.appendChild(svgEl('text', { x: 12, y: -8, 'font-family': SVG_FONT,
-    'font-size': 18, fill: '#e2e8f0' }, all.scoped ? pct(all.now) : '—'));
-  if (all.scoped && all.plan)
-    layer.appendChild(svgEl('text', { x: 58, y: -8, 'font-family': SVG_FONT,
-      'font-size': 10, fill: '#22c55e' }, '\u2192 ' + pct(all.withPlan) + ' planned'));
+  drawContinuum();          // the canvas carries the framework, not the score
+  renderScoreboard();       // numbers live in the sidebar, next to the controls
 }
 
-/* In the vendor view the scoreboard counts distinct products rather than
-   coverage: the useful reading is where the stack is dense and where it is
-   empty, which is what plotting the landscape was always for. */
-function drawVendorBoard(layer) {
-  const recorded = vendorSummary();
-  const shown = {};
-  CONTROLS.forEach(function(c) {
-    vendorsFor(c).names.forEach(function(n) {
-      const k = n.toLowerCase();
-      shown[k] = shown[k] || { fns: {}, rows: {} };
-      shown[k].fns[c.fn] = true;
-      for (let r = 0; r < GRID.assets.length; r++) if (inRow(c, r)) shown[k].rows[r] = true;
-    });
+/* The score sits beside the controls it is derived from, so the matrix itself
+   stays the picture Sounil drew rather than a dashboard. */
+function renderScoreboard() {
+  const all = coverage(CONTROLS);
+  document.getElementById('sb-overall').textContent =
+    all.scoped ? pct(all.now) + (all.plan ? '  →  ' + pct(all.withPlan) : '') : '—';
+  const wrap = document.getElementById('sb-rows');
+  wrap.innerHTML = '';
+  GRID.functions.forEach(function(name, i) {
+    const cv = coverageByFunction(i);
+    const li = document.createElement('li');
+    li.className = 'sb-row';
+    li.title = cv.scoped
+      ? cv.cur + ' current of ' + cv.scoped + ' applicable · ' +
+        cv.todo + ' still to assess'
+      : name + ' has no applicable controls';
+    li.innerHTML = '<span class="sb-name">' + name + '</span>' +
+      '<span class="sb-track"><span class="sb-plan" style="width:' +
+        (cv.withPlan * 100).toFixed(1) + '%"></span><span class="sb-now" style="width:' +
+        (cv.now * 100).toFixed(1) + '%"></span></span>' +
+      '<span class="sb-num">' + (cv.scoped ? pct(cv.now) : '—') + '</span>';
+    wrap.appendChild(li);
   });
-  const keys = Object.keys(shown);
-
-  GRID.functions.forEach(function(name, c) {
-    const n = keys.filter(k => shown[k].fns[c]).length;
-    const cx = GRID.x0 + c * GRID.colW + GRID.colW / 2;
-    layer.appendChild(svgEl('text', { x: cx.toFixed(2), y: -25, 'text-anchor': 'middle',
-      'font-family': SVG_FONT, 'font-size': 15,
-      fill: n ? '#e2e8f0' : '#475569' }, n || '—'));
-    layer.appendChild(svgEl('text', { x: cx.toFixed(2), y: -8, 'text-anchor': 'middle',
-      'font-family': SVG_FONT, 'font-size': 9.5, fill: '#64748b' },
-      n ? (n === 1 ? 'product' : 'products') : 'nothing named'));
-  });
-
-  const rx = GRID.x0 + 6 * GRID.colW + 12;
-  GRID.assets.forEach(function(name, r) {
-    const n = keys.filter(k => shown[k].rows[r]).length;
-    const cy = GRID.y0 + r * GRID.rowH + GRID.rowH / 2;
-    layer.appendChild(svgEl('text', { x: rx.toFixed(2), y: (cy + 2).toFixed(2),
-      'font-family': SVG_FONT, 'font-size': 14,
-      fill: n ? '#e2e8f0' : '#475569' }, n || '—'));
-  });
-  layer.appendChild(svgEl('text', { x: rx.toFixed(2), y: -6, 'font-family': SVG_FONT,
-    'font-size': 8.5, fill: '#64748b' }, 'BY ASSET CLASS'));
-
-  // The headline counts what the client actually has; anything the library
-  // filled in is called out separately so the two never blur together.
-  layer.appendChild(svgEl('text', { x: 12, y: -27, 'font-family': SVG_FONT,
-    'font-size': 9.5, fill: '#64748b', 'letter-spacing': '1.5' }, 'IN PLACE'));
-  layer.appendChild(svgEl('text', { x: 12, y: -8, 'font-family': SVG_FONT,
-    'font-size': 18, fill: '#e2e8f0' }, recorded.length || '—'));
-  const examples = keys.length - recorded.length;
-  if (examples > 0)
-    layer.appendChild(svgEl('text', { x: 48, y: -8, 'font-family': SVG_FONT,
-      'font-size': 10, fill: '#7c8ba3' }, '+ ' + examples + ' market examples'));
+  document.getElementById('sb-note').textContent = all.todo
+    ? all.todo + ' of ' + CONTROLS.length + ' controls still to assess'
+    : 'All controls assessed.';
 }
 
 function coverageByFunction(f) { return coverage(CONTROLS.filter(c => c.fn === f)); }
@@ -1334,7 +1349,7 @@ function drawContinuum() {
 
   // Structural vs situational, split where continuous control gives way to
   // event-driven response.
-  const bracket = 600;
+  const bracket = 604;
   [['STRUCTURAL — always on', x1, mid], ['SITUATIONAL — event driven', mid, x2]]
     .forEach(function(b) {
       layer.appendChild(svgEl('path', {
@@ -1348,7 +1363,7 @@ function drawContinuum() {
     });
 
   CONTINUUM.forEach(function(band, i) {
-    const cy = 626 + i * 23;
+    const cy = 630 + i * 23;
     layer.appendChild(svgEl('polygon', {
       points: [[x1, cy - band.from / 2], [x2, cy - band.to / 2],
                [x2, cy + band.to / 2], [x1, cy + band.from / 2]]
@@ -1358,12 +1373,10 @@ function drawContinuum() {
     layer.appendChild(svgEl('text', { x: GRID.x0 - 10, y: cy + 3.5, 'text-anchor': 'end',
       'font-family': SVG_FONT, 'font-size': 9, fill: '#64748b' }, band.label));
   });
-  layer.appendChild(svgEl('text', { x: x2 + 12, y: 645, 'font-family': SVG_FONT,
-    'font-size': 8.5, fill: '#475569' }, 'Degree of'));
-  layer.appendChild(svgEl('text', { x: x2 + 12, y: 656, 'font-family': SVG_FONT,
-    'font-size': 8.5, fill: '#475569' }, 'dependency'));
-  layer.appendChild(svgEl('text', { x: x2 + 12, y: 672, 'font-family': SVG_FONT,
-    'font-size': 7.5, fill: '#334155' }, 'after Sounil Yu'));
+  layer.appendChild(svgEl('text', { x: GRID.x0 - 10, y: 700, 'text-anchor': 'end',
+    'font-family': SVG_FONT, 'font-size': 8, fill: '#334155' }, 'after Sounil Yu'));
+  layer.appendChild(svgEl('text', { x: GRID.x0, y: 700, 'font-family': SVG_FONT,
+    'font-size': 8.5, fill: '#475569' }, '  Degree of dependency'));
 }
 
 /* ── Vendor view ────────────────────────────────────────────────────────────
@@ -1436,20 +1449,26 @@ function barItems(mode) {
 
 function renderMatrix() {
   const layer = document.getElementById('labels');
-  renderBars(layer, layoutControls(barItems(viewMode)), p => p.ctl.id);
+  renderBars(layer, layoutControls(barItems(viewMode)),
+    p => p.ctl.id + (p.vertical ? '' : '--r' + p.row));
   CONTROLS.forEach(function(c) {
-    const g = document.getElementById(c.id);
-    if (!g) return;
+    const nodes = nodesFor(c.id);
+    if (!nodes.length) return;
+    const g = nodes[0];
     // A control left "off" is hidden in the control view — that is what out of
     // scope means. But once something is named on its cell, hiding the bar
     // would empty the grid on a board nobody has assessed yet, so it shows in
     // neutral instead: present, and plainly carrying no status.
-    if (viewMode !== 'controls' && state[c.id] === 'off' && vendorsFor(c).names.length) {
-      const rect = g.querySelector('rect'), text = g.querySelector('text');
-      rect.style.display = '';
-      if (text) { text.style.display = ''; text.style.fill = '#cbd5e1'; }
-      rect.setAttribute('fill', NEUTRAL_FILL);
-      rect.setAttribute('stroke', NEUTRAL_STROKE);
+    if (viewMode !== 'controls' && !ASSESSED[state[c.id]] &&
+        state[c.id] !== 'off' && vendorsFor(c).names.length) {
+      nodes.forEach(function(n) {
+        const rect = n.querySelector('rect'), text = n.querySelector('text');
+        if (!rect) return;
+        rect.style.display = '';
+        if (text) { text.style.display = ''; text.style.fill = '#cbd5e1'; }
+        rect.setAttribute('fill', NEUTRAL_FILL);
+        rect.setAttribute('stroke', NEUTRAL_STROKE);
+      });
     } else {
       applyState(c.id);
     }
@@ -1498,10 +1517,8 @@ function drawOverlay() {
 
   let hit = 0, scoped = 0;
   CONTROLS.forEach(function(c) {
-    const g = document.getElementById(c.id);
-    if (!g) return;
     const covered = on && overlayCovers(c);
-    g.classList.toggle('covered', covered);
+    nodesFor(c.id).forEach(n => n.classList.toggle('covered', covered));
     if (state[c.id] !== 'off') scoped++;
     if (covered) hit++;
   });
@@ -1513,7 +1530,7 @@ function drawOverlay() {
     fill: 'none', stroke: OVERLAY_EDGE, 'stroke-width': 2 }));
   note.appendChild(svgEl('text', { x: 28, y: 697, 'font-family': SVG_FONT,
     'font-size': 10.5, fill: '#7dd3fc' },
-    'Overlay: ' + who + ' — covers ' + hit + ' of ' + scoped + ' controls in scope'));
+    'Overlay: ' + who + ' — covers ' + hit + ' of ' + scoped + ' applicable controls'));
 }
 
 let viewMode = 'controls';
@@ -1533,7 +1550,9 @@ const NEUTRAL_FILL = '#16233c', NEUTRAL_STROKE = '#475569';
 const COLOR_STROKES = { green: '#4ade80', blue: '#93c5fd', red: '#fca5a5' };
 
 /* ── State ──────────────────────────────────────────────────────────────── */
-const STATUS_LABEL = { blue: 'Current', green: 'Planned', red: 'Gap', off: 'Out of scope' };
+const STATUS_LABEL = { blue: 'Current', green: 'Planned', red: 'Gap',
+                       off: 'Not applicable', new: 'Not assessed' };
+const ASSESSED = { blue: 1, green: 1, red: 1 };
 const PRIORITIES = [
   { val: 'p1', label: 'P1', title: 'P1 — do now' },
   { val: 'p2', label: 'P2', title: 'P2 — next' },
@@ -1544,7 +1563,7 @@ const STORE_KEY = 'cdm-csf2-v2', LEGACY_STORE_KEY = 'cdm-csf2-v1';
 const state = {};   // control id -> 'off' | 'blue' | 'green' | 'red'
 const meta  = {};   // control id -> { note, priority } — the assessment detail
 CONTROLS.forEach(function(c) {
-  state[c.id] = 'off';
+  state[c.id] = 'new';
   meta[c.id] = { note: '', priority: '', products: '' };
 });
 
@@ -1567,7 +1586,7 @@ CONTROLS.forEach(function(c) {
   } catch (e) {}
 })();
 CONTROLS.forEach(function(c) {
-  if (!COLOR_FILLS[state[c.id]]) state[c.id] = 'off';
+  if (!COLOR_FILLS[state[c.id]] && state[c.id] !== 'off') state[c.id] = 'new';
   if (!PRIORITIES.some(p => p.val === meta[c.id].priority)) meta[c.id].priority = '';
 });
 
@@ -1582,70 +1601,213 @@ function save() {
    "off" is out of scope for this client, not a silent zero — otherwise every
    matrix would score badly for owning no OT and no mainframe.
    ─────────────────────────────────────────────────────────────────────────── */
-function inRow(ctl, r) {
-  return ctl.rows === 'all' || (ctl.rows[0] <= r && r <= ctl.rows[1]);
-}
+function inRow(ctl, r) { return rowsOf(ctl).indexOf(r) !== -1; }
 
 function coverage(list) {
-  let cur = 0, plan = 0, gap = 0;
+  let cur = 0, plan = 0, gap = 0, todo = 0;
   list.forEach(function(c) {
-    if (state[c.id] === 'blue') cur++;
-    else if (state[c.id] === 'green') plan++;
-    else if (state[c.id] === 'red') gap++;
+    const st = state[c.id];
+    if (st === 'blue') cur++;
+    else if (st === 'green') plan++;
+    else if (st === 'red') gap++;
+    else if (st === 'new') todo++;
   });
-  const scoped = cur + plan + gap;
-  return { cur: cur, plan: plan, gap: gap, scoped: scoped,
-           now: scoped ? cur / scoped : 0,
-           withPlan: scoped ? (cur + plan) / scoped : 0 };
+  // Denominator is everything applicable, not just what has been looked at.
+  // An unassessed control is not covered, and scoring only the assessed ones
+  // would read 100% on a board with fifty controls still untouched.
+  const applicable = cur + plan + gap + todo;
+  return { cur: cur, plan: plan, gap: gap, todo: todo,
+           scoped: applicable, assessed: cur + plan + gap,
+           now: applicable ? cur / applicable : 0,
+           withPlan: applicable ? (cur + plan) / applicable : 0 };
 }
 
 const pct = v => Math.round(v * 100) + '%';
 
 function applyState(id) {
-  const color = state[id], g = document.getElementById(id);
-  if (!g) return;
-  const rect = g.querySelector('rect'), text = g.querySelector('text');
-  if (color === 'off') {
-    rect.style.display = 'none';
-    if (text) text.style.display = 'none';
-    return;
-  }
-  rect.style.display = '';
-  if (text) text.style.display = '';
-  rect.setAttribute('fill', COLOR_FILLS[color]);
-  rect.setAttribute('stroke', COLOR_STROKES[color]);
-  if (text) text.style.fill = '#f8fafc';
+  const color = state[id], unassessed = !COLOR_FILLS[color];
+  nodesFor(id).forEach(function(g) {
+    const rect = g.querySelector('rect'), text = g.querySelector('text');
+    if (!rect) return;
+    if (color === 'off') {                     // deliberately out of scope
+      rect.style.display = 'none';
+      if (text) text.style.display = 'none';
+      return;
+    }
+    rect.style.display = '';
+    if (text) text.style.display = '';
+    rect.setAttribute('fill',   unassessed ? NEUTRAL_FILL   : COLOR_FILLS[color]);
+    rect.setAttribute('stroke', unassessed ? NEUTRAL_STROKE : COLOR_STROKES[color]);
+    if (text) text.style.fill = unassessed ? '#93a4bd' : '#f8fafc';
+  });
 }
 
 function updateStats() {
-  const counts = { green: 0, blue: 0, red: 0, off: 0 };
+  const counts = { green: 0, blue: 0, red: 0, off: 0, new: 0 };
   CONTROLS.forEach(c => counts[state[c.id]]++);
   drawCoverage();
   renderBenchmark();
   renderVendorPanel();
+  renderStack();
   refreshOverlayOptions();
   renderMatrix();
   document.getElementById('stat-blue').textContent  = '● ' + counts.blue  + ' Current';
   document.getElementById('stat-green').textContent = '● ' + counts.green + ' Planned';
   document.getElementById('stat-red').textContent   = '● ' + counts.red   + ' Gap';
-  document.getElementById('stat-off').textContent   = '● ' + counts.off   + ' Off';
+  document.getElementById('stat-off').textContent   = '● ' + counts.new +
+    ' Not assessed' + (counts.off ? '  ·  ' + counts.off + ' N/A' : '');
 }
+
+function flashError(msg) {
+  const el = document.getElementById('intake-error');
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(flashError.t);
+  flashError.t = setTimeout(() => el.classList.remove('on'), 3200);
+}
+
+/* ── Vendor-first intake ────────────────────────────────────────────────────
+   A CISO can name their stack in twenty seconds and would need an hour to
+   click through fifty-nine controls. So the fastest way into a board is to
+   ask what they run: each product resolves through its market category to the
+   controls it answers, marks them Current, and records itself against them.
+
+   Free text works too — an unrecognised name is attached to whatever control
+   is being viewed is wrong, so it asks which category instead of guessing.
+   ─────────────────────────────────────────────────────────────────────────── */
+function productIndex() {
+  const idx = [];
+  Object.keys(VENDOR_LIBRARY).forEach(function(cat) {
+    VENDOR_LIBRARY[cat].forEach(function(name) {
+      const hit = idx.find(e => e.name.toLowerCase() === name.toLowerCase());
+      if (hit) { if (hit.cats.indexOf(cat) === -1) hit.cats.push(cat); return; }
+      idx.push({ name: name, cats: [cat] });
+    });
+  });
+  return idx;
+}
+const PRODUCT_INDEX = productIndex();
+
+const controlsForCategory = cat => CONTROLS.filter(c => c.vendor === cat);
+
+/* Everything the stack currently claims, with what it covers. */
+function recordedStack() {
+  const map = {};
+  CONTROLS.forEach(function(c) {
+    productList(c.id).forEach(function(name) {
+      const k = name.toLowerCase();
+      map[k] = map[k] || { name: name, controls: [] };
+      map[k].controls.push(c);
+    });
+  });
+  return Object.keys(map).map(k => map[k])
+    .sort((a, b) => b.controls.length - a.controls.length || a.name.localeCompare(b.name));
+}
+
+function addProduct(name, cats) {
+  const targets = [];
+  cats.forEach(cat => controlsForCategory(cat).forEach(c => targets.push(c)));
+  if (!targets.length) return 0;
+  targets.forEach(function(c) {
+    const have = productList(c.id);
+    if (!have.some(x => x.toLowerCase() === name.toLowerCase()))
+      meta[c.id].products = have.concat(name).join(', ');
+    if (!ASSESSED[state[c.id]]) state[c.id] = 'blue';
+  });
+  save();
+  renderList();
+  updateStats();
+  return targets.length;
+}
+
+function removeProduct(name) {
+  CONTROLS.forEach(function(c) {
+    const keep = productList(c.id).filter(x => x.toLowerCase() !== name.toLowerCase());
+    if (keep.length !== productList(c.id).length) meta[c.id].products = keep.join(', ');
+  });
+  save();
+  renderList();
+  updateStats();
+}
+
+function renderStack() {
+  const wrap = document.getElementById('intake-stack');
+  wrap.innerHTML = '';
+  recordedStack().forEach(function(v) {
+    const li = document.createElement('li');
+    li.className = 'stack-chip';
+    li.title = v.name + ' answers ' + v.controls.length +
+      (v.controls.length === 1 ? ' control' : ' controls');
+    li.innerHTML = '<span>' + v.name.replace(/[<>&]/g, '') + '</span>' +
+                   '<span class="stack-n">' + v.controls.length + '</span>';
+    const x = document.createElement('button');
+    x.className = 'stack-x';
+    x.textContent = '×';
+    x.title = 'Remove ' + v.name;
+    x.addEventListener('click', () => removeProduct(v.name));
+    li.appendChild(x);
+    wrap.appendChild(li);
+  });
+}
+
+(function wireIntake() {
+  const input = document.getElementById('intake-input');
+  const hits = document.getElementById('intake-hits');
+  let active = [];
+
+  function close() { hits.innerHTML = ''; active = []; }
+
+  function commit(entry) {
+    const n = addProduct(entry.name, entry.cats);
+    input.value = '';
+    close();
+    if (!n) flashError(entry.name + ' has no matching control');
+  }
+
+  input.addEventListener('input', function() {
+    const q = input.value.trim().toLowerCase();
+    close();
+    if (q.length < 2) return;
+    active = PRODUCT_INDEX
+      .filter(e => e.name.toLowerCase().indexOf(q) !== -1)
+      .slice(0, 6);
+    active.forEach(function(e) {
+      const li = document.createElement('li');
+      li.className = 'intake-hit';
+      li.innerHTML = '<span>' + e.name + '</span><span class="hit-cat">' +
+        e.cats.join(' · ') + '</span>';
+      li.addEventListener('click', () => commit(e));
+      hits.appendChild(li);
+    });
+  });
+
+  input.addEventListener('keydown', function(ev) {
+    if (ev.key === 'Escape') return close();
+    if (ev.key !== 'Enter') return;
+    // Enter takes the single obvious match; anything else needs a pick.
+    if (active.length === 1) return commit(active[0]);
+    const typed = input.value.trim();
+    const exact = PRODUCT_INDEX.find(e => e.name.toLowerCase() === typed.toLowerCase());
+    if (exact) return commit(exact);
+    if (typed) flashError('Pick a category for "' + typed + '" on its control');
+  });
+})();
 
 /* ── Sidebar ────────────────────────────────────────────────────────────── */
 const STATUS_OPTS = [
-  { val: 'off',   cls: 'lbl-off',   title: 'Not applicable' },
-  { val: 'blue',  cls: 'lbl-blue',  title: 'Current' },
-  { val: 'green', cls: 'lbl-green', title: 'Planned' },
-  { val: 'red',   cls: 'lbl-red',   title: 'Gap' }
+  { val: 'blue',  cls: 'lbl-blue',  title: 'Current — in place today' },
+  { val: 'green', cls: 'lbl-green', title: 'Planned — funded or scheduled' },
+  { val: 'red',   cls: 'lbl-red',   title: 'Gap — nothing in place' },
+  { val: 'off',   cls: 'lbl-off',   title: 'Not applicable to this client' }
 ];
 const ul = document.getElementById('solution-checkboxes');
 let groupMode = 'fn';
 
 function assetLabel(ctl) {
-  if (ctl.rows === 'all') return 'All Assets';
-  return ctl.rows[0] === ctl.rows[1]
-    ? GRID.assets[ctl.rows[0]]
-    : GRID.assets[ctl.rows[0]] + '–' + GRID.assets[ctl.rows[1]];
+  const rs = rowsOf(ctl);
+  if (rs.length === GRID.assets.length) return 'All Assets';
+  if (rs.length === 1) return GRID.assets[rs[0]];
+  return rs.map(r => GRID.assets[r]).join(', ');
 }
 
 function groupsFor(mode) {
@@ -1727,9 +1889,10 @@ function buildRow(ctl) {
 
   li.appendChild(buildDetail(ctl, li));
 
-  const bar = document.getElementById(ctl.id);
-  main.addEventListener('mouseenter', () => bar && bar.classList.add('bar-hover'));
-  main.addEventListener('mouseleave', () => bar && bar.classList.remove('bar-hover'));
+  main.addEventListener('mouseenter',
+    () => nodesFor(ctl.id).forEach(n => n.classList.add('bar-hover')));
+  main.addEventListener('mouseleave',
+    () => nodesFor(ctl.id).forEach(n => n.classList.remove('bar-hover')));
   return li;
 }
 
@@ -2007,6 +2170,11 @@ document.getElementById('filter-clear').addEventListener('click', function() {
   renderBenchmark();
   applyFilter();
 });
+document.getElementById('bm-toggle').addEventListener('click', function() {
+  const b = document.getElementById('benchmark');
+  const open = b.classList.toggle('collapsed');
+  this.setAttribute('aria-expanded', String(!open));
+});
 document.getElementById('examples-toggle').addEventListener('change', function() {
   showExamples = this.checked;
   updateStats();
@@ -2035,8 +2203,9 @@ setView('controls');
 function applyTemplate(name, colorMode) {
   const tpl = TEMPLATES[name];
   if (!tpl) return;
+  colorMode = colorMode || document.getElementById('tpl-mode').value;
   tpl.controls.forEach(function(id) {
-    if (state[id] === 'off') setStatus(id, colorMode);
+    if (!ASSESSED[state[id]] && state[id] !== 'off') setStatus(id, colorMode);
   });
   renderList();
 }
@@ -2057,7 +2226,7 @@ function getClientName() {
 function register() {
   const srank = { red: 0, green: 1, blue: 2 };
   const prank = { p1: 0, p2: 1, p3: 2, '': 3 };
-  return CONTROLS.filter(c => state[c.id] !== 'off').sort(function(a, b) {
+  return CONTROLS.filter(c => ASSESSED[state[c.id]]).sort(function(a, b) {
     if (prank[meta[a.id].priority] !== prank[meta[b.id].priority])
       return prank[meta[a.id].priority] - prank[meta[b.id].priority];
     if (srank[state[a.id]] !== srank[state[b.id]])
@@ -2220,7 +2389,7 @@ function exportPDF() {
     const heading = [
       pdfEsc(getClientName()) + ' - Cyber Defense Matrix gap register',
       'NIST CSF 2.0  |  ' + pdfEsc(new Date().toLocaleDateString()) + '  |  ' +
-        all.scoped + ' controls in scope  |  ' + pct(all.now) + ' current, ' +
+        all.scoped + ' controls applicable  |  ' + pct(all.now) + ' current, ' +
         pct(all.withPlan) + ' with plan delivered',
       GRID.functions.map(function(n, i) {
         const cv = coverageByFunction(i);
