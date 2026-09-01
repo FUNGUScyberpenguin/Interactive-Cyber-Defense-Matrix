@@ -11,7 +11,7 @@
 
     body {
       display: grid;
-      grid-template-columns: 260px 1fr;
+      grid-template-columns: 300px 1fr;
       min-height: 100vh;
       background: #060810;
       color: #e2e8f0;
@@ -89,14 +89,58 @@
     #solution-checkboxes li:hover { background: rgba(30,58,138,0.12); }
     #solution-checkboxes li.hidden-item { display: none; }
 
+    /* CSF 2.0 function / asset-class group headers */
+    #solution-checkboxes li.group-head {
+      position: sticky; top: 0; z-index: 2;
+      justify-content: space-between;
+      background: #0d1424;
+      border-top: 1px solid rgba(59,130,246,0.25);
+      border-bottom: 1px solid rgba(59,130,246,0.25);
+      padding: 5px 12px;
+      font-family: 'Rajdhani', sans-serif; font-weight: 700;
+      font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
+      color: #7dd3fc; cursor: default;
+    }
+    #solution-checkboxes li.group-head:hover { background: #0d1424; }
+    .group-count {
+      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      letter-spacing: 0; color: #64748b;
+    }
+
+    .sol-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
     .sol-label {
-      flex: 1; font-size: 14px; color: #cbd5e1;
+      font-size: 12.5px; color: #cbd5e1; line-height: 1.25;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       transition: color 0.15s;
+    }
+    /* Grouped market terminology for the same capability */
+    .sol-alias {
+      font-size: 10px; color: #5b6b84; line-height: 1.2;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     li.active-green .sol-label { color: #4ade80; }
     li.active-blue  .sol-label { color: #93c5fd; }
     li.active-red   .sol-label { color: #fca5a5; }
+    li.active-green .sol-alias,
+    li.active-blue  .sol-alias,
+    li.active-red   .sol-alias { color: #7c8ba3; }
+
+    #group-switch { display: flex; align-items: center; gap: 4px; margin-top: 7px; }
+    .group-switch-label {
+      font-size: 11px; letter-spacing: 1px; color: #475569;
+      text-transform: uppercase; margin-right: 2px;
+    }
+    .group-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      background: transparent; border: 1px solid rgba(59,130,246,0.2);
+      color: #64748b; border-radius: 3px; padding: 3px 8px; cursor: pointer;
+      transition: all 0.12s;
+    }
+    .group-btn:hover { border-color: rgba(59,130,246,0.45); color: #93c5fd; }
+    .group-btn.on { background: rgba(30,58,138,0.4); border-color: #3b82f6; color: #bfdbfe; }
+
+    /* Sidebar hover highlights the matching bar in the matrix */
+    #labels g.bar-hover rect { stroke: #fbbf24; stroke-width: 2; }
 
     /* Radio dots */
     .radio-group { display: flex; gap: 4px; flex-shrink: 0; }
@@ -230,7 +274,13 @@
   </div>
 
   <div id="search-wrap">
-    <input id="search" type="text" placeholder="Filter controls…" />
+    <input id="search" type="text" placeholder="Filter by name, acronym or CSF ID…" />
+    <div id="group-switch">
+      <span class="group-switch-label">Group</span>
+      <button class="group-btn on" data-mode="fn"    title="Group by CSF 2.0 Function">Function</button>
+      <button class="group-btn"    data-mode="asset" title="Group by asset class">Asset</button>
+      <button class="group-btn"    data-mode="az"    title="Flat A–Z list">A–Z</button>
+    </div>
   </div>
 
   <ul id="solution-checkboxes"></ul>
@@ -240,7 +290,7 @@
 <main id="main">
   <div id="title-bar">
     <h2>CYBER DEFENSE MATRIX</h2>
-    <span>NIST CSF × ASSET CLASS</span>
+    <span>NIST CSF 2.0 × ASSET CLASS</span>
   </div>
 
   <div id="templates-bar">
@@ -253,7 +303,7 @@
       </div>
     </div>
     <div class="template-group">
-      <button class="template-btn" onclick="applyTemplate('gettingInsurance', 'red')">Getting Insurance</button>
+      <button class="template-btn" onclick="applyTemplate('gettingInsurance', 'red')">Insurance Ready</button>
       <div class="template-colors">
         <button class="color-btn current-btn" onclick="applyTemplate('gettingInsurance', 'blue')" title="Current">Current</button>
         <button class="color-btn planned-btn" onclick="applyTemplate('gettingInsurance', 'green')" title="Planned">Planned</button>
@@ -269,7 +319,7 @@
       </div>
     </div>
     <div class="template-group">
-      <button class="template-btn" onclick="applyTemplate('regionalBankStandard', 'red')">Regional Bank</button>
+      <button class="template-btn" onclick="applyTemplate('regionalBankStandard', 'red')">Regulated / Bank</button>
       <div class="template-colors">
         <button class="color-btn current-btn" onclick="applyTemplate('regionalBankStandard', 'blue')" title="Current">Current</button>
         <button class="color-btn planned-btn" onclick="applyTemplate('regionalBankStandard', 'green')" title="Planned">Planned</button>
@@ -311,234 +361,8 @@
       </g>
 
       <!-- CONTROLS -->
-      <g id="labels" transform="matrix(1.0958935,0,0,0.99963677,72.433308,11.016104)">
-
-        <g id="vCiso">
-          <rect stroke="#355bb7" height="510.18531" x="67.68604" stroke-width="3px" width="20.07494" y="55.00388" fill="#355bb7"/>
-          <text style="font-size:11.3333px;fill:#f9f9f9" x="-418.06103" y="80.75862" font-family="Helvetica" transform="rotate(-90)"><tspan x="-418.06103" y="80.75862">vCISO: Maturity Assessments, Roadmap Build</tspan></text>
-        </g>
-
-        <g id="staffingAndRecruiting">
-          <rect stroke="#355bb7" height="510.18531" x="121.64810" y="55.00388" stroke-width="3px" width="20.07494" fill="#355bb7"/>
-          <text style="font-size:11.3333px;fill:#f9f9f9" x="-337.14251" y="134.51481" font-family="Helvetica" transform="rotate(-90)"><tspan x="-337.14251" y="134.51481">Staffing and Recruiting</tspan></text>
-        </g>
-
-        <g id="managedGrc">
-          <rect stroke="#355bb7" height="510.18531" x="94.66707" y="55.00388" stroke-width="3px" width="20.07494" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="-268.46340" y="113.13033" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-268.46340" y="113.13033">Managed GRC</tspan></text>
-        </g>
-
-        <g id="managedControlsAssurance">
-          <rect stroke="#355bb7" height="510.18531" x="148.62913" y="55.00388" stroke-width="3px" width="20.07494" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="-260.07697" y="169.69826" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-260.07697" y="169.69826">Managed Controls Assurance</tspan></text>
-        </g>
-
-        <g id="attackSurfaceManagement">
-          <rect stroke="#355bb7" height="510.18531" x="258.12830" y="55.00388" stroke-width="3.33388px" width="20.07494" fill="#355bb7"/>
-          <text style="font-size:10.8281px;fill:#f9f9f9" x="-394.81434" y="284.97328" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-394.81434" y="284.97328">Attack Surface Management</tspan></text>
-        </g>
-
-        <g id="soc">
-          <rect stroke="#355bb7" height="510.18531" x="502.01886" y="55.00388" stroke-width="4.07723px" width="20.07494" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="-295.00762" y="540.45182" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-295.00762" y="540.45182">SOC</tspan></text>
-        </g>
-
-        <g id="managedSiem">
-          <rect stroke="#355bb7" height="510.18531" x="470.50952" y="55.00388" stroke-width="3.34109px" width="20.07494" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="-297.85486" y="506.88817" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-297.85486" y="506.88817">Managed SIEM</tspan></text>
-        </g>
-
-        <g id="incidentResponse">
-          <rect stroke="#355bb7" height="510.18531" x="541.28699" y="55.00388" stroke-width="3.33388px" width="20.07494" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="-295.87471" y="580.82691" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-295.87471" y="580.82691">Incident Response</tspan></text>
-        </g>
-
-        <g id="ransomwareNegotiation">
-          <rect stroke="#355bb7" height="510.18531" x="569.12729" y="55.00388" stroke-width="3.33732px" width="20.07494" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="-289.87087" y="609.10573" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-289.87087" y="609.10573">Ransomware Negotiation</tspan></text>
-        </g>
-
-        <g id="draas">
-          <rect stroke="#355bb7" height="510.18531" x="684.09306" y="55.00388" stroke-width="3.33732px" width="20.07494" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="-294.06780" y="730.98772" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-294.06780" y="730.98772">DR-aaS</tspan></text>
-        </g>
-
-        <g id="drPlanAndRehearsals">
-          <rect stroke="#355bb7" height="510.18531" x="710.07511" y="55.00388" stroke-width="3.33388px" width="20.07494" fill="#355bb7"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="-294.05195" y="757.99709" font-family="Helvetica" transform="matrix(0,-1.0470395,0.95507383,0,0,0)"><tspan x="-294.05195" y="757.99709">DR Plan and Rehearsals</tspan></text>
-        </g>
-
-        <g id="awarenessTraining">
-          <rect stroke="#355bb7" height="100.53440" x="485.16261" y="-166.91557" stroke-width="1.78241px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.1435px;fill:#f9f9f9;text-anchor:middle" x="122.66502" y="472.45539" font-family="Helvetica" transform="scale(0.95095059,1.0515793)"><tspan x="122.66502" y="472.45539">Awareness Training</tspan></text>
-        </g>
-
-        <g id="phishingTests">
-          <rect stroke="#355bb7" height="100.53440" x="512.86880" y="-166.91557" stroke-width="1.78241px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.1912px;fill:#f9f9f9;text-anchor:middle" x="122.13545" y="499.98625" font-family="Helvetica" transform="scale(0.95507382,1.0470395)"><tspan x="122.13545" y="499.98625">Phishing Tests</tspan></text>
-        </g>
-
-        <g id="policyEnforcement">
-          <rect stroke="#355bb7" height="100.53440" x="540.57498" y="-166.91557" stroke-width="1.78241px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.1912px;fill:#f9f9f9;text-anchor:middle" x="122.13545" y="527.36972" font-family="Helvetica" transform="scale(0.95507382,1.0470395)"><tspan x="122.13545" y="527.36972">Policy Enforcement</tspan></text>
-        </g>
-
-        <g id="iam">
-          <rect stroke="#355bb7" height="69.18715" x="542.18452" y="-248.47619" stroke-width="1.50131px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.1912px;fill:#f9f9f9;text-anchor:middle" x="223.94354" y="528.75831" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="223.94354" y="528.75831">IAM</tspan></text>
-        </g>
-
-        <g id="mfaSso">
-          <rect stroke="#355bb7" height="69.18715" x="488.81548" y="-248.47619" stroke-width="1.44215px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.1912px;fill:#f9f9f9;text-anchor:middle" x="223.94354" y="478.52572" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="223.94354" y="478.52572">MFA / SSO</tspan></text>
-        </g>
-
-        <g id="emailSecurity">
-          <rect stroke="#355bb7" height="69.18715" x="516.90349" y="-248.47619" stroke-width="1.50131px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:9.82353px;fill:#f9f9f9;text-anchor:middle" x="232.32513" y="485.87368" font-family="Helvetica" transform="scale(0.92061765,1.0862273)"><tspan x="232.32513" y="485.87368">Email Security</tspan></text>
-        </g>
-
-        <g id="pam">
-          <rect stroke="#355bb7" height="73.42089" x="439.98446" y="-382.71894" stroke-width="1.75893px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="362.28455" y="430.64524" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="362.28455" y="430.64524">PAM</tspan></text>
-        </g>
-
-        <g id="impersonation">
-          <rect stroke="#355bb7" height="83.95062" x="494.94398" y="-482.31871" stroke-width="1.51282px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="461.05692" y="483.25458" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="461.05692" y="483.25458">Impersonation</tspan></text>
-        </g>
-
-        <g id="ddos">
-          <rect stroke="#355bb7" height="89.30685" x="332.80448" y="-381.50376" stroke-width="1.67459px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="352.69560" y="329.65959" transform="scale(0.95507383,1.0470395)"><tspan x="352.69560" y="329.65959">DDoS</tspan></text>
-        </g>
-
-        <g id="dns">
-          <rect stroke="#355bb7" height="34.49968" x="301.21329" y="-326.69659" stroke-width="1.05796px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="324.00296" y="299.00327" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="324.00296" y="299.00327">DNS</tspan></text>
-        </g>
-
-        <g id="networkIntelligence">
-          <rect stroke="#355bb7" height="113.31521" x="293.61094" y="-447.71959" stroke-width="1.83806px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.4714px;text-anchor:middle;fill:#f9f9f9" x="423.40320" y="281.28421" font-family="Helvetica" transform="scale(0.92361603,1.082701)"><tspan x="423.40320" y="281.28421">Network Intelligence</tspan></text>
-        </g>
-
-        <g id="firewall">
-          <rect stroke="#355bb7" height="94.58848" x="271.18943" y="-386.78539" stroke-width="1.6948px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.5229px;text-anchor:middle;fill:#f9f9f9" x="365.77116" y="261.97208" font-family="Helvetica" transform="scale(0.92815178,1.07741)"><tspan x="365.77116" y="261.97208">Firewall</tspan></text>
-        </g>
-
-        <g id="managedFirewall">
-          <rect stroke="#355bb7" height="94.58848" x="270.38859" y="-386.78539" stroke-width="1.6948px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.5229px;text-anchor:middle;fill:#f9f9f9" x="365.77116" y="261.43699" font-family="Helvetica" transform="scale(0.92815178,1.07741)"><tspan x="365.77116" y="261.43699">Managed Firewall</tspan></text>
-        </g>
-
-        <g id="botManagement">
-          <rect stroke="#355bb7" height="92.99429" x="242.78265" y="-385.19120" stroke-width="1.6948px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.5192px;text-anchor:middle;fill:#f9f9f9" x="365.04023" y="235.00384" font-family="Helvetica" transform="scale(0.92782665,1.0777875)"><tspan x="365.04023" y="235.00384">Bot Management</tspan></text>
-        </g>
-
-        <g id="managedPatching">
-          <rect stroke="#355bb7" height="100.53440" x="94.42578" y="-392.73132" stroke-width="1.75378px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="358.57344" y="102.01076" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="358.57344" y="102.01076">Managed Patching</tspan></text>
-        </g>
-
-        <g id="managedEdr">
-          <rect stroke="#355bb7" height="242.78308" x="57.11146" y="-534.97999" stroke-width="2.61866px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="433.04343" y="66.50397" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="433.04343" y="66.50397">Managed EDR</tspan></text>
-        </g>
-
-        <g id="deviceBackups">
-          <rect stroke="#355bb7" height="48.28766" x="59.42247" y="-679.20817" stroke-width="1.82625px" width="32" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="685.87822" y="67.64476" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="685.87822" y="67.64476">Device</tspan><tspan x="685.87822" y="81.17988">Backups</tspan></text>
-        </g>
-
-        <g id="cloudRecovery">
-          <rect stroke="#355bb7" height="48.77431" x="165.08191" y="-679.69483" stroke-width="1.82625px" width="32" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="686.13300" y="169.05362" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="686.13300" y="169.05362">Cloud</tspan><tspan x="686.13300" y="182.58875">Recovery</tspan></text>
-        </g>
-
-        <g id="vmDbBackup">
-          <rect stroke="#355bb7" height="46.64190" x="375.43165" y="-677.56241" stroke-width="1.82625px" width="32" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="685.01664" y="370.18727" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="685.01664" y="370.18727">VM/DB</tspan><tspan x="685.01664" y="383.72239">Backup</tspan></text>
-        </g>
-
-        <g id="tapeBackup">
-          <rect stroke="#355bb7" height="46.64190" x="418.51367" y="-677.56241" stroke-width="1.98957px" width="32" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="685.01664" y="411.95055" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="685.01664" y="411.95055">Tape</tspan><tspan x="685.01664" y="425.48567">Backup</tspan></text>
-        </g>
-
-        <g id="ztna">
-          <rect stroke="#355bb7" height="100.10444" x="175.54443" y="-336.72931" stroke-width="1.73439px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;fill:#f9f9f9;text-anchor:middle" x="300.16223" y="179.20801" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="300.16223" y="179.20801">ZTNA</tspan></text>
-        </g>
-
-        <g id="vpn">
-          <rect stroke="#355bb7" height="100.10444" x="175.54443" y="-336.72931" stroke-width="1.73439px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;fill:#f9f9f9;text-anchor:middle" x="300.16223" y="179.11800" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="300.16223" y="179.11800">VPN</tspan></text>
-        </g>
-
-        <g id="sse">
-          <rect stroke="#355bb7" height="100.10444" x="175.54443" y="-336.72931" stroke-width="1.73439px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;fill:#f9f9f9;text-anchor:middle" x="300.16223" y="179.29802" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="300.16223" y="179.29802">SSE</tspan></text>
-        </g>
-
-        <g id="penTest">
-          <rect stroke="#355bb7" height="45.44307" x="121.92754" y="-337.63998" stroke-width="1.40019px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;fill:#f9f9f9;text-anchor:middle" x="329.73205" y="127.71441" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="329.73205" y="127.71441">Pen Test</tspan></text>
-        </g>
-
-        <g id="codeTesting">
-          <rect stroke="#355bb7" height="49.88182" x="148.33339" y="-392.73132" stroke-width="1.94092px" width="32" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="385.09107" y="152.66262" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="385.09107" y="152.66262">Code </tspan><tspan x="385.09107" y="166.19775">Testing</tspan></text>
-        </g>
-
-        <g id="bugBounty">
-          <rect stroke="#355bb7" height="49.88182" x="186.55098" y="-392.73132" stroke-width="1.94092px" width="32" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#f9f9f9" x="385.09107" y="188.87637" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="385.09107" y="188.87637">Bug </tspan><tspan x="385.09107" y="202.41149">Bounty</tspan></text>
-        </g>
-
-        <g id="apiDiscovery">
-          <rect stroke="#355bb7" height="92.35549" x="193.16489" y="-279.82344" stroke-width="1.81576px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="244.63627" y="195.68901" font-family="Helvetica" transform="scale(0.95507382,1.0470395)"><tspan x="244.63627" y="195.68901">API Discovery</tspan></text>
-        </g>
-
-        <g id="apiProtection">
-          <rect stroke="#355bb7" height="94.94907" x="222.77204" y="-387.55643" stroke-width="1.81576px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="356.07917" y="223.32722" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="356.07917" y="223.32722">API Protection</tspan></text>
-        </g>
-
-        <g id="microsegmentation">
-          <rect stroke="#355bb7" height="177.44882" x="75.10687" y="-469.64573" stroke-width="2.43443px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="398.83966" y="83.10837" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="398.83966" y="83.10837">Microsegmentation</tspan></text>
-        </g>
-
-        <g id="otSecurity">
-          <rect stroke="#355bb7" height="64.89656" x="95.85886" y="-470.00134" stroke-width="1.53013px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.4663px;text-anchor:middle;fill:#ffffff" x="473.97065" y="99.38362" font-family="Helvetica" transform="scale(0.92316489,1.0832301)"><tspan x="473.97065" y="99.38362">OT Security</tspan></text>
-        </g>
-
-        <g id="dataIdAndClassification">
-          <rect stroke="#355bb7" height="76.24152" x="402.75927" y="-255.53056" stroke-width="2.02686px" width="32" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="227.63664" y="397.32106" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="227.63664" y="397.32106">Data ID and</tspan><tspan x="227.63664" y="410.85619">Classification</tspan></text>
-        </g>
-
-        <g id="dataLossPrevention">
-          <rect stroke="#355bb7" height="96.86072" x="400.61307" y="-391.96626" stroke-width="2.2685px" width="32" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:11.3333px;text-anchor:middle;fill:#ffffff" x="448.91207" y="424.69039" font-family="Helvetica" transform="matrix(0.91249743,0,0,1.0003634,-66.095207,-11.020107)"><tspan x="448.91207" y="424.69039">Data Loss</tspan><tspan x="448.91207" y="438.85702">Prevention</tspan></text>
-        </g>
-
-        <g id="darkWebScanning">
-          <rect stroke="#355bb7" height="57.13159" x="402.03977" y="-462.50257" stroke-width="2.04319px" width="32" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="454.34893" y="396.28350" font-family="Helvetica" transform="scale(0.95507383,1.0470395)"><tspan x="454.34893" y="396.28350">Dark Web</tspan><tspan x="454.34893" y="409.81862">Scanning</tspan></text>
-        </g>
-
-        <g id="ddosTesting">
-          <rect stroke="#355bb7" height="94.94907" x="313.68887" y="-424.59363" stroke-width="1.81576px" width="17" fill="#355bb7" transform="rotate(90)"/>
-          <text style="font-size:10.8281px;text-anchor:middle;fill:#ffffff" x="394.85858" y="309.81111" font-family="Helvetica" transform="scale(0.95507382,1.0470395)"><tspan x="394.85858" y="309.81111">DDoS Testing</tspan></text>
-        </g>
-
-      </g>
+      <!-- Control bars are generated from CONTROLS by layoutControls(). -->
+      <g id="labels"></g>
     </svg>
   </div>
 
@@ -567,179 +391,590 @@
 </main>
 
 <script>
-const TEMPLATES = {
-  'tableStakes': {
-    label: 'Table Stakes',
-    controls: ['vCiso', 'managedEdr', 'managedPatching', 'vpn', 'firewall', 'managedSiem', 'incidentResponse', 'deviceBackups', 'vmDbBackup', 'mfaSso', 'emailSecurity', 'iam', 'awarenessTraining']
-  },
-  'gettingInsurance': {
-    label: 'Getting Insurance',
-    controls: ['vCiso', 'managedSiem', 'incidentResponse', 'drPlanAndRehearsals', 'managedEdr', 'managedPatching', 'penTest', 'deviceBackups', 'ztna', 'codeTesting', 'botManagement', 'managedFirewall', 'dns', 'networkIntelligence', 'ddos', 'pam', 'vmDbBackup', 'impersonation', 'awarenessTraining', 'phishingTests', 'mfaSso', 'emailSecurity', 'iam']
-  },
-  'industryAverage': {
-    label: 'Industry Average',
-    controls: ['vCiso', 'staffingAndRecruiting', 'attackSurfaceManagement', 'managedEdr', 'managedPatching', 'penTest', 'sse', 'codeTesting', 'botManagement', 'managedFirewall', 'dns', 'networkIntelligence', 'ddos', 'managedSiem', 'soc', 'incidentResponse', 'pam', 'impersonation', 'deviceBackups', 'vmDbBackup', 'drPlanAndRehearsals', 'awarenessTraining', 'phishingTests', 'mfaSso', 'emailSecurity', 'iam']
-  },
-  'regionalBankStandard': {
-    label: 'Regional Bank',
-    controls: ['vCiso', 'managedGrc', 'staffingAndRecruiting', 'managedControlsAssurance', 'attackSurfaceManagement', 'managedSiem', 'soc', 'incidentResponse', 'ransomwareNegotiation', 'draas', 'drPlanAndRehearsals', 'managedEdr', 'microsegmentation', 'managedPatching', 'otSecurity', 'penTest', 'bugBounty', 'sse', 'apiDiscovery', 'apiProtection', 'botManagement', 'managedFirewall', 'dns', 'networkIntelligence', 'ddosTesting', 'ddos', 'dataIdAndClassification', 'dataLossPrevention', 'pam', 'darkWebScanning', 'vmDbBackup', 'tapeBackup', 'deviceBackups', 'cloudRecovery', 'awarenessTraining', 'phishingTests', 'policyEnforcement', 'mfaSso', 'emailSecurity', 'iam', 'impersonation']
-  }
+/* ══════════════════════════════════════════════════════════════════════════
+   CONTROL LIBRARY — NIST CSF 2.0
+
+   Columns are the six CSF 2.0 Functions (Govern, Identify, Protect, Detect,
+   Respond, Recover); rows are the Cyber Defense Matrix asset classes.
+
+     fn    : Function column index — 0 GV, 1 ID, 2 PR, 3 DE, 4 RS, 5 RC
+     rows  : 'all' for a program-wide control (drawn as a vertical band),
+             otherwise [firstRow, lastRow] over
+             0 Devices, 1 Applications, 2 Networks, 3 Data, 4 Users
+     alias : grouped market terminology for the same capability — these are
+             searchable and shown on the control, so a matrix stays readable
+             whether the client says "SSE", "SWG" or "CASB"
+     csf   : the CSF 2.0 Categories the control primarily supports
+   ══════════════════════════════════════════════════════════════════════════ */
+const CONTROLS = [
+  /* ── GOVERN ───────────────────────────────────────────────────────── */
+  { id:'securityLeadership', label:'Security Leadership', fn:0, rows:'all',
+    alias:['vCISO','CISO-as-a-Service','Security Program Management','Roles & Responsibilities'], csf:['GV.OC','GV.RR'] },
+  { id:'cyberRiskMgmt', label:'Cyber Risk Management', fn:0, rows:'all',
+    alias:['Risk Register','Cyber Risk Quantification (CRQ)','FAIR','Risk Appetite','Risk Assessment'], csf:['GV.RM','ID.RA'] },
+  { id:'policyStandards', label:'Policy & Standards', fn:0, rows:'all',
+    alias:['Policy Management','Control Framework','Standards & Baselines','Exception Management'], csf:['GV.PO'] },
+  { id:'grcAssurance', label:'GRC & Assurance', fn:0, rows:'all',
+    alias:['Integrated Risk Management (IRM)','Compliance Automation','Continuous Control Monitoring','Audit Readiness','Controls Assurance'], csf:['GV.OV','GV.PO'] },
+  { id:'supplyChainRisk', label:'Third-Party & Supply Chain Risk', fn:0, rows:'all',
+    alias:['TPRM','C-SCRM','Vendor Risk Management','Fourth-Party Risk','SIG / CAIQ'], csf:['GV.SC'] },
+
+  /* ── IDENTIFY ─────────────────────────────────────────────────────── */
+  { id:'attackSurfaceMgmt', label:'Attack Surface Management', fn:1, rows:'all',
+    alias:['EASM','CAASM','ASM','Shadow IT Discovery','External Exposure'], csf:['ID.AM','ID.RA'] },
+  { id:'exposureManagement', label:'Exposure Management', fn:1, rows:'all',
+    alias:['CTEM','Risk-Based Vulnerability Management (RBVM)','Vulnerability Scanning','Prioritization','Reachability Analysis'], csf:['ID.RA'] },
+  { id:'offensiveTesting', label:'Offensive Security Testing', fn:1, rows:'all',
+    alias:['Penetration Testing','PTaaS','Red Team','Purple Team','Breach & Attack Simulation (BAS)','Bug Bounty','Adversarial Emulation'], csf:['ID.IM','ID.RA'] },
+  { id:'threatIntelligence', label:'Threat Intelligence', fn:1, rows:'all',
+    alias:['CTI','Threat Intel Platform (TIP)','IOC / TTP Feeds','Threat Modeling','Dark Web Recon'], csf:['ID.RA-02','ID.RA-03'] },
+  { id:'assetInventory', label:'Asset Inventory', fn:1, rows:[0,0],
+    alias:['CMDB','IT Asset Management','Device Inventory','Endpoint Discovery','Unmanaged Device Detection'], csf:['ID.AM-01'] },
+  { id:'appApiDiscovery', label:'App & API Discovery', fn:1, rows:[1,1],
+    alias:['API Discovery','SaaS Discovery','Shadow SaaS','Software Inventory','SBOM'], csf:['ID.AM-02','ID.AM-08'] },
+  { id:'networkMapping', label:'Network Mapping', fn:1, rows:[2,2],
+    alias:['Topology Discovery','Flow Visibility','OT / IoT Asset Discovery','Network Inventory'], csf:['ID.AM-03'] },
+  { id:'dataDiscovery', label:'Data Discovery', fn:1, rows:[3,3],
+    alias:['Data Classification','Data Mapping','Data Catalog','Sensitive Data Discovery','Records of Processing'], csf:['ID.AM-07','ID.AM-08'] },
+  { id:'identityInventory', label:'Identity Inventory', fn:1, rows:[4,4],
+    alias:['Account Discovery','Non-Human Identity (NHI) Inventory','Entitlement Mapping','Joiner-Mover-Leaver Baseline'], csf:['ID.AM-05'] },
+
+  /* ── PROTECT ──────────────────────────────────────────────────────── */
+  { id:'zeroTrustArchitecture', label:'Zero Trust Architecture', fn:2, rows:'all',
+    alias:['Zero Trust Strategy','Least Privilege','Policy Enforcement Point','Continuous Verification'], csf:['PR.AA','PR.IR'] },
+  { id:'endpointProtection', label:'Endpoint Protection (EPP)', fn:2, rows:[0,0],
+    alias:['NGAV','Anti-Malware','Application Control','Device Control','Host Firewall'], csf:['PR.PS'] },
+  { id:'patchConfigMgmt', label:'Patch & Config Mgmt', fn:2, rows:[0,0],
+    alias:['Managed Patching','Hardening','CIS Benchmarks','UEM / MDM','Secure Baselines'], csf:['PR.PS-01','PR.PS-02'] },
+  { id:'otIotSecurity', label:'OT / IoT Security', fn:2, rows:[0,0],
+    alias:['ICS / SCADA Security','Cyber-Physical Systems (CPS)','XIoT','Purdue Model Segmentation'], csf:['PR.IR','PR.PS'] },
+  { id:'secureSdlc', label:'Secure SDLC & Testing', fn:2, rows:[1,1],
+    alias:['SAST','DAST','IAST','SCA','ASPM','Secrets Scanning','IaC Scanning','Pipeline Security'], csf:['PR.PS-06'] },
+  { id:'cloudSecurity', label:'Cloud Security (CNAPP)', fn:2, rows:[1,1],
+    alias:['CSPM','CWPP','KSPM','CIEM','Container & Kubernetes Security','Cloud Workload Protection'], csf:['PR.PS','PR.IR'] },
+  { id:'saasSecurity', label:'SaaS Security (SSPM)', fn:2, rows:[1,1],
+    alias:['SaaS Posture Management','OAuth / App Governance','CASB Posture','Tenant Hardening'], csf:['PR.PS','PR.AA'] },
+  { id:'waapApiProtection', label:'WAF & API Protection', fn:2, rows:[1,1],
+    alias:['WAAP','Web Application Firewall','API Security','Bot Management','Client-Side Protection'], csf:['PR.IR','PR.PS'] },
+  { id:'saseSse', label:'SASE / SSE', fn:2, rows:[2,2],
+    alias:['Secure Service Edge','SWG','CASB','FWaaS','SD-WAN','Protective DNS','DNS Filtering'], csf:['PR.IR','PR.AA'] },
+  { id:'ztnaRemoteAccess', label:'ZTNA & Remote Access', fn:2, rows:[2,2],
+    alias:['Zero Trust Network Access','VPN','Remote Access Broker','Device Posture Check'], csf:['PR.AA-05','PR.IR'] },
+  { id:'networkSegmentation', label:'Microsegmentation', fn:2, rows:[2,2],
+    alias:['Network Segmentation','Network Zoning','East-West Controls','NGFW','IPS / IDS','Managed Firewall'], csf:['PR.IR-01'] },
+  { id:'ddosProtection', label:'DDoS Protection', fn:2, rows:[2,2],
+    alias:['DDoS Mitigation','Scrubbing Centers','Rate Limiting','DDoS Testing'], csf:['PR.IR-04'] },
+  { id:'dataProtectionDlp', label:'Data Loss Prevention', fn:2, rows:[3,3],
+    alias:['DLP','Insider Risk Management','Data Exfiltration Prevention','GenAI Data Controls'], csf:['PR.DS'] },
+  { id:'encryptionKeyMgmt', label:'Encryption & Key Mgmt', fn:2, rows:[3,3],
+    alias:['KMS','HSM','PKI','Certificate Lifecycle Management','Tokenization','Post-Quantum Readiness'], csf:['PR.DS-01','PR.DS-02'] },
+  { id:'dspm', label:'Data Security Posture', fn:2, rows:[3,3],
+    alias:['DSPM','Data Access Governance','Data Minimization','Privacy Engineering','Data Residency'], csf:['PR.DS','PR.AA-05'] },
+  { id:'mfaSso', label:'MFA & SSO', fn:2, rows:[4,4],
+    alias:['Phishing-Resistant MFA','Passkeys','FIDO2','Passwordless','Single Sign-On','Adaptive Authentication'], csf:['PR.AA-03'] },
+  { id:'iamIga', label:'Identity Governance', fn:2, rows:[4,4],
+    alias:['IAM','IGA','Access Certification','Joiner-Mover-Leaver','Directory Services','NHI Management'], csf:['PR.AA-01','PR.AA-05'] },
+  { id:'pamSecrets', label:'PAM & Secrets', fn:2, rows:[4,4],
+    alias:['Privileged Access Management','Credential Vaulting','Just-in-Time Access','Session Recording','CIEM'], csf:['PR.AA-05'] },
+  { id:'emailCollabSecurity', label:'Email Security', fn:2, rows:[4,4],
+    alias:['ICES','Secure Email Gateway','Anti-Phishing','BEC / Impersonation Defense','DMARC','Collaboration & Chat Protection'], csf:['PR.IR','DE.CM'] },
+  { id:'awarenessHumanRisk', label:'Awareness & Training', fn:2, rows:[4,4],
+    alias:['Human Risk Management (HRM)','Phishing Simulation','Security Culture','Role-Based Training'], csf:['PR.AT'] },
+
+  /* ── DETECT ───────────────────────────────────────────────────────── */
+  { id:'siemLogging', label:'SIEM & Log Management', fn:3, rows:'all',
+    alias:['Managed SIEM','Security Data Lake','Telemetry Pipeline','Log Retention','Audit Logging'], csf:['DE.AE','PR.PS-04'] },
+  { id:'socMdr', label:'SOC / MDR (24×7)', fn:3, rows:'all',
+    alias:['Managed Detection & Response','Managed SOC','MSSP','Co-Managed SOC','Triage & Escalation'], csf:['DE.CM','DE.AE'] },
+  { id:'detectionEngineering', label:'Detection Engineering & Hunting', fn:3, rows:'all',
+    alias:['Threat Hunting','Detection-as-Code','Sigma / MITRE ATT&CK Mapping','Deception Technology','Content Tuning'], csf:['DE.AE','ID.IM'] },
+  { id:'edrXdr', label:'EDR / XDR', fn:3, rows:[0,0],
+    alias:['Endpoint Detection & Response','Extended Detection & Response','Managed EDR','Host Telemetry'], csf:['DE.CM-01'] },
+  { id:'appDetectionResponse', label:'App Detection (ADR)', fn:3, rows:[1,1],
+    alias:['ADR','RASP','Runtime Application Security','Cloud Runtime Detection','eBPF Sensors'], csf:['DE.CM-09'] },
+  { id:'ndr', label:'Network Detection', fn:3, rows:[2,2],
+    alias:['NDR','Network Traffic Analysis','Network Intelligence','Encrypted Traffic Analysis','Full Packet Capture'], csf:['DE.CM-01'] },
+  { id:'dataDetectionResponse', label:'Data Detection (DDR)', fn:3, rows:[3,3],
+    alias:['DDR','Database Activity Monitoring','Data Access Anomaly Detection','File Integrity Monitoring'], csf:['DE.CM-09','DE.AE'] },
+  { id:'itdrUeba', label:'ITDR / UEBA', fn:3, rows:[4,4],
+    alias:['Identity Threat Detection & Response','User & Entity Behavior Analytics','Session Anomaly Detection','MFA Fatigue Detection'], csf:['DE.CM-03'] },
+  { id:'digitalRiskMonitoring', label:'Brand & Leak Monitoring', fn:3, rows:[4,4],
+    alias:['Digital Risk Protection','Dark Web Scanning','Credential Leak Monitoring','Impersonation & Typosquat Detection','Takedown Services'], csf:['DE.CM-06','ID.RA-02'] },
+
+  /* ── RESPOND ──────────────────────────────────────────────────────── */
+  { id:'incidentResponse', label:'Incident Response & DFIR', fn:4, rows:'all',
+    alias:['IR Retainer','Digital Forensics','CSIRT','Breach Investigation','Root Cause Analysis'], csf:['RS.MA','RS.AN'] },
+  { id:'soarAutomation', label:'Response Automation (SOAR)', fn:4, rows:'all',
+    alias:['Playbooks','Auto-Containment','Case Management','Hyperautomation','Agentic Triage'], csf:['RS.MA','RS.MI'] },
+  { id:'crisisComms', label:'Crisis Mgmt & Comms', fn:4, rows:'all',
+    alias:['Breach Notification','Legal & PR Counsel','Ransomware Negotiation','Tabletop Exercises','Regulatory Reporting'], csf:['RS.CO','RS.MA'] },
+  { id:'endpointContainment', label:'Endpoint Containment', fn:4, rows:[0,0],
+    alias:['Host Isolation','Quarantine','Remote Remediation','Kill Process / Rollback'], csf:['RS.MI-01'] },
+  { id:'appRemediation', label:'App Remediation', fn:4, rows:[1,1],
+    alias:['Virtual Patching','Emergency Hotfix','WAF Rule Deployment','Deployment Rollback'], csf:['RS.MI-02'] },
+  { id:'networkContainment', label:'Network Containment', fn:4, rows:[2,2],
+    alias:['Blocklists & Sinkholing','Emergency Segmentation','Egress Blocking','ACL Enforcement'], csf:['RS.MI-01'] },
+  { id:'dataBreachResponse', label:'Data Breach Response', fn:4, rows:[3,3],
+    alias:['Impacted-Record Analysis','Legal Hold','Data Subject Notification','eDiscovery'], csf:['RS.CO-02','RS.AN'] },
+  { id:'identityResponse', label:'Account Takeover Response', fn:4, rows:[4,4],
+    alias:['Credential Reset','Session & Token Revocation','Privilege Rollback','ITDR Response'], csf:['RS.MI-01'] },
+
+  /* ── RECOVER ──────────────────────────────────────────────────────── */
+  { id:'cyberResilience', label:'Cyber Resilience & BCDR', fn:5, rows:'all',
+    alias:['Business Continuity','Business Impact Analysis','Minimum Viable Company','Lessons Learned','Post-Incident Improvement'], csf:['RC.RP','ID.IM'] },
+  { id:'drPlanRehearsals', label:'DR Plan & Rehearsals', fn:5, rows:'all',
+    alias:['DR Testing','Failover Drills','RTO / RPO Validation','Recovery Runbooks'], csf:['RC.RP-01','RC.RP-05'] },
+  { id:'cyberInsurance', label:'Cyber Insurance Readiness', fn:5, rows:'all',
+    alias:['Coverage Review','Claims Readiness','Underwriting Requirements','Risk Transfer'], csf:['GV.RM-06','RC.CO'] },
+  { id:'endpointRecovery', label:'Endpoint Recovery', fn:5, rows:[0,0],
+    alias:['Device Backups','Golden Images','Bare-Metal Restore','Mass Reimaging','Endpoint Rebuild'], csf:['RC.RP-03'] },
+  { id:'appRecovery', label:'App & Config Restore', fn:5, rows:[1,1],
+    alias:['IaC Rebuild','Pipeline Restore','Configuration Backup','Blue-Green Failback'], csf:['RC.RP-03'] },
+  { id:'networkRecovery', label:'Network Restoration', fn:5, rows:[2,2],
+    alias:['Device Config Backup','Out-of-Band Access','Failover Circuits','DNS Failover'], csf:['RC.RP-03'] },
+  { id:'immutableBackup', label:'Immutable Backup', fn:5, rows:[3,3],
+    alias:['Air-Gapped Backup','VM / DB Backup','Tape Backup','DRaaS','Cloud Recovery','Isolated Recovery Environment','Immutable Snapshots'], csf:['RC.RP-03','PR.DS-11'] },
+  { id:'identityRecovery', label:'Directory Recovery', fn:5, rows:[4,4],
+    alias:['AD / Entra Forest Recovery','Identity Recovery','Break-Glass Accounts','Tier-0 Rebuild'], csf:['RC.RP-03'] },
+];
+
+/* Legacy ids from the pre-CSF-2.0 control list, so saved JSON still loads. */
+const LEGACY_IDS = {
+  vCiso: 'securityLeadership', staffingAndRecruiting: 'securityLeadership',
+  managedGrc: 'grcAssurance', managedControlsAssurance: 'grcAssurance',
+  attackSurfaceManagement: 'attackSurfaceMgmt', apiDiscovery: 'appApiDiscovery',
+  managedPatching: 'patchConfigMgmt', microsegmentation: 'networkSegmentation',
+  otSecurity: 'otIotSecurity', managedEdr: 'edrXdr', sse: 'saseSse', dns: 'saseSse',
+  ztna: 'ztnaRemoteAccess', vpn: 'ztnaRemoteAccess', penTest: 'offensiveTesting',
+  bugBounty: 'offensiveTesting', codeTesting: 'secureSdlc',
+  botManagement: 'waapApiProtection', apiProtection: 'waapApiProtection',
+  firewall: 'networkSegmentation', managedFirewall: 'networkSegmentation',
+  ddos: 'ddosProtection', ddosTesting: 'ddosProtection', networkIntelligence: 'ndr',
+  dataIdAndClassification: 'dataDiscovery', dataLossPrevention: 'dataProtectionDlp',
+  darkWebScanning: 'digitalRiskMonitoring', impersonation: 'digitalRiskMonitoring',
+  managedSiem: 'siemLogging', soc: 'socMdr', ransomwareNegotiation: 'crisisComms',
+  awarenessTraining: 'awarenessHumanRisk', phishingTests: 'awarenessHumanRisk',
+  policyEnforcement: 'zeroTrustArchitecture', emailSecurity: 'emailCollabSecurity',
+  iam: 'iamIga', pam: 'pamSecrets', deviceBackups: 'endpointRecovery',
+  cloudRecovery: 'immutableBackup', vmDbBackup: 'immutableBackup',
+  tapeBackup: 'immutableBackup', draas: 'immutableBackup',
+  drPlanAndRehearsals: 'drPlanRehearsals'
 };
 
-const SOLUTIONS = [
-  { id: 'vCiso',                    label: 'vCISO' },
-  { id: 'staffingAndRecruiting',    label: 'Staffing & Recruiting' },
-  { id: 'managedGrc',               label: 'Managed GRC' },
-  { id: 'managedControlsAssurance', label: "Mng'd Controls Assurance" },
-  { id: 'attackSurfaceManagement',  label: 'Attack Surface Mgmt' },
-  { id: 'apiDiscovery',             label: 'API Discovery' },
-  { id: 'managedPatching',          label: 'Managed Patching' },
-  { id: 'microsegmentation',        label: 'Microsegmentation' },
-  { id: 'otSecurity',               label: 'OT Security' },
-  { id: 'managedEdr',               label: 'Managed EDR' },
-  { id: 'sse',                      label: 'SSE' },
-  { id: 'ztna',                     label: 'ZTNA' },
-  { id: 'vpn',                      label: 'VPN' },
-  { id: 'penTest',                  label: 'Pen Test' },
-  { id: 'codeTesting',              label: 'Code Testing' },
-  { id: 'bugBounty',                label: 'Bug Bounty' },
-  { id: 'botManagement',            label: 'Bot Management' },
-  { id: 'apiProtection',            label: 'API Protection' },
-  { id: 'firewall',                 label: 'Firewall' },
-  { id: 'managedFirewall',          label: 'Managed Firewall' },
-  { id: 'dns',                      label: 'DNS' },
-  { id: 'ddos',                     label: 'DDoS' },
-  { id: 'ddosTesting',              label: 'DDoS Testing' },
-  { id: 'networkIntelligence',      label: 'Network Intelligence' },
-  { id: 'dataIdAndClassification',  label: 'Data ID & Classification' },
-  { id: 'dataLossPrevention',       label: 'Data Loss Prevention' },
-  { id: 'darkWebScanning',          label: 'Dark Web Scanning' },
-  { id: 'managedSiem',              label: 'Managed SIEM' },
-  { id: 'soc',                      label: 'SOC' },
-  { id: 'incidentResponse',         label: 'Incident Response' },
-  { id: 'ransomwareNegotiation',    label: 'Ransomware Negotiation' },
-  { id: 'awarenessTraining',        label: 'Awareness Training' },
-  { id: 'phishingTests',            label: 'Phishing Tests' },
-  { id: 'policyEnforcement',        label: 'Policy Enforcement' },
-  { id: 'mfaSso',                   label: 'MFA / SSO' },
-  { id: 'emailSecurity',            label: 'Email Security' },
-  { id: 'iam',                      label: 'IAM' },
-  { id: 'pam',                      label: 'PAM' },
-  { id: 'impersonation',            label: 'Impersonation' },
-  { id: 'deviceBackups',            label: 'Device Backups' },
-  { id: 'cloudRecovery',            label: 'Cloud Recovery' },
-  { id: 'vmDbBackup',               label: 'VM/DB Backup' },
-  { id: 'tapeBackup',               label: 'Tape Backup' },
-  { id: 'drPlanAndRehearsals',      label: 'DR Plan & Rehearsals' },
-  { id: 'draas',                    label: 'DR-aaS' },
+/* ── Maturity templates ─────────────────────────────────────────────────── */
+const BASELINE = [
+  'securityLeadership', 'policyStandards', 'assetInventory', 'exposureManagement',
+  'endpointProtection', 'patchConfigMgmt', 'edrXdr', 'saseSse', 'networkSegmentation',
+  'mfaSso', 'iamIga', 'emailCollabSecurity', 'awarenessHumanRisk', 'siemLogging',
+  'incidentResponse', 'endpointRecovery', 'immutableBackup', 'drPlanRehearsals'
 ];
+const INSURANCE = BASELINE.concat([
+  'cyberInsurance', 'supplyChainRisk', 'cyberRiskMgmt', 'offensiveTesting',
+  'socMdr', 'pamSecrets', 'ztnaRemoteAccess', 'secureSdlc', 'ddosProtection',
+  'dataProtectionDlp', 'encryptionKeyMgmt', 'crisisComms', 'cyberResilience',
+  'endpointContainment', 'identityResponse', 'digitalRiskMonitoring'
+]);
+const INDUSTRY = INSURANCE.concat([
+  'grcAssurance', 'attackSurfaceMgmt', 'threatIntelligence', 'appApiDiscovery',
+  'zeroTrustArchitecture', 'cloudSecurity', 'waapApiProtection', 'ndr',
+  'soarAutomation', 'appRecovery', 'networkRecovery', 'identityRecovery'
+]);
+const TEMPLATES = {
+  tableStakes:          { label: 'Table Stakes',     controls: BASELINE },
+  gettingInsurance:     { label: 'Insurance Ready',  controls: INSURANCE },
+  industryAverage:      { label: 'Industry Average', controls: INDUSTRY },
+  regionalBankStandard: { label: 'Regulated / Bank', controls: CONTROLS.map(c => c.id) }
+};
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MATRIX GEOMETRY & AUTO-LAYOUT
+
+   Bars are generated from CONTROLS rather than hand-placed, so adding or
+   renaming a control needs no SVG edits. Program-wide controls become
+   vertical bands filling their Function column; asset-specific controls
+   become horizontal bars packed into lanes inside their cell. The packer
+   guarantees no two bars overlap.
+   ══════════════════════════════════════════════════════════════════════════ */
+const GRID = {
+  x0: 138.4232, colW: 123.7387, y0: 56, rowH: 106,
+  functions: ['Govern', 'Identify', 'Protect', 'Detect', 'Respond', 'Recover'],
+  assets:    ['Devices', 'Applications', 'Networks', 'Data', 'Users']
+};
+const PAD = 4, V_BAR_W = 14, V_GAP = 2.5, V_INSET = 7;
+const ROW_PAD = 5, MAX_LANE_H = 20, LANE_GAP = 3, BAR_LINE_H = 17;
+const MIN_FONT = 6.8, MAX_FONT = 9.5, WRAP_FONT = 7.3, CHAR_W = 0.55;
+
+/* Split a label into exactly n lines, minimising the longest one. */
+function wrapLabel(label, n) {
+  const words = label.split(/\s+/);
+  if (n === 1) return [label];
+  if (words.length < n) return null;
+  let best = null;
+  (function walk(i, parts) {
+    if (parts.length === n - 1) {
+      const rest = words.slice(i).join(' ');
+      if (!rest) return;
+      const lines = parts.concat(rest);
+      const score = Math.max.apply(null, lines.map(l => l.length));
+      if (!best || score < best.score) best = { lines: lines, score: score };
+      return;
+    }
+    for (let j = i + 1; j <= words.length - (n - parts.length - 1); j++)
+      walk(j, parts.concat(words.slice(i, j).join(' ')));
+  })(0, []);
+  return best ? best.lines : null;
+}
+
+/* Fewest lines that keep the label legible inside width w. */
+function fitText(label, w) {
+  const usable = w - 7;
+  const widest = ls => Math.max.apply(null, ls.map(l => l.length));
+  for (let n = 1; n <= 3; n++) {
+    const lines = wrapLabel(label, n);
+    if (!lines) continue;
+    const f = usable / (CHAR_W * widest(lines));
+    if (f >= (n === 1 ? WRAP_FONT : MIN_FONT))
+      return { lines: lines, font: Math.min(MAX_FONT, f) };
+  }
+  const lines = wrapLabel(label, 3) || wrapLabel(label, 2) || [label];
+  const f = usable / (CHAR_W * widest(lines));
+  return { lines: lines, font: Math.max(MIN_FONT, Math.min(MAX_FONT, f)) };
+}
+
+function layoutControls() {
+  const nCols = GRID.functions.length, nRows = GRID.assets.length;
+  const placed = [], vZone = new Array(nCols).fill(null);
+
+  // 1 — program-wide controls become vertical bands.
+  for (let c = 0; c < nCols; c++) {
+    const bands = CONTROLS.filter(k => k.fn === c && k.rows === 'all');
+    if (!bands.length) continue;
+    const hasRowBars = CONTROLS.some(k => k.fn === c && k.rows !== 'all');
+    const left = GRID.x0 + c * GRID.colW + PAD;
+    const pitch = hasRowBars ? V_BAR_W + V_GAP : (GRID.colW - 2 * PAD) / bands.length;
+    const barW  = hasRowBars ? V_BAR_W : pitch - V_GAP;
+    const y = GRID.y0 + V_INSET, h = nRows * GRID.rowH - 2 * V_INSET;
+    bands.forEach((k, i) => placed.push({
+      ctl: k, vertical: true, x: left + i * pitch, y: y, w: barW, h: h,
+      text: fitText(k.label, h * 0.85)
+    }));
+    vZone[c] = { x1: left, x2: left + bands.length * pitch - V_GAP };
+  }
+
+  // 2 — asset-specific controls take the widest run of their column span
+  //     that no vertical band already occupies.
+  function freeSpan(c1, c2) {
+    const full = [GRID.x0 + c1 * GRID.colW + PAD, GRID.x0 + (c2 + 1) * GRID.colW - PAD];
+    let segs = [full];
+    for (let c = c1; c <= c2; c++) {
+      const b = vZone[c];
+      if (!b) continue;
+      const next = [];
+      segs.forEach(function(s) {
+        if (b.x2 <= s[0] || b.x1 >= s[1]) { next.push(s); return; }
+        if (b.x1 - 2 > s[0]) next.push([s[0], b.x1 - 2]);
+        if (b.x2 + 2 < s[1]) next.push([b.x2 + 2, s[1]]);
+      });
+      segs = next;
+    }
+    segs.sort((p, q) => (q[1] - q[0]) - (p[1] - p[0]));
+    return segs[0] || full;
+  }
+
+  const lanes = [];
+  for (let r = 0; r < nRows; r++) lanes.push([]);
+  function claim(r1, r2, n, x1, x2) {
+    for (let L = 0; L < 40; L++) {
+      let ok = true;
+      for (let r = r1; r <= r2 && ok; r++)
+        for (let l = L; l < L + n && ok; l++) {
+          lanes[r][l] = lanes[r][l] || [];
+          if (lanes[r][l].some(s => !(x2 <= s[0] || x1 >= s[1]))) ok = false;
+        }
+      if (!ok) continue;
+      for (let r = r1; r <= r2; r++)
+        for (let l = L; l < L + n; l++) lanes[r][l].push([x1, x2]);
+      return L;
+    }
+    return 0;
+  }
+
+  CONTROLS.filter(k => k.rows !== 'all').forEach(function(k) {
+    const cols = Array.isArray(k.fn) ? k.fn : [k.fn, k.fn];
+    const span = freeSpan(cols[0], cols[1]);
+    const text = fitText(k.label, span[1] - span[0]);
+    placed.push({
+      ctl: k, vertical: false, x: span[0], w: span[1] - span[0],
+      r1: k.rows[0], r2: k.rows[1], cell: cols[0] + '-' + cols[1],
+      lane: claim(k.rows[0], k.rows[1], text.lines.length, span[0], span[1]),
+      span: text.lines.length, text: text
+    });
+  });
+
+  // 3 — lane height is uniform per asset row so bars line up across the
+  //     matrix; each cell's own stack is then centred inside its row.
+  const rowLaneH = lanes.map(ls =>
+    Math.min(MAX_LANE_H, (GRID.rowH - 2 * ROW_PAD) / (ls.length || 1)));
+  const bars = placed.filter(p => !p.vertical), cellLanes = {};
+  bars.forEach(function(p) {
+    for (let r = p.r1; r <= p.r2; r++) {
+      const key = r + ':' + p.cell;
+      cellLanes[key] = Math.max(cellLanes[key] || 0, p.lane + p.span);
+    }
+  });
+  const cellTop = (r, cell) =>
+    GRID.y0 + r * GRID.rowH + (GRID.rowH - cellLanes[r + ':' + cell] * rowLaneH[r]) / 2;
+  bars.forEach(function(p) {
+    const yTop = cellTop(p.r1, p.cell) + p.lane * rowLaneH[p.r1];
+    const yBot = cellTop(p.r2, p.cell) + (p.lane + p.span) * rowLaneH[p.r2];
+    p.h = Math.min(yBot - yTop - LANE_GAP, p.span * BAR_LINE_H);
+    p.y = yTop + (yBot - yTop - p.h) / 2;
+  });
+  return placed;
+}
+
+/* ── Draw the bars into the SVG ─────────────────────────────────────────── */
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const PLACED = layoutControls();
+
+(function drawBars() {
+  const layer = document.getElementById('labels');
+  PLACED.forEach(function(p) {
+    const g = document.createElementNS(SVG_NS, 'g');
+    g.setAttribute('id', p.ctl.id);
+    g.setAttribute('class', 'ctl-bar');
+
+    const rect = document.createElementNS(SVG_NS, 'rect');
+    rect.setAttribute('x', p.x.toFixed(2));
+    rect.setAttribute('y', p.y.toFixed(2));
+    rect.setAttribute('width', p.w.toFixed(2));
+    rect.setAttribute('height', p.h.toFixed(2));
+    rect.setAttribute('rx', '2');
+    rect.setAttribute('stroke-width', '1');
+    g.appendChild(rect);
+
+    const text = document.createElementNS(SVG_NS, 'text');
+    text.setAttribute('font-family', 'Helvetica, Arial, sans-serif');
+    text.setAttribute('font-size', p.text.font.toFixed(2));
+    text.setAttribute('text-anchor', 'middle');
+    const cx = p.x + p.w / 2, cy = p.y + p.h / 2, lh = p.text.font * 1.15;
+    if (p.vertical) {
+      // rotate(-90) maps local (x,y) to screen (y,-x): text reads bottom-up.
+      text.setAttribute('transform', 'rotate(-90)');
+      text.setAttribute('x', (-cy).toFixed(2));
+      text.setAttribute('y', (cx + p.text.font * 0.35).toFixed(2));
+      text.textContent = p.text.lines[0];
+    } else {
+      const top = cy - (p.text.lines.length - 1) * lh / 2 + p.text.font * 0.35;
+      text.setAttribute('x', cx.toFixed(2));
+      text.setAttribute('y', top.toFixed(2));
+      p.text.lines.forEach(function(line, i) {
+        const ts = document.createElementNS(SVG_NS, 'tspan');
+        ts.setAttribute('x', cx.toFixed(2));
+        if (i) ts.setAttribute('dy', lh.toFixed(2));
+        ts.textContent = line;
+        text.appendChild(ts);
+      });
+    }
+    g.appendChild(text);
+    layer.appendChild(g);
+  });
+})();
 
 const COLOR_FILLS   = { green: '#166534', blue: '#1e3a8a', red: '#7f1d1d' };
 const COLOR_STROKES = { green: '#4ade80', blue: '#93c5fd', red: '#fca5a5' };
-const COLOR_TEXT    = { green: '#4ade80', blue: '#93c5fd', red: '#fca5a5' };
 
-// State
+/* ── State ──────────────────────────────────────────────────────────────── */
 const state = {};
-SOLUTIONS.forEach(s => state[s.id] = 'off');
-try { Object.assign(state, JSON.parse(localStorage.getItem('cdm-svg-v2') || '{}')); } catch(e) {}
+CONTROLS.forEach(c => state[c.id] = 'off');
+try { Object.assign(state, JSON.parse(localStorage.getItem('cdm-csf2-v1') || '{}')); } catch (e) {}
+CONTROLS.forEach(c => { if (!COLOR_FILLS[state[c.id]]) state[c.id] = 'off'; });
 
 function save() {
-  try { localStorage.setItem('cdm-svg-v2', JSON.stringify(state)); } catch(e) {}
+  try { localStorage.setItem('cdm-csf2-v1', JSON.stringify(state)); } catch (e) {}
 }
 
 function applyState(id) {
-  const color = state[id];
-  const g = document.getElementById(id);
+  const color = state[id], g = document.getElementById(id);
   if (!g) return;
-  const rect = g.querySelector('rect');
-  const text = g.querySelector('text');
-  if (!rect) return;
+  const rect = g.querySelector('rect'), text = g.querySelector('text');
   if (color === 'off') {
     rect.style.display = 'none';
     if (text) text.style.display = 'none';
-  } else {
-    rect.style.display = '';
-    if (text) text.style.display = '';
-    rect.setAttribute('fill', COLOR_FILLS[color]);
-    rect.setAttribute('stroke', COLOR_STROKES[color]);
-    if (text) text.style.fill = COLOR_TEXT[color];
+    return;
   }
+  rect.style.display = '';
+  if (text) text.style.display = '';
+  rect.setAttribute('fill', COLOR_FILLS[color]);
+  rect.setAttribute('stroke', COLOR_STROKES[color]);
+  if (text) text.style.fill = '#f8fafc';
 }
 
 function updateStats() {
   const counts = { green: 0, blue: 0, red: 0, off: 0 };
-  SOLUTIONS.forEach(s => counts[state[s.id]]++);
-  document.getElementById('stat-blue').textContent  = `● ${counts.blue} Current`;
-  document.getElementById('stat-green').textContent = `● ${counts.green} Planned`;
-  document.getElementById('stat-red').textContent   = `● ${counts.red} Gap`;
-  document.getElementById('stat-off').textContent   = `● ${counts.off} Off`;
+  CONTROLS.forEach(c => counts[state[c.id]]++);
+  document.getElementById('stat-blue').textContent  = '● ' + counts.blue  + ' Current';
+  document.getElementById('stat-green').textContent = '● ' + counts.green + ' Planned';
+  document.getElementById('stat-red').textContent   = '● ' + counts.red   + ' Gap';
+  document.getElementById('stat-off').textContent   = '● ' + counts.off   + ' Off';
 }
 
+/* ── Sidebar ────────────────────────────────────────────────────────────── */
+const STATUS_OPTS = [
+  { val: 'off',   cls: 'lbl-off',   title: 'Not applicable' },
+  { val: 'blue',  cls: 'lbl-blue',  title: 'Current' },
+  { val: 'green', cls: 'lbl-green', title: 'Planned' },
+  { val: 'red',   cls: 'lbl-red',   title: 'Gap' }
+];
 const ul = document.getElementById('solution-checkboxes');
+let groupMode = 'fn';
 
-// Sort solutions alphabetically
-const sortedSolutions = [...SOLUTIONS].sort((a, b) => a.label.localeCompare(b.label));
+function assetLabel(ctl) {
+  if (ctl.rows === 'all') return 'All Assets';
+  return ctl.rows[0] === ctl.rows[1]
+    ? GRID.assets[ctl.rows[0]]
+    : GRID.assets[ctl.rows[0]] + '–' + GRID.assets[ctl.rows[1]];
+}
 
-sortedSolutions.forEach(sol => {
+function groupsFor(mode) {
+  if (mode === 'az') return [{ name: 'All Controls',
+    items: CONTROLS.slice().sort((a, b) => a.label.localeCompare(b.label)) }];
+  if (mode === 'asset') {
+    const order = GRID.assets.concat('All Assets');
+    return order.map(name => ({ name: name,
+      items: CONTROLS.filter(c => assetLabel(c) === name) }))
+      .filter(g => g.items.length);
+  }
+  return GRID.functions.map((name, i) => ({ name: name,
+    items: CONTROLS.filter(c => c.fn === i) })).filter(g => g.items.length);
+}
+
+function buildRow(ctl) {
   const li = document.createElement('li');
-  li.id = `li-${sol.id}`;
-  if (state[sol.id] !== 'off') li.className = `active-${state[sol.id]}`;
+  li.id = 'li-' + ctl.id;
+  li.className = state[ctl.id] !== 'off' ? 'active-' + state[ctl.id] : '';
+  li.title = ctl.label + '\n' + GRID.functions[ctl.fn].toUpperCase() + ' · ' +
+    assetLabel(ctl) + '\nCSF 2.0: ' + ctl.csf.join(', ') +
+    '\nAlso known as: ' + ctl.alias.join(', ');
 
+  const txt = document.createElement('div');
+  txt.className = 'sol-text';
   const lbl = document.createElement('span');
   lbl.className = 'sol-label';
-  lbl.textContent = sol.label;
-  li.appendChild(lbl);
+  lbl.textContent = ctl.label;
+  const sub = document.createElement('span');
+  sub.className = 'sol-alias';
+  sub.textContent = ctl.alias.slice(0, 3).join(' · ');
+  txt.appendChild(lbl);
+  txt.appendChild(sub);
+  li.appendChild(txt);
 
   const rg = document.createElement('div');
   rg.className = 'radio-group';
-
-  [
-    { val: 'off',   cls: 'lbl-off',   title: 'Off'     },
-    { val: 'blue',  cls: 'lbl-blue',  title: 'Current' },
-    { val: 'green', cls: 'lbl-green', title: 'Planned' },
-    { val: 'red',   cls: 'lbl-red',   title: 'Gap'     },
-  ].forEach(opt => {
+  STATUS_OPTS.forEach(function(opt) {
     const inp = document.createElement('input');
     inp.type = 'radio';
-    inp.name = `${sol.id}-color`;
-    inp.id   = `${sol.id}-${opt.val}`;
+    inp.name = ctl.id + '-color';
+    inp.id = ctl.id + '-' + opt.val;
     inp.value = opt.val;
-    if (state[sol.id] === opt.val) inp.checked = true;
-
-    const optLbl = document.createElement('label');
-    optLbl.htmlFor = inp.id;
-    optLbl.className = opt.cls;
-    optLbl.title = opt.title;
-
-    inp.addEventListener('change', () => {
-      state[sol.id] = opt.val;
-      const liEl = document.getElementById(`li-${sol.id}`);
-      liEl.className = opt.val !== 'off' ? `active-${opt.val}` : '';
-      applyState(sol.id);
-      updateStats();
-      save();
-      sortAndReorderList();
-    });
-
+    inp.checked = state[ctl.id] === opt.val;
+    inp.addEventListener('change', function() { setStatus(ctl.id, opt.val); });
+    const dot = document.createElement('label');
+    dot.htmlFor = inp.id;
+    dot.className = opt.cls;
+    dot.title = opt.title;
     rg.appendChild(inp);
-    rg.appendChild(optLbl);
+    rg.appendChild(dot);
   });
-
   li.appendChild(rg);
-  ul.appendChild(li);
-  applyState(sol.id);
+
+  const bar = document.getElementById(ctl.id);
+  li.addEventListener('mouseenter', () => bar && bar.classList.add('bar-hover'));
+  li.addEventListener('mouseleave', () => bar && bar.classList.remove('bar-hover'));
+  return li;
+}
+
+function renderList() {
+  ul.innerHTML = '';
+  groupsFor(groupMode).forEach(function(group) {
+    const head = document.createElement('li');
+    head.className = 'group-head';
+    head.dataset.group = group.name;
+    head.innerHTML = '<span>' + group.name + '</span><span class="group-count">' +
+      group.items.length + '</span>';
+    ul.appendChild(head);
+    const items = group.items.slice().sort(function(a, b) {
+      const sa = state[a.id] !== 'off', sb = state[b.id] !== 'off';
+      if (sa !== sb) return sa ? -1 : 1;
+      return a.label.localeCompare(b.label);
+    });
+    items.forEach(c => ul.appendChild(buildRow(c)));
+  });
+  applyFilter();
+}
+
+function setStatus(id, val) {
+  state[id] = val;
+  const li = document.getElementById('li-' + id);
+  if (li) li.className = val !== 'off' ? 'active-' + val : '';
+  const radio = document.getElementById(id + '-' + val);
+  if (radio) radio.checked = true;
+  applyState(id);
+  updateStats();
+  save();
+}
+
+function applyFilter() {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const shown = {};
+  CONTROLS.forEach(function(c) {
+    const hay = (c.label + ' ' + c.alias.join(' ') + ' ' + c.csf.join(' ') + ' ' +
+      GRID.functions[c.fn] + ' ' + assetLabel(c)).toLowerCase();
+    const hit = !q || hay.indexOf(q) !== -1;
+    shown[c.id] = hit;
+    const li = document.getElementById('li-' + c.id);
+    if (li) li.classList.toggle('hidden-item', !hit);
+  });
+  groupsFor(groupMode).forEach(function(group) {
+    const n = group.items.filter(c => shown[c.id]).length;
+    const head = ul.querySelector('.group-head[data-group="' + group.name + '"]');
+    if (head) {
+      head.classList.toggle('hidden-item', n === 0);
+      head.querySelector('.group-count').textContent = n;
+    }
+  });
+}
+
+document.getElementById('search').addEventListener('input', applyFilter);
+document.querySelectorAll('.group-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.group-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    groupMode = btn.dataset.mode;
+    renderList();
+  });
 });
 
+CONTROLS.forEach(c => applyState(c.id));
+renderList();
 updateStats();
 
-document.getElementById('search').addEventListener('input', function() {
-  const q = this.value.toLowerCase();
-  SOLUTIONS.forEach(sol => {
-    const li = document.getElementById(`li-${sol.id}`);
-    li.classList.toggle('hidden-item', !sol.label.toLowerCase().includes(q));
+/* ── Templates & bulk actions ───────────────────────────────────────────── */
+function applyTemplate(name, colorMode) {
+  const tpl = TEMPLATES[name];
+  if (!tpl) return;
+  tpl.controls.forEach(function(id) {
+    if (state[id] === 'off') setStatus(id, colorMode);
   });
-});
+  renderList();
+}
 
+function clearAll() {
+  CONTROLS.forEach(c => setStatus(c.id, 'off'));
+  renderList();
+}
+
+/* ── Export / import ────────────────────────────────────────────────────── */
 function getClientName() {
   return document.getElementById('client-input').value.trim() || 'CDM';
 }
@@ -767,7 +1002,7 @@ function renderCanvas(cb) {
     ctx.textAlign = 'right';
     ctx.fillText('Mason SC', img.naturalWidth - 20, 30);
     ctx.font = '12px IBM Plex Mono, monospace';
-    ctx.fillText('Cyber Defense Matrix', img.naturalWidth - 20, 50);
+    ctx.fillText('Cyber Defense Matrix · NIST CSF 2.0', img.naturalWidth - 20, 50);
 
     ctx.drawImage(img, 0, headerHeight);
     URL.revokeObjectURL(url);
@@ -777,8 +1012,8 @@ function renderCanvas(cb) {
 }
 
 function exportPNG() {
-  renderCanvas(canvas => {
-    canvas.toBlob(blob => {
+  renderCanvas(function(canvas) {
+    canvas.toBlob(function(blob) {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = getClientName().replace(/\s+/g, '-') + '-CDM.png';
@@ -791,7 +1026,7 @@ function exportPNG() {
 // Wrap the rendered matrix image in a single-page PDF (self-contained,
 // embeds the picture as a JPEG image XObject — no print dialog, no libraries).
 function exportPDF() {
-  renderCanvas(canvas => {
+  renderCanvas(function(canvas) {
     const jpeg = atob(canvas.toDataURL('image/jpeg', 0.95).split(',')[1]); // binary string, 1 char/byte
     const iw = canvas.width, ih = canvas.height;
     const margin = 18;
@@ -842,13 +1077,18 @@ function exportJSON() {
   const clientName = getClientName();
   const output = {
     client: clientName,
+    framework: 'NIST CSF 2.0',
     exportedAt: new Date().toISOString(),
     controls: {}
   };
-  SOLUTIONS.forEach(sol => {
-    output.controls[sol.id] = {
-      label: sol.label,
-      status: state[sol.id]
+  CONTROLS.forEach(function(c) {
+    output.controls[c.id] = {
+      label: c.label,
+      status: state[c.id],
+      function: GRID.functions[c.fn],
+      assetClass: assetLabel(c),
+      csf: c.csf,
+      alias: c.alias
     };
   });
   const blob = new Blob([JSON.stringify(output, null, 2)], { type: 'application/json' });
@@ -871,109 +1111,40 @@ function loadFromJSON(event) {
     try {
       const data = JSON.parse(e.target.result);
       if (!data.controls) throw new Error('Invalid format: missing controls key');
+      if (data.client) document.getElementById('client-input').value = data.client;
 
-      // Restore client name
-      if (data.client) {
-        document.getElementById('client-input').value = data.client;
-      }
-
-      // Restore control states
-      let loaded = 0;
-      Object.entries(data.controls).forEach(([id, val]) => {
+      let loaded = 0, remapped = 0;
+      Object.entries(data.controls).forEach(function(entry) {
+        const rawId = entry[0], val = entry[1];
         const status = typeof val === 'string' ? val : (val.status || 'off');
-        if (state.hasOwnProperty(id)) {
-          state[id] = status;
-          // Update radio button
-          const radio = document.getElementById(id + '-' + status);
-          if (radio) radio.checked = true;
-          // Update li class
-          const li = document.getElementById('li-' + id);
-          if (li) li.className = status !== 'off' ? 'active-' + status : '';
-          applyState(id);
-          loaded++;
-        }
+        if (status === 'off') return;
+        let id = rawId;
+        if (!state.hasOwnProperty(id) && LEGACY_IDS[id]) { id = LEGACY_IDS[id]; remapped++; }
+        if (!state.hasOwnProperty(id)) return;
+        setStatus(id, status);
+        loaded++;
       });
+      renderList();
 
-      updateStats();
-      save();
-
-      // Flash success
       const statusEl = document.getElementById('export-status');
       const errEl = document.getElementById('export-error');
       errEl.classList.remove('show');
-      statusEl.textContent = '✓ Loaded ' + (data.client || file.name);
+      statusEl.textContent = '✓ Loaded ' + loaded + ' controls' +
+        (remapped ? ' (' + remapped + ' mapped from the legacy list)' : '');
       statusEl.classList.add('show');
-      setTimeout(() => {
+      setTimeout(function() {
         statusEl.classList.remove('show');
         statusEl.textContent = '✓ Downloaded';
-      }, 2500);
-
-    } catch(err) {
+      }, 3000);
+    } catch (err) {
       const errEl = document.getElementById('export-error');
       errEl.textContent = '✗ ' + err.message;
       errEl.classList.add('show');
       setTimeout(() => errEl.classList.remove('show'), 3000);
     }
-    // Reset input so same file can be reloaded
-    event.target.value = '';
+    event.target.value = ''; // reset so the same file can be reloaded
   };
   reader.readAsText(file);
-}
-
-function applyTemplate(templateName, colorMode) {
-  const template = TEMPLATES[templateName];
-  if (!template) return;
-
-  template.controls.forEach(controlId => {
-    // Only change if control is currently 'off'
-    if (state[controlId] === 'off') {
-      state[controlId] = colorMode; // 'red', 'green', or 'blue'
-      applyState(controlId);
-      const radio = document.getElementById(controlId + '-' + colorMode);
-      if (radio) radio.checked = true;
-      const li = document.getElementById('li-' + controlId);
-      if (li) li.className = 'active-' + colorMode;
-    }
-  });
-
-  updateStats();
-  save();
-  sortAndReorderList();
-}
-
-function clearAll() {
-  SOLUTIONS.forEach(s => {
-    state[s.id] = 'off';
-    const li = document.getElementById('li-' + s.id);
-    if (li) li.className = '';
-    const radio = document.getElementById(s.id + '-off');
-    if (radio) radio.checked = true;
-    applyState(s.id);
-  });
-  updateStats();
-  save();
-  sortAndReorderList();
-}
-
-function sortAndReorderList() {
-  const ul = document.getElementById('solution-checkboxes');
-  const items = Array.from(ul.children);
-
-  // Separate selected and unselected
-  const selected = items.filter(li => li.className && li.className.includes('active-'));
-  const unselected = items.filter(li => !li.className || !li.className.includes('active-'));
-
-  // Sort unselected alphabetically by label
-  unselected.sort((a, b) => {
-    const labelA = a.querySelector('.sol-label').textContent.toLowerCase();
-    const labelB = b.querySelector('.sol-label').textContent.toLowerCase();
-    return labelA.localeCompare(labelB);
-  });
-
-  // Clear and rebuild list: selected first (in order they were selected), then unselected (alphabetical)
-  ul.innerHTML = '';
-  selected.forEach(li => ul.appendChild(li));
-  unselected.forEach(li => ul.appendChild(li));
 }
 </script>
 </body>
