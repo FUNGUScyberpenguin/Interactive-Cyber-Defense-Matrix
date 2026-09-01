@@ -190,6 +190,11 @@
     .vendor-link:hover { background: rgba(56,189,248,0.2); border-color: #38bdf8; }
     .vendor-link.primary { background: rgba(56,189,248,0.16); border-color: rgba(56,189,248,0.45); }
     .vendor-link::after { content: ' ↗'; opacity: 0.5; }
+    /* Terms to filter the catalog on — selectable text, not fake deep links. */
+    .vendor-term { font-size: 10.5px; color: #64748b; }
+    .vendor-term::after { content: ' ·'; }
+    .vendor-term:last-child::after { content: ''; }
+    .vendor-term.lead { color: #94a3b8; }
 
     .note-input {
       width: 100%; resize: vertical; background: rgba(2,6,23,0.7);
@@ -663,14 +668,16 @@ const CONTROLS = [
    list: the category is what a buyer actually searches, it needs no upkeep,
    and it keeps the tool from reading as a recommendation.
 
-   Deep links are built from SEARCH below. /vendors is the confirmed catalog
-   entry point; the ?q= parameter is an assumption — if Charting Cyber filters
-   on a different key, change this one line and every control follows.
+   The catalog filters client-side with no shareable query string, so the link
+   opens the catalog and the terms sit beside it as the vocabulary to filter on
+   — rather than faking a deep link that silently lands on the full list. If a
+   search parameter ever appears, set SEARCH and the terms become links:
+       SEARCH: term => VENDOR_SOURCE.home + '?q=' + encodeURIComponent(term)
    ─────────────────────────────────────────────────────────────────────────── */
 const VENDOR_SOURCE = {
   label: 'Charting Cyber',
-  home: 'https://chartingcyber.com/vendors',
-  SEARCH: term => 'https://chartingcyber.com/vendors?q=' + encodeURIComponent(term)
+  home: 'https://www.chartingcyber.com/vendors',
+  SEARCH: null
 };
 
 // The control's own term first, then adjacent category names worth a look.
@@ -1251,15 +1258,30 @@ function buildDetail(ctl, li) {
   vrow.className = 'detail-vendors';
   vrow.appendChild(Object.assign(document.createElement('span'),
     { className: 'detail-tag', textContent: 'Vendors' }));
-  vendorTerms(ctl).forEach(function(term, i) {
-    const a = document.createElement('a');
-    a.className = 'vendor-link' + (i ? '' : ' primary');
-    a.href = VENDOR_SOURCE.SEARCH(term);
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    a.textContent = term;
-    a.title = 'Find ' + term + ' vendors on ' + VENDOR_SOURCE.label;
-    vrow.appendChild(a);
+  const terms = vendorTerms(ctl);
+  const cat = document.createElement('a');
+  cat.className = 'vendor-link primary';
+  cat.href = VENDOR_SOURCE.SEARCH ? VENDOR_SOURCE.SEARCH(terms[0]) : VENDOR_SOURCE.home;
+  cat.target = '_blank';
+  cat.rel = 'noopener noreferrer';
+  cat.textContent = VENDOR_SOURCE.label;
+  cat.title = 'Open the ' + VENDOR_SOURCE.label + ' catalog and filter for: ' + terms.join(', ');
+  vrow.appendChild(cat);
+  terms.forEach(function(term, i) {
+    if (VENDOR_SOURCE.SEARCH) {
+      const a = document.createElement('a');
+      a.className = 'vendor-link';
+      a.href = VENDOR_SOURCE.SEARCH(term);
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.textContent = term;
+      vrow.appendChild(a);
+      return;
+    }
+    const t = document.createElement('span');           // vocabulary to filter on
+    t.className = 'vendor-term' + (i ? '' : ' lead');
+    t.textContent = term;
+    vrow.appendChild(t);
   });
   d.appendChild(vrow);
 
@@ -1443,12 +1465,11 @@ function download(blob, filename) {
 function exportCSV() {
   const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
   const lines = [['Control', 'Status', 'Priority', 'CSF Function', 'Asset Class',
-    'CSF 2.0 Categories', 'Also Known As', 'Notes', 'Market Category',
-    'Vendor Lookup'].map(q).join(',')];
+    'CSF 2.0 Categories', 'Also Known As', 'Notes', 'Market Category'].map(q).join(',')];
   register().forEach(function(c) {
     lines.push([c.label, STATUS_LABEL[state[c.id]], meta[c.id].priority.toUpperCase(),
       GRID.functions[c.fn], assetLabel(c), c.csf.join('; '), c.alias.join('; '),
-      meta[c.id].note, c.vendor, VENDOR_SOURCE.SEARCH(c.vendor)].map(q).join(','));
+      meta[c.id].note, c.vendor].map(q).join(','));
   });
   // BOM so Excel opens the UTF-8 correctly on Windows.
   download(new Blob(['\ufeff' + lines.join('\r\n')],
@@ -1504,12 +1525,15 @@ function exportPNG() {
    register, so the export is a deliverable rather than a screenshot.
    Self-contained: a JPEG XObject plus base-14 Helvetica, no libraries.
    ─────────────────────────────────────────────────────────────────────────── */
+/* Market Category rides along so the client can see what class of product a
+   gap needs. Named vendors deliberately stay out of the client deliverable. */
 const PDF_COLS = [
-  { head: 'Control',  w: 0.20 }, { head: 'Status',  w: 0.08 },
-  { head: 'Priority', w: 0.07 }, { head: 'Function', w: 0.10 },
-  { head: 'Asset',    w: 0.11 }, { head: 'CSF 2.0', w: 0.12 },
-  { head: 'Notes',    w: 0.32 }
+  { head: 'Control',  w: 0.17 }, { head: 'Market Category', w: 0.12 },
+  { head: 'Status',   w: 0.07 }, { head: 'Priority', w: 0.06 },
+  { head: 'Function', w: 0.09 }, { head: 'Asset',    w: 0.10 },
+  { head: 'CSF 2.0',  w: 0.11 }, { head: 'Notes',    w: 0.28 }
 ];
+const PDF_STATUS_COL = 2;   // index of the Status column, which gets colour
 const PDF_STATUS_RGB = { red: '0.98 0.45 0.45', green: '0.35 0.85 0.50', blue: '0.58 0.75 0.99' };
 
 // WinAnsi-safe, and the three characters that would break a PDF string.
@@ -1557,8 +1581,9 @@ function exportPDF() {
 
     const rows = register().map(function(c) {
       return {
-        cells: [c.label, STATUS_LABEL[state[c.id]], meta[c.id].priority.toUpperCase(),
-                GRID.functions[c.fn], assetLabel(c), c.csf.join(' '), meta[c.id].note],
+        cells: [c.label, c.vendor, STATUS_LABEL[state[c.id]],
+                meta[c.id].priority.toUpperCase(), GRID.functions[c.fn],
+                assetLabel(c), c.csf.join(' '), meta[c.id].note],
         rgb: PDF_STATUS_RGB[state[c.id]] || '0.8 0.84 0.9'
       };
     });
@@ -1644,7 +1669,8 @@ function exportPDF() {
           lines.forEach(function(line, li) {
             if (!line) return;
             c += pdfText(xs[i], r.y - 9 - li * 9.5, 7.5,
-              i === 0 ? '0.86 0.89 0.94' : (i === 1 ? r.rgb : '0.60 0.68 0.80'), line);
+              i === 0 ? '0.86 0.89 0.94'
+                      : (i === PDF_STATUS_COL ? r.rgb : '0.60 0.68 0.80'), line);
           });
         });
         c += '0.10 0.14 0.22 RG 0.4 w ' + pad + ' ' + (r.y - r.h + 2).toFixed(2) + ' m ' +
