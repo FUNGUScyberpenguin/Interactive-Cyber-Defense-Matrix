@@ -312,6 +312,8 @@
       font-family: 'IBM Plex Mono', monospace; font-size: 13px; outline: none;
     }
     #intake-input:focus { border-color: #38bdf8; }
+    #intake-input.asking { border-color: #fbbf24; color: #fde68a; }
+    #intake-input.asking::placeholder { color: #78716c; }
     #intake-input::placeholder { color: #334155; }
     #intake-error { display: none; font-size: 10.5px; color: #fca5a5; margin-top: 5px; }
     #intake-error.on { display: block; }
@@ -869,58 +871,58 @@ const CONTROLS = [
    common industry terms, and which of those were verified rather than recalled.
    ─────────────────────────────────────────────────────────────────────────── */
 const VENDOR_LIBRARY = {
-  'IT Risk Management (IRM)': ['Vanta', 'Drata', 'AuditBoard'],
-  'Cyber Risk Quantification': ['Safe Security', 'Axio', 'Kovrr'],
-  'Third-Party Risk Management': ['Bitsight', 'SecurityScorecard', 'Panorays'],
+  'IT Risk Management (IRM)': ['Vanta', 'Drata', 'Secureframe', 'AuditBoard', 'LogicGate', 'ServiceNow IRM', 'Archer', 'OneTrust', 'Hyperproof', 'Sprinto', 'Thoropass', 'Scrut'],
+  'Cyber Risk Quantification': ['Safe Security', 'Axio', 'Kovrr', 'X-Analytics', 'Squalify'],
+  'Third-Party Risk Management': ['Bitsight', 'SecurityScorecard', 'Panorays', 'OneTrust', 'Prevalent', 'ProcessUnity', 'Whistic', 'UpGuard', 'Black Kite'],
 
-  'Attack Surface Management': ['Censys', 'Cortex Xpanse', 'CyCognito'],
-  'CAASM': ['Axonius', 'runZero', 'Lansweeper'],
-  'Vulnerability Assessment': ['Tenable', 'Qualys', 'Rapid7'],
-  'Penetration Testing as a Service (PTaaS)': ['Cobalt', 'HackerOne', 'Pentera'],
-  'Threat Intelligence': ['Recorded Future', 'Mandiant', 'Intel 471'],
-  'API Security': ['Salt Security', 'Traceable', 'Akamai API Security'],
-  'Data Classification': ['Microsoft Purview', 'BigID', 'Varonis'],
-  'Identity Governance and Administration (IGA)': ['SailPoint', 'Saviynt', 'Okta'],
+  'Attack Surface Management': ['Censys', 'Cortex Xpanse', 'CyCognito', 'IONIX', 'Detectify', 'Bitsight'],
+  'CAASM': ['Axonius', 'runZero', 'JupiterOne', 'Sevco Security', 'Lansweeper', 'Panaseer', 'Noetic'],
+  'Vulnerability Assessment': ['Tenable', 'Qualys', 'Rapid7', 'Nucleus Security', 'Vulcan Cyber', 'Brinqa', 'Balbix'],
+  'Penetration Testing as a Service (PTaaS)': ['Cobalt', 'HackerOne', 'Bugcrowd', 'Synack', 'Pentera', 'NetSPI', 'Horizon3.ai', 'Intruder'],
+  'Threat Intelligence': ['Recorded Future', 'Mandiant', 'Intel 471', 'Flashpoint', 'Anomali', 'ThreatConnect', 'Silent Push'],
+  'API Security': ['Salt Security', 'Traceable', 'Akamai API Security', 'Noname Security', '42Crunch', 'Wallarm', 'Cequence'],
+  'Data Classification': ['Microsoft Purview', 'BigID', 'Varonis', 'OneTrust', 'Spirion', 'Concentric AI'],
+  'Identity Governance and Administration (IGA)': ['SailPoint', 'Saviynt', 'Okta', 'Microsoft Entra ID Governance', 'One Identity', 'Omada', 'Veza'],
 
-  'Endpoint Protection': ['CrowdStrike Falcon', 'Microsoft Defender for Endpoint', 'SentinelOne'],
-  'Patch Management': ['Microsoft Intune', 'Automox', 'Tanium'],
-  'CPS Protection Platforms': ['Claroty', 'Nozomi Networks', 'Dragos'],
-  'Application Security Testing': ['Snyk', 'Veracode', 'Checkmarx'],
-  'CNAPP': ['Wiz', 'Prisma Cloud', 'Orca Security'],
-  'SSPM': ['AppOmni', 'Obsidian Security', 'Valence Security'],
-  'WAAP': ['Cloudflare', 'Akamai', 'F5'],
-  'SASE': ['Zscaler', 'Netskope', 'Prisma Access'],
-  'ZTNA': ['Zscaler Private Access', 'Cloudflare Access', 'Netskope Private Access'],
-  'Microsegmentation': ['Illumio', 'Akamai Guardicore', 'Cisco Secure Workload'],
-  'DDoS Protection': ['Cloudflare', 'Akamai Prolexic', 'Radware'],
-  'DLP': ['Microsoft Purview', 'Netskope', 'Forcepoint'],
-  'Enterprise Key Management': ['HashiCorp Vault', 'Thales CipherTrust', 'Entrust'],
-  'DSPM': ['Cyera', 'Varonis', 'BigID'],
-  'User Authentication': ['Okta', 'Microsoft Entra ID', 'Cisco Duo'],
-  'Access Management': ['Okta', 'Microsoft Entra ID', 'Ping Identity'],
-  'Privileged Access Management': ['CyberArk', 'BeyondTrust', 'Delinea'],
-  'Email Security': ['Proofpoint', 'Abnormal Security', 'Mimecast'],
-  'Security Behavior and Culture Programs (SBCP)': ['KnowBe4', 'Hoxhunt', 'Proofpoint'],
+  'Endpoint Protection': ['CrowdStrike Falcon', 'Microsoft Defender for Endpoint', 'SentinelOne', 'Sophos Intercept X', 'ESET', 'Bitdefender', 'Trend Micro', 'Cybereason', 'Trellix'],
+  'Patch Management': ['Microsoft Intune', 'Automox', 'Tanium', 'Ivanti', 'ManageEngine', 'NinjaOne', 'Action1'],
+  'CPS Protection Platforms': ['Claroty', 'Nozomi Networks', 'Dragos', 'Armis', 'Forescout', 'TXOne Networks', 'Tenable OT'],
+  'Application Security Testing': ['Snyk', 'Veracode', 'Checkmarx', 'GitHub Advanced Security', 'Semgrep', 'Sonar', 'Black Duck', 'Mend', 'Endor Labs'],
+  'CNAPP': ['Wiz', 'Prisma Cloud', 'Orca Security', 'Microsoft Defender for Cloud', 'Sysdig', 'Aqua Security', 'Lacework', 'Upwind', 'Tenable Cloud Security'],
+  'SSPM': ['AppOmni', 'Obsidian Security', 'Valence Security', 'Adaptive Shield', 'Grip Security', 'Nudge Security', 'Reco'],
+  'WAAP': ['Cloudflare', 'Akamai', 'F5', 'Imperva', 'AWS WAF', 'Fastly', 'Radware', 'Barracuda'],
+  'SASE': ['Zscaler', 'Netskope', 'Prisma Access', 'Cloudflare One', 'Cisco Umbrella', 'Cato Networks', 'Fortinet', 'Skyhigh Security', 'iboss'],
+  'ZTNA': ['Zscaler Private Access', 'Cloudflare Access', 'Netskope Private Access', 'Tailscale', 'Twingate', 'Appgate', 'Banyan Security'],
+  'Microsegmentation': ['Illumio', 'Akamai Guardicore', 'Cisco Secure Workload', 'Zscaler Workload Segmentation', 'ColorTokens', 'Elisity'],
+  'DDoS Protection': ['Cloudflare', 'Akamai Prolexic', 'Radware', 'AWS Shield', 'Imperva', 'NETSCOUT', 'Azure DDoS Protection'],
+  'DLP': ['Microsoft Purview', 'Netskope', 'Forcepoint', 'Zscaler', 'Symantec', 'Trellix', 'Cyberhaven', 'Nightfall'],
+  'Enterprise Key Management': ['HashiCorp Vault', 'Thales CipherTrust', 'Entrust', 'AWS KMS', 'Azure Key Vault', 'Fortanix', 'Venafi', 'Keyfactor'],
+  'DSPM': ['Cyera', 'Varonis', 'BigID', 'Wiz', 'Securiti', 'Sentra', 'Normalyze'],
+  'User Authentication': ['Okta', 'Microsoft Entra ID', 'Cisco Duo', 'Yubico', 'Ping Identity', 'RSA', 'Beyond Identity', 'Silverfort'],
+  'Access Management': ['Okta', 'Microsoft Entra ID', 'Ping Identity', 'JumpCloud', 'ForgeRock', 'IBM Verify', 'CyberArk'],
+  'Privileged Access Management': ['CyberArk', 'BeyondTrust', 'Delinea', 'HashiCorp Vault', 'One Identity', 'Keeper Security', 'Teleport', 'StrongDM'],
+  'Email Security': ['Proofpoint', 'Abnormal Security', 'Mimecast', 'Microsoft Defender for Office 365', 'Sublime Security', 'IRONSCALES', 'Material Security', 'Barracuda', 'Egress'],
+  'Security Behavior and Culture Programs (SBCP)': ['KnowBe4', 'Hoxhunt', 'Proofpoint', 'Living Security', 'Arctic Wolf', 'Riot'],
 
-  'SIEM': ['Splunk', 'Microsoft Sentinel', 'Google SecOps'],
-  'MDR': ['Arctic Wolf', 'Expel', 'Red Canary'],
-  'Threat Hunting': ['Red Canary', 'CrowdStrike Falcon OverWatch', 'Splunk'],
-  'EDR': ['CrowdStrike Falcon', 'Microsoft Defender for Endpoint', 'SentinelOne'],
-  'Application Detection and Response (ADR)': ['Contrast Security', 'Oligo Security', 'Sysdig'],
-  'NDR': ['Darktrace', 'ExtraHop', 'Vectra AI'],
-  'Data Detection and Response (DDR)': ['Cyera', 'Varonis', 'Imperva'],
-  'ITDR': ['Silverfort', 'Semperis', 'Microsoft Defender for Identity'],
-  'Digital Risk Protection': ['Recorded Future', 'ZeroFox', 'Doppel'],
+  'SIEM': ['Splunk', 'Microsoft Sentinel', 'Google SecOps', 'Elastic Security', 'Panther', 'Sumo Logic', 'Exabeam', 'Securonix', 'Devo', 'IBM QRadar'],
+  'MDR': ['Arctic Wolf', 'Expel', 'Red Canary', 'Huntress', 'eSentire', 'Sophos MDR', 'Rapid7 MDR', 'Critical Start', 'Deepwatch', 'Blackpoint Cyber'],
+  'Threat Hunting': ['Red Canary', 'CrowdStrike Falcon OverWatch', 'Splunk', 'Huntress', 'Binalyze'],
+  'EDR': ['CrowdStrike Falcon', 'Microsoft Defender for Endpoint', 'SentinelOne', 'Cortex XDR', 'Trellix', 'Cybereason', 'Trend Vision One'],
+  'Application Detection and Response (ADR)': ['Contrast Security', 'Oligo Security', 'Sysdig', 'Miggo', 'Operant AI'],
+  'NDR': ['Darktrace', 'ExtraHop', 'Vectra AI', 'Corelight', 'Arista NDR', 'Stamus Networks', 'Gigamon'],
+  'Data Detection and Response (DDR)': ['Cyera', 'Varonis', 'Imperva', 'Sentra', 'Cyberhaven'],
+  'ITDR': ['Silverfort', 'Semperis', 'Microsoft Defender for Identity', 'CrowdStrike Falcon Identity', 'Push Security', 'Permiso'],
+  'Digital Risk Protection': ['Recorded Future', 'ZeroFox', 'Doppel', 'Bitsight', 'BrandShield', 'Netcraft'],
 
-  'Incident Response Services': ['Mandiant', 'Unit 42', 'Kroll'],
-  'SOAR': ['Cortex XSOAR', 'Tines', 'Torq'],
-  'Network Firewalls': ['Palo Alto Networks', 'Fortinet', 'Check Point'],
+  'Incident Response Services': ['Mandiant', 'Unit 42', 'Kroll', 'CrowdStrike Services', 'Arete', 'Coveware', 'Sygnia', 'Secureworks'],
+  'SOAR': ['Cortex XSOAR', 'Splunk SOAR', 'Tines', 'Torq', 'Swimlane', 'Blink Ops', 'D3 Security'],
+  'Network Firewalls': ['Palo Alto Networks', 'Fortinet', 'Check Point', 'Cisco', 'Juniper', 'Sophos', 'SonicWall', 'WatchGuard'],
 
-  'Business Continuity': ['Fusion Risk Management', 'Riskonnect', 'Archer'],
-  'DRaaS': ['Zerto', 'Veeam', 'Commvault'],
-  'Cyber Insurance': ['Coalition', 'At-Bay', 'Resilience'],
-  'Enterprise Backup and Recovery': ['Veeam', 'Rubrik', 'Cohesity'],
-  'Active Directory Recovery': ['Semperis', 'Quest', 'Cayosoft']
+  'Business Continuity': ['Fusion Risk Management', 'Riskonnect', 'Archer', 'Castellan', 'Everbridge'],
+  'DRaaS': ['Zerto', 'Veeam', 'Commvault', 'Druva', 'Azure Site Recovery'],
+  'Cyber Insurance': ['Coalition', 'At-Bay', 'Resilience', 'Corvus', 'Chubb', 'Beazley', 'Cowbell'],
+  'Enterprise Backup and Recovery': ['Veeam', 'Rubrik', 'Cohesity', 'Commvault', 'Druva', 'Acronis', 'Dell PowerProtect', 'HYCU'],
+  'Active Directory Recovery': ['Semperis', 'Quest', 'Cayosoft', 'Commvault', 'Veeam']
 };
 
 /* How much weight each category name carries. A CISO reading "Magic Quadrant"
@@ -953,7 +955,13 @@ const tierOf = cat => Object.keys(CATEGORY_TIER)
 // product purchase: security leadership, zero trust, breach notification,
 // network configuration management.
 
-const librarySuggestions = ctl => VENDOR_LIBRARY[ctl.vendor] || [];
+// Three shown on the control as samples. The full list behind them is a
+// recognition index for the intake — knowing that Secureframe is a GRC tool
+// when someone types it is not the same as putting it forward.
+const SAMPLES_SHOWN = 3;
+const librarySuggestions = ctl =>
+  (VENDOR_LIBRARY[ctl.vendor] || []).slice(0, SAMPLES_SHOWN);
+const knownProducts = cat => VENDOR_LIBRARY[cat] || [];
 
 /* ── Vendor lookup ──────────────────────────────────────────────────────────
    Each control carries a market category term rather than a baked-in vendor
@@ -1752,44 +1760,95 @@ function renderStack() {
 
 (function wireIntake() {
   const input = document.getElementById('intake-input');
-  const hits = document.getElementById('intake-hits');
-  let active = [];
+  const hits  = document.getElementById('intake-hits');
+  const CATEGORIES = Object.keys(VENDOR_LIBRARY).sort();
+  let active = [];        // what Enter would take
+  let pending = null;     // a typed name waiting to be told its category
 
   function close() { hits.innerHTML = ''; active = []; }
 
-  function commit(entry) {
-    const n = addProduct(entry.name, entry.cats);
+  function reset() {
+    pending = null;
     input.value = '';
+    input.placeholder = 'CrowdStrike, Okta, Zscaler…';
+    input.classList.remove('asking');
     close();
-    if (!n) flashError(entry.name + ' has no matching control');
+  }
+
+  function commit(name, cats) {
+    if (!addProduct(name, cats)) flashError(name + ' has no matching control');
+    reset();
+  }
+
+  function row(main, side, onPick) {
+    const li = document.createElement('li');
+    li.className = 'intake-hit';
+    li.innerHTML = '<span>' + main.replace(/[<>&]/g, '') + '</span>' +
+                   '<span class="hit-cat">' + side + '</span>';
+    li.addEventListener('click', onPick);
+    hits.appendChild(li);
+    return li;
+  }
+
+  /* No library will ever be complete, so an unrecognised name is not a dead
+     end: it becomes a question about which category it belongs in, and the
+     answer teaches the board what the product covers. */
+  function askForCategory(name) {
+    pending = name;
+    input.value = '';
+    input.placeholder = 'Which category? e.g. SIEM, CNAPP, PAM…';
+    input.classList.add('asking');
+    input.focus();
+    listCategories('');
+  }
+
+  function listCategories(q) {
+    close();
+    const matches = CATEGORIES
+      .filter(c => !q || c.toLowerCase().indexOf(q) !== -1)
+      .slice(0, 8);
+    if (!matches.length) { row('No category matches "' + q + '"', '', reset); return; }
+    active = matches.map(c => ({ name: pending, cats: [c] }));
+    matches.forEach(function(cat) {
+      const tier = tierOf(cat);
+      row(cat, tier || '', () => commit(pending, [cat]));
+    });
+  }
+
+  function listProducts(q) {
+    close();
+    const found = PRODUCT_INDEX
+      .filter(e => e.name.toLowerCase().indexOf(q) !== -1)
+      .sort((a, b) => a.name.toLowerCase().indexOf(q) - b.name.toLowerCase().indexOf(q))
+      .slice(0, 7);
+    active = found;
+    found.forEach(e => row(e.name, e.cats.join(' · '), () => commit(e.name, e.cats)));
+    // Always offer the typed text as its own product, so nothing is unenterable.
+    const typed = input.value.trim();
+    if (typed.length > 1 && !found.some(e => e.name.toLowerCase() === typed.toLowerCase()))
+      row('Add "' + typed + '"…', 'choose a category', () => askForCategory(typed));
   }
 
   input.addEventListener('input', function() {
     const q = input.value.trim().toLowerCase();
-    close();
-    if (q.length < 2) return;
-    active = PRODUCT_INDEX
-      .filter(e => e.name.toLowerCase().indexOf(q) !== -1)
-      .slice(0, 6);
-    active.forEach(function(e) {
-      const li = document.createElement('li');
-      li.className = 'intake-hit';
-      li.innerHTML = '<span>' + e.name + '</span><span class="hit-cat">' +
-        e.cats.join(' · ') + '</span>';
-      li.addEventListener('click', () => commit(e));
-      hits.appendChild(li);
-    });
+    if (pending) return listCategories(q);
+    if (q.length < 2) return close();
+    listProducts(q);
   });
 
   input.addEventListener('keydown', function(ev) {
-    if (ev.key === 'Escape') return close();
+    if (ev.key === 'Escape') return reset();
     if (ev.key !== 'Enter') return;
-    // Enter takes the single obvious match; anything else needs a pick.
-    if (active.length === 1) return commit(active[0]);
+    ev.preventDefault();
     const typed = input.value.trim();
+    if (pending) {
+      if (active.length) commit(pending, active[0].cats);
+      return;
+    }
     const exact = PRODUCT_INDEX.find(e => e.name.toLowerCase() === typed.toLowerCase());
-    if (exact) return commit(exact);
-    if (typed) flashError('Pick a category for "' + typed + '" on its control');
+    if (exact) return commit(exact.name, exact.cats);
+    if (active.length === 1) return commit(active[0].name, active[0].cats);
+    if (typed.length > 1) return askForCategory(typed);
   });
 })();
 
