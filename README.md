@@ -97,6 +97,42 @@ only the controls a chosen product covers, dimming the rest. One product
 lighting up nine controls is either good consolidation or a single point of
 failure, depending on which nine.
 
+## Adding a vendor
+
+The list will never be complete, and it does not need to be — this is open
+source, so a missing vendor is a one-line pull request.
+
+`VENDOR_LIBRARY` in `index.html` is a flat map of market category to product
+names:
+
+```js
+'SIEM': ['Splunk', 'Microsoft Sentinel', 'Google SecOps', …],
+```
+
+Add the product to the category it sells into. That is the whole change: the
+category already knows which controls it answers and where they sit on the
+grid, so a new entry is immediately searchable in **What do you run?** and
+lands in the right cells.
+
+Three conventions worth keeping:
+
+* **Order is not a ranking.** The first three show on the control as samples,
+  so put the most widely recognised first — but nothing here is a shortlist,
+  a recommendation, or a top three.
+* **One product, one category** unless it genuinely sells into several.
+  Listing a vendor everywhere makes the concentration analysis meaningless.
+* **Use the product name a buyer would type** — `Cortex XDR`, not
+  `Palo Alto Networks Cortex XDR`.
+
+If the category itself is missing, that is a bigger change: see
+`docs/category-provenance.md`, which records what each category name is worth
+and where it came from.
+
+**You do not have to wait for a pull request to use an unlisted vendor.** Type
+it into **What do you run?**, pick its category when asked, and it goes on the
+board immediately — it just will not be there for the next person until it is
+contributed back.
+
 ## Where the vendor mapping comes from
 
 Each control carries a market category, and `VENDOR_LIBRARY` lists well-known
@@ -121,6 +157,12 @@ vendor sells into which category. The comprehensive ones are commercial:
 [IT-Harvest](https://it-harvest.com/) tracks 4,000+ vendors and 11,300+
 products mapped to CSF 2.0, MITRE ATT&CK and CIS Controls by subscription, and
 Gartner and Forrester define the category names most of the industry uses.
+
+Gartner **Peer Insights** does publish a public per-market vendor directory,
+and Magic Quadrants and Forrester Waves name vendors — but a curated market
+vendor list is the thing those firms license, so reproducing one here would not
+be right. Linking out per category would be, and is worth adding once the
+market URLs can be checked against the live site.
 
 So `VENDOR_LIBRARY` is a **starting point, not a source of truth**: common
 examples per category, not a ranking, not an endorsement, not exhaustive.

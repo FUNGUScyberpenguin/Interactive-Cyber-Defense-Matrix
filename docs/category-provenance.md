@@ -94,6 +94,18 @@ Free and authoritative, but narrow:
 Vendors also publish their own: Cisco's *Security Portfolio Mapping to NIST CSF
 2.0* is a public worked example of the same exercise.
 
+Gartner Peer Insights publishes a public per-market vendor directory, and
+Magic Quadrants and Forrester Waves name vendors. But a curated market vendor
+list is precisely what those firms license, so reproducing one in this repo
+would not be appropriate. Linking out per category would be, once the market
+URLs can be verified against the live site.
+
 So `VENDOR_LIBRARY` in `index.html` remains what it says it is — common examples
 per category, assembled from general knowledge, not sourced from any register.
 Treat it as a starting point and check it before a client sees it.
+
+It does not have to stay incomplete, though. The project is open source and the
+library is a flat category-to-products map, so a missing vendor is a one-line
+pull request — see **Adding a vendor** in the README. Anyone can also enter an
+unlisted product straight into the intake and pick its category; the list only
+decides what is recognised automatically.
