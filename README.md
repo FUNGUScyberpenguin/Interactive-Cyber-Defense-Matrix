@@ -48,37 +48,38 @@ controls are horizontal bars inside their cell.
 * State persists in `localStorage`; boards from the earlier control list are
   migrated on first load.
 
-## Two views
+## Three views
 
-A toggle in the header switches what the grid is populated with.
+A toggle in the header switches what the bars are named after. The bars
+themselves never move, so a control keeps its position and your eye keeps its
+place across the switch.
 
-**Controls** — the assessed control set, coloured by status. This is the gap
-analysis.
+**Controls** — the assessed control set, coloured by status. The gap analysis.
 
-**Vendors** — the same grid populated with the products actually in place.
-Plotting the product landscape onto the matrix is what Sounil Yu built it for:
-it shows at a glance where the stack is dense, where it is empty, and which
-vendors span half the board.
+**Vendors** — the products, named at the control they answer. Plotting the
+product landscape onto the matrix is what Sounil Yu built it for: where the
+stack is dense, where it is empty, and which vendors span half the board.
 
-Products are recorded against the control they deliver (open a control,
-fill in *Products in place*), so they inherit that control's position and the
-two views stay one dataset rather than two. A product answering several
-controls appears in each of their cells, and **Stack concentration** below the
-matrix ranks products by how much of the board each one covers — the
-consolidation conversation, and the concentration risk.
+**Both** — controls with their products underneath.
 
-## Vendor overlay
+Products are recorded against the control they deliver (open a control, fill
+in *Products in place*), so they inherit that control's position and the views
+stay one dataset rather than three. **Stack concentration** below the matrix
+ranks products by how much of the board each one covers — the consolidation
+conversation, and the concentration risk.
 
-The **Overlay** picker in the header lays product coverage over the control
-matrix rather than replacing it. Pick *all products* to see where the stack
-reaches; pick a single product to see how far that one vendor spans. Covered
-controls stay lit, everything else falls back, and a caption is drawn into the
-matrix naming the overlay — so a PNG or PDF says what it is showing.
+**Market examples** fills any control you have not recorded a product against
+with common products for its category, drawn muted so a suggestion is never
+mistaken for something the client owns. Untick it for a clean client view of
+only what they actually have. A control left *off* is hidden in the Controls
+view — that is what out of scope means — but shows in neutral in the other two
+once something is named on it, so the grid is populated before anyone has
+assessed a thing.
 
-A single-vendor overlay is the consolidation conversation and the
-concentration-risk conversation at once: one product lighting up nine controls
-is either good consolidation or a single point of failure, depending on which
-nine.
+**Overlay** is the other way round: it keeps the control view and lights up
+only the controls a chosen product covers, dimming the rest. One product
+lighting up nine controls is either good consolidation or a single point of
+failure, depending on which nine.
 
 ## Where the vendor mapping comes from
 

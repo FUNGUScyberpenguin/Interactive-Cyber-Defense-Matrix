@@ -241,6 +241,18 @@
     .pick-btn:hover { border-style: solid; border-color: #38bdf8; color: #7dd3fc; }
     .pick-btn::before { content: '+ '; opacity: 0.6; }
 
+    #examples-wrap {
+      display: flex; align-items: center; gap: 5px; margin-left: 10px;
+      font-size: 11px; letter-spacing: 1px; color: #475569; text-transform: uppercase;
+      cursor: pointer; transition: opacity 0.15s; user-select: none;
+    }
+    #examples-toggle { accent-color: #3b82f6; cursor: pointer; }
+
+    /* A product the client actually has reads solid; a market example is
+       dimmed, so a suggestion is never mistaken for something they own. */
+    .bar-sub { fill: #cbd5e1; }
+    .bar-sub.muted { fill: #7c8ba3; opacity: 0.85; }
+
     #overlay-wrap {
       display: flex; align-items: center; gap: 6px; margin-left: 10px;
       font-size: 11px; letter-spacing: 1px; color: #475569; text-transform: uppercase;
@@ -461,9 +473,14 @@
     <h2>CYBER DEFENSE MATRIX</h2>
     <span>NIST CSF 2.0 × ASSET CLASS</span>
     <div id="view-switch">
-      <button class="view-btn on" data-view="controls" title="Controls you have assessed">Controls</button>
-      <button class="view-btn"    data-view="vendors"  title="The products in place, plotted on the grid">Vendors</button>
+      <button class="view-btn on" data-view="controls" title="The assessed control set">Controls</button>
+      <button class="view-btn"    data-view="vendors"  title="Products only, plotted at the control they answer">Vendors</button>
+      <button class="view-btn"    data-view="both"     title="Controls with their products underneath">Both</button>
     </div>
+    <label id="examples-wrap" title="Fill empty controls with common products for that market category">
+      <input type="checkbox" id="examples-toggle" checked />
+      <span>Market examples</span>
+    </label>
     <label id="overlay-wrap" title="Lay product coverage over the control matrix">
       <span>Overlay</span>
       <select id="overlay-select"><option value="">off</option></select>
@@ -540,9 +557,6 @@
       <!-- CONTROLS -->
       <!-- Control bars are generated from CONTROLS by layoutControls(). -->
       <g id="labels"></g>
-
-      <!-- Vendor bars: the same grid, named after products instead. -->
-      <g id="vendors"></g>
 
       <!-- Scoreboard, redrawn on every change; contents depend on the view. -->
       <g id="coverage"></g>
@@ -964,6 +978,17 @@ function fitText(label, w) {
   return { lines: lines, font: Math.max(MIN_FONT, Math.min(MAX_FONT, f)) };
 }
 
+/* Subtitles get one line and are cut to fit: a bar already carrying a control
+   name has no room to wrap, and a clipped third line is worse than an ellipsis. */
+function fitOneLine(label, w) {
+  const usable = w - 7;
+  let font = Math.min(MAX_FONT, usable / (CHAR_W * label.length));
+  if (font >= MIN_FONT) return { lines: [label], font: font };
+  font = MIN_FONT;
+  const max = Math.max(3, Math.floor(usable / (CHAR_W * font)));
+  return { lines: [label.slice(0, max - 1).replace(/[\s·]+$/, '') + '…'], font: font };
+}
+
 function layoutControls(items) {
   const nCols = GRID.functions.length, nRows = GRID.assets.length;
   const placed = [], vZone = new Array(nCols).fill(null);
@@ -1025,12 +1050,17 @@ function layoutControls(items) {
   items.filter(k => k.rows !== 'all').forEach(function(k) {
     const cols = Array.isArray(k.fn) ? k.fn : [k.fn, k.fn];
     const span = freeSpan(cols[0], cols[1]);
-    const text = fitText(k.label, span[1] - span[0]);
+    const w = span[1] - span[0];
+    const text = fitText(k.label, w);
+    // A subtitle (the products answering this control) takes its own lanes.
+    const sub = k.sub ? fitOneLine(k.sub, w) : null;
+    if (sub) sub.font = Math.min(sub.font, text.font * 0.92);
+    const lines = text.lines.length + (sub ? sub.lines.length : 0);
     placed.push({
-      ctl: k, vertical: false, x: span[0], w: span[1] - span[0],
+      ctl: k, vertical: false, x: span[0], w: w,
       r1: k.rows[0], r2: k.rows[1], cell: cols[0] + '-' + cols[1],
-      lane: claim(k.rows[0], k.rows[1], text.lines.length, span[0], span[1]),
-      span: text.lines.length, text: text
+      lane: claim(k.rows[0], k.rows[1], lines, span[0], span[1]),
+      span: lines, text: text, sub: sub, subMuted: !!k.subMuted
     });
   });
 
@@ -1052,6 +1082,15 @@ function layoutControls(items) {
     const yBot = cellTop(p.r2, p.cell) + (p.lane + p.span) * rowLaneH[p.r2];
     p.h = Math.min(yBot - yTop - LANE_GAP, p.span * BAR_LINE_H);
     p.y = yTop + (yBot - yTop - p.h) / 2;
+    // A crowded cell can leave a bar shorter than its text; shrink to fit
+    // rather than spill over the bar below.
+    const block = p.text.font + (p.text.lines.length - 1) * p.text.font * 1.15 +
+                  (p.sub ? p.sub.font * 1.2 : 0);
+    if (block > p.h - 2) {
+      const k = (p.h - 2) / block;
+      p.text.font = Math.max(5.5, p.text.font * k);
+      if (p.sub) p.sub.font = Math.max(5, p.sub.font * k);
+    }
   });
   return placed;
 }
@@ -1059,7 +1098,6 @@ function layoutControls(items) {
 /* ── Draw the bars into the SVG ─────────────────────────────────────────── */
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const SVG_FONT = 'Helvetica, Arial, sans-serif';
-const PLACED = layoutControls(CONTROLS);
 
 /* Draw a laid-out set of bars into a layer. Shared by the control view and
    the vendor view, which differ only in what the bars are named after. */
@@ -1091,7 +1129,10 @@ function renderBars(layer, placed, idFor) {
       text.setAttribute('y', (cx + p.text.font * 0.35).toFixed(2));
       text.textContent = p.text.lines[0];
     } else {
-      const top = cy - (p.text.lines.length - 1) * lh / 2 + p.text.font * 0.35;
+      const subLines = p.sub ? p.sub.lines.length : 0;
+      const slh = p.sub ? p.sub.font * 1.2 : 0;
+      const block = (p.text.lines.length - 1) * lh + subLines * slh;
+      const top = cy - block / 2 + p.text.font * 0.35;
       text.setAttribute('x', cx.toFixed(2));
       text.setAttribute('y', top.toFixed(2));
       p.text.lines.forEach(function(line, i) {
@@ -1101,13 +1142,21 @@ function renderBars(layer, placed, idFor) {
         ts.textContent = line;
         text.appendChild(ts);
       });
+      if (p.sub) p.sub.lines.forEach(function(line, i) {
+        const ts = document.createElementNS(SVG_NS, 'tspan');
+        ts.setAttribute('x', cx.toFixed(2));
+        ts.setAttribute('dy', (i ? slh : slh).toFixed(2));
+        ts.setAttribute('font-size', p.sub.font.toFixed(2));
+        ts.setAttribute('class', p.subMuted ? 'bar-sub muted' : 'bar-sub');
+        ts.textContent = line;
+        text.appendChild(ts);
+      });
     }
     g.appendChild(text);
     layer.appendChild(g);
   });
 }
 
-renderBars(document.getElementById('labels'), PLACED, p => p.ctl.id);
 
 /* ── Coverage scoreboard ────────────────────────────────────────────────────
    Drawn inside the SVG rather than in the page chrome, so the percentages
@@ -1185,27 +1234,32 @@ function drawCoverage() {
    coverage: the useful reading is where the stack is dense and where it is
    empty, which is what plotting the landscape was always for. */
 function drawVendorBoard(layer) {
-  const entries = vendorEntries(), all = vendorSummary();
-  const distinct = (test) => {
-    const set = {};
-    entries.forEach(e => { if (test(e)) set[e.label.toLowerCase()] = 1; });
-    return Object.keys(set).length;
-  };
+  const recorded = vendorSummary();
+  const shown = {};
+  CONTROLS.forEach(function(c) {
+    vendorsFor(c).names.forEach(function(n) {
+      const k = n.toLowerCase();
+      shown[k] = shown[k] || { fns: {}, rows: {} };
+      shown[k].fns[c.fn] = true;
+      for (let r = 0; r < GRID.assets.length; r++) if (inRow(c, r)) shown[k].rows[r] = true;
+    });
+  });
+  const keys = Object.keys(shown);
 
   GRID.functions.forEach(function(name, c) {
-    const n = distinct(e => e.fn === c);
+    const n = keys.filter(k => shown[k].fns[c]).length;
     const cx = GRID.x0 + c * GRID.colW + GRID.colW / 2;
     layer.appendChild(svgEl('text', { x: cx.toFixed(2), y: -25, 'text-anchor': 'middle',
       'font-family': SVG_FONT, 'font-size': 15,
       fill: n ? '#e2e8f0' : '#475569' }, n || '—'));
     layer.appendChild(svgEl('text', { x: cx.toFixed(2), y: -8, 'text-anchor': 'middle',
       'font-family': SVG_FONT, 'font-size': 9.5, fill: '#64748b' },
-      n ? (n === 1 ? 'product' : 'products') : 'nothing recorded'));
+      n ? (n === 1 ? 'product' : 'products') : 'nothing named'));
   });
 
   const rx = GRID.x0 + 6 * GRID.colW + 12;
   GRID.assets.forEach(function(name, r) {
-    const n = distinct(e => inRow(e, r));
+    const n = keys.filter(k => shown[k].rows[r]).length;
     const cy = GRID.y0 + r * GRID.rowH + GRID.rowH / 2;
     layer.appendChild(svgEl('text', { x: rx.toFixed(2), y: (cy + 2).toFixed(2),
       'font-family': SVG_FONT, 'font-size': 14,
@@ -1214,13 +1268,16 @@ function drawVendorBoard(layer) {
   layer.appendChild(svgEl('text', { x: rx.toFixed(2), y: -6, 'font-family': SVG_FONT,
     'font-size': 8.5, fill: '#64748b' }, 'BY ASSET CLASS'));
 
+  // The headline counts what the client actually has; anything the library
+  // filled in is called out separately so the two never blur together.
   layer.appendChild(svgEl('text', { x: 12, y: -27, 'font-family': SVG_FONT,
-    'font-size': 9.5, fill: '#64748b', 'letter-spacing': '1.5' }, 'PRODUCTS'));
+    'font-size': 9.5, fill: '#64748b', 'letter-spacing': '1.5' }, 'IN PLACE'));
   layer.appendChild(svgEl('text', { x: 12, y: -8, 'font-family': SVG_FONT,
-    'font-size': 18, fill: '#e2e8f0' }, all.length || '—'));
-  if (all.length)
-    layer.appendChild(svgEl('text', { x: 46, y: -8, 'font-family': SVG_FONT,
-      'font-size': 10, fill: '#7dd3fc' }, 'across ' + entries.length + ' placements'));
+    'font-size': 18, fill: '#e2e8f0' }, recorded.length || '—'));
+  const examples = keys.length - recorded.length;
+  if (examples > 0)
+    layer.appendChild(svgEl('text', { x: 48, y: -8, 'font-family': SVG_FONT,
+      'font-size': 10, fill: '#7c8ba3' }, '+ ' + examples + ' market examples'));
 }
 
 function coverageByFunction(f) { return coverage(CONTROLS.filter(c => c.fn === f)); }
@@ -1289,26 +1346,21 @@ const productList = id => (meta[id].products || '')
 
 const STATUS_RANK = { blue: 0, green: 1, red: 2, off: 3 };
 
-function vendorEntries() {
-  const seen = {}, out = [];
-  CONTROLS.forEach(function(c) {
-    productList(c.id).forEach(function(name) {
-      const key = name.toLowerCase() + '|' + c.fn + '|' +
-        (c.rows === 'all' ? 'all' : c.rows.join('-'));
-      if (seen[key]) {
-        // Same product, same cell, via another control: keep the best status.
-        if (STATUS_RANK[state[c.id]] < STATUS_RANK[seen[key].status])
-          seen[key].status = state[c.id];
-        return;
-      }
-      const e = { id: 'vendor-' + out.length, label: name, fn: c.fn, rows: c.rows,
-                  status: state[c.id], csf: [], alias: [] };
-      seen[key] = e;
-      out.push(e);
-    });
-  });
-  return out;
+/* What to name on a control's cell. A board with nothing recorded still has
+   an answer to "what belongs here": the library examples, drawn muted so a
+   suggestion is never mistaken for something the client owns. */
+const EXAMPLE_LIMIT = 2;
+let showExamples = true;
+
+function vendorsFor(ctl, limit) {
+  const own = productList(ctl.id);
+  if (own.length) return { names: own, fromLibrary: false };
+  if (!showExamples) return { names: [], fromLibrary: false };
+  return { names: librarySuggestions(ctl).slice(0, limit || EXAMPLE_LIMIT),
+           fromLibrary: true };
 }
+
+const vendorText = ctl => vendorsFor(ctl).names.join(' · ');
 
 /* One row per distinct product: how much of the matrix it covers. Broad
    coverage is the consolidation conversation, and the concentration risk. */
@@ -1327,18 +1379,52 @@ function vendorSummary() {
     (a, b) => b.controls - a.controls || a.name.localeCompare(b.name));
 }
 
-function drawVendors() {
-  const entries = vendorEntries();
-  const layer = document.getElementById('vendors');
-  renderBars(layer, layoutControls(entries), p => p.ctl.id);
-  entries.forEach(function(e) {
-    const g = document.getElementById(e.id);
-    if (!g) return;
-    const c = e.status === 'off' ? 'blue' : e.status;
-    g.querySelector('rect').setAttribute('fill', COLOR_FILLS[c]);
-    g.querySelector('rect').setAttribute('stroke', COLOR_STROKES[c]);
-    g.querySelector('text').style.fill = '#f8fafc';
+/* The bars are the same bars in every view — only their labels change, so a
+   control keeps its position and the eye keeps its place across the toggle. */
+function barItems(mode) {
+  const out = [];
+  CONTROLS.forEach(function(c) {
+    const v = vendorsFor(c);
+    if (mode === 'vendors') {
+      if (!v.names.length) return;                    // nothing to name here
+      out.push(Object.assign({}, c, { label: v.names.join(' · '),
+                                      exampleOnly: v.fromLibrary }));
+      return;
+    }
+    const item = Object.assign({}, c, { exampleOnly: false });
+    const w = mode === 'both' ? vendorsFor(c, 1) : v;   // a subtitle fits one
+    if (mode === 'both' && w.names.length) {
+      // A vertical band is too narrow for a second line, so it reads inline.
+      if (c.rows === 'all') item.label = c.label + ' · ' + w.names.join(' · ');
+      else { item.sub = w.names.join(' · '); item.subMuted = w.fromLibrary; }
+      item.exampleOnly = w.fromLibrary;
+    }
+    out.push(item);
   });
+  return out;
+}
+
+function renderMatrix() {
+  const layer = document.getElementById('labels');
+  renderBars(layer, layoutControls(barItems(viewMode)), p => p.ctl.id);
+  CONTROLS.forEach(function(c) {
+    const g = document.getElementById(c.id);
+    if (!g) return;
+    // A control left "off" is hidden in the control view — that is what out of
+    // scope means. But once something is named on its cell, hiding the bar
+    // would empty the grid on a board nobody has assessed yet, so it shows in
+    // neutral instead: present, and plainly carrying no status.
+    if (viewMode !== 'controls' && state[c.id] === 'off' && vendorsFor(c).names.length) {
+      const rect = g.querySelector('rect'), text = g.querySelector('text');
+      rect.style.display = '';
+      if (text) { text.style.display = ''; text.style.fill = '#cbd5e1'; }
+      rect.setAttribute('fill', NEUTRAL_FILL);
+      rect.setAttribute('stroke', NEUTRAL_STROKE);
+    } else {
+      applyState(c.id);
+    }
+  });
+  drawOverlay();
 }
 
 /* ── Vendor overlay ─────────────────────────────────────────────────────────
@@ -1377,7 +1463,7 @@ function drawOverlay() {
   const layer = document.getElementById('labels');
   const note = document.getElementById('overlay-note');
   while (note.firstChild) note.removeChild(note.firstChild);
-  const on = !!overlayTarget && viewMode === 'controls';
+  const on = !!overlayTarget && viewMode !== 'vendors';
   layer.classList.toggle('overlay', on);
 
   let hit = 0, scoped = 0;
@@ -1404,17 +1490,16 @@ let viewMode = 'controls';
 
 function setView(mode) {
   viewMode = mode;
-  document.getElementById('labels').style.display  = mode === 'controls' ? '' : 'none';
-  document.getElementById('vendors').style.display = mode === 'vendors' ? '' : 'none';
-  document.getElementById('benchmark').style.display = mode === 'controls' ? '' : 'none';
-  document.getElementById('vendor-panel').style.display = mode === 'vendors' ? '' : 'none';
+  document.getElementById('benchmark').style.display = mode === 'vendors' ? 'none' : '';
+  document.getElementById('vendor-panel').style.display = mode === 'controls' ? 'none' : '';
+  document.getElementById('examples-wrap').style.opacity = mode === 'controls' ? '0.35' : '';
   document.querySelectorAll('.view-btn').forEach(
     b => b.classList.toggle('on', b.dataset.view === mode));
-  document.getElementById('overlay-wrap').style.opacity = mode === 'controls' ? '' : '0.35';
   updateStats();
 }
 
 const COLOR_FILLS   = { green: '#166534', blue: '#1e3a8a', red: '#7f1d1d' };
+const NEUTRAL_FILL = '#16233c', NEUTRAL_STROKE = '#475569';
 const COLOR_STROKES = { green: '#4ade80', blue: '#93c5fd', red: '#fca5a5' };
 
 /* ── State ──────────────────────────────────────────────────────────────── */
@@ -1509,8 +1594,7 @@ function updateStats() {
   renderBenchmark();
   renderVendorPanel();
   refreshOverlayOptions();
-  drawOverlay();
-  if (viewMode === 'vendors') drawVendors();
+  renderMatrix();
   document.getElementById('stat-blue').textContent  = '● ' + counts.blue  + ' Current';
   document.getElementById('stat-green').textContent = '● ' + counts.green + ' Planned';
   document.getElementById('stat-red').textContent   = '● ' + counts.red   + ' Gap';
@@ -1705,7 +1789,6 @@ function buildDetail(ctl, li) {
   prod.addEventListener('input', function() {
     meta[ctl.id].products = prod.value;
     save();
-    if (viewMode === 'vendors') drawVendors();
     updateStats();
   });
   d.appendChild(prod);
@@ -1726,7 +1809,6 @@ function buildDetail(ctl, li) {
         prod.value = meta[ctl.id].products;
         save();
         updateStats();
-        if (viewMode === 'vendors') drawVendors();
       });
       srow.appendChild(b);
     });
@@ -1876,6 +1958,10 @@ document.getElementById('filter-clear').addEventListener('click', function() {
   profileFilter = null;
   renderBenchmark();
   applyFilter();
+});
+document.getElementById('examples-toggle').addEventListener('change', function() {
+  showExamples = this.checked;
+  updateStats();
 });
 document.getElementById('overlay-select').addEventListener('change', function() {
   overlayTarget = this.value;
