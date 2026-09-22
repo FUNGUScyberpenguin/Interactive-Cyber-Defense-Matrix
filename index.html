@@ -12,7 +12,14 @@
 
     body {
       display: grid;
-      grid-template-columns: 300px 1fr;
+      /*
+       * 360px is the measured width at which every control name fits without
+       * being clipped, set by the longest, "Third-Party & Supply Chain Risk".
+       * The matrix is a fixed 900px drawing, so this comes out of the margin
+       * beside it rather than out of the chart, until the window narrows
+       * enough that the chart wants it back. See the media query below.
+       */
+      grid-template-columns: 360px 1fr;
       min-height: 100vh;
       background: #060810;
       color: #e2e8f0;
@@ -406,11 +413,65 @@
     .tpl-label {
       font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #475569;
     }
-    #tpl-mode {
-      font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace; font-size: 12px;
-      background: rgba(15,23,42,0.9); border: 1px solid rgba(59,130,246,0.25);
-      color: #93c5fd; border-radius: 4px; padding: 5px 8px; outline: none; cursor: pointer;
+    .info-btn {
+      flex-shrink: 0; width: 16px; height: 16px; border-radius: 50%;
+      border: 1px solid rgba(148,163,184,0.45); background: transparent;
+      color: #94a3b8; font-size: 11px; font-weight: 700; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; padding: 0; margin-left: 6px; transition: all 0.12s;
+      font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
     }
+    .info-btn:hover, .info-btn:focus-visible {
+      border-color: #60a5fa; color: #bfdbfe; background: rgba(30,58,138,0.35); outline: none;
+    }
+    .info-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.72); backdrop-filter: blur(2px);
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+    }
+    .info-overlay[hidden] { display: none; }
+    .info-card {
+      background: #0b1220; border: 1px solid rgba(59,130,246,0.4); border-radius: 8px;
+      max-width: 560px; width: 100%; max-height: 82vh; overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+    .info-head {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 18px 20px 12px; border-bottom: 1px solid rgba(59,130,246,0.2);
+    }
+    .info-title { flex: 1; margin: 0; font-size: 17px; font-weight: 700; color: #e2e8f0; }
+    .info-fn {
+      display: block; margin-top: 3px; font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: #60a5fa; font-weight: 600;
+    }
+    .info-close {
+      flex-shrink: 0; background: transparent; border: none; color: #94a3b8;
+      font-size: 22px; line-height: 1; cursor: pointer; padding: 0 4px;
+    }
+    .info-close:hover, .info-close:focus-visible { color: #e2e8f0; outline: none; }
+    .info-body { padding: 16px 20px 18px; }
+    .info-body section { margin-bottom: 15px; }
+    .info-body h4 {
+      margin: 0 0 5px; font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: #60a5fa;
+      font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    }
+    .info-body p { margin: 0; font-size: 14px; line-height: 1.6; color: #cbd5e1; }
+    .info-refs {
+      padding: 12px 20px 16px; border-top: 1px solid rgba(59,130,246,0.2);
+      font-size: 12px; color: #94a3b8; line-height: 1.6;
+    }
+    .info-refs .csf-tag { margin-right: 4px; }
+    .info-status {
+      padding: 10px 20px 14px; border-top: 1px solid rgba(59,130,246,0.2);
+      font-size: 12px; color: #94a3b8;
+      font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    }
+
+    .template-btn.template-active {
+      background: rgba(239,68,68,0.3); border-color: rgba(239,68,68,0.6); color: #fca5a5;
+    }
+    .template-btn.template-active:hover { background: rgba(239,68,68,0.45); }
     #bm-toggle {
       font-family: 'Avenir Next Condensed', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 15px;
       letter-spacing: 2px; text-transform: uppercase; color: #cbd5e1;
@@ -570,6 +631,11 @@
     #export-status.show { opacity: 1; }
     #export-error { font-size: 12px; color: #fca5a5; letter-spacing: 1px; display: none; }
     #export-error.show { display: inline; }
+    /* Below this the 900px matrix needs the room more than the labels do. */
+    @media (max-width: 1300px) {
+      body { grid-template-columns: 300px 1fr; }
+    }
+
     @media print {
       body { grid-template-columns: 1fr; background: #000; }
       #sidebar, #stats-bar, #export-bar, #title-bar, #benchmark, #vendor-panel { display: none !important; }
@@ -650,17 +716,28 @@
   </div>
 
   <div id="templates-bar">
-    <span class="tpl-label">Apply profile as</span>
-    <select id="tpl-mode">
-      <option value="blue" selected>Current</option>
-      <option value="green">Planned</option>
-      <option value="red">Gap</option>
-    </select>
-    <button class="template-btn" onclick="applyTemplate('tableStakes')" title="Opinionated baseline, CIS v8.1 IG1 in shape">Table stakes</button>
-    <button class="template-btn" onclick="applyTemplate('gettingInsurance')" title="What carrier questionnaires commonly ask about">Insurance ready</button>
-    <button class="template-btn" onclick="applyTemplate('industryAverage')" title="A funded mid-market programme — not a measured average">Commonly seen</button>
-    <button class="template-btn" onclick="applyTemplate('regionalBankStandard')" title="Every control in the tool">Everything</button>
+    <span class="tpl-label">Show as gaps</span>
+    <button class="template-btn" id="tpl-tableStakes" onclick="applyTemplate('tableStakes')" title="Opinionated baseline, CIS v8.1 IG1 in shape">Table stakes</button>
+    <button class="template-btn" id="tpl-gettingInsurance" onclick="applyTemplate('gettingInsurance')" title="What carrier questionnaires commonly ask about">Insurance ready</button>
+    <button class="template-btn" id="tpl-industryAverage" onclick="applyTemplate('industryAverage')" title="A funded mid-market programme — not a measured average">Commonly seen</button>
+    <button class="template-btn" id="tpl-regionalBankStandard" onclick="applyTemplate('regionalBankStandard')" title="Every control in the tool">Everything</button>
   </div>
+  </div>
+
+  <div class="info-overlay" id="info-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="info-title">
+    <div class="info-card">
+      <div class="info-head">
+        <h3 class="info-title" id="info-title"><span id="info-name"></span><span class="info-fn" id="info-fn"></span></h3>
+        <button class="info-close" id="info-close" aria-label="Close" onclick="closeInfo()">&times;</button>
+      </div>
+      <div class="info-body">
+        <section><h4>What it is</h4><p id="info-what"></p></section>
+        <section><h4>What goes wrong without it</h4><p id="info-without"></p></section>
+        <section><h4>Does a company your size need it?</h4><p id="info-size"></p></section>
+      </div>
+      <div class="info-refs" id="info-refs"></div>
+      <p class="info-status" id="info-status"></p>
+    </div>
   </div>
 
   <div id="svg-wrap">
@@ -779,6 +856,331 @@
              whether the client says "SSE", "SWG" or "CASB"
      csf   : the CSF 2.0 Categories the control primarily supports
    ══════════════════════════════════════════════════════════════════════════ */
+/* Plain-English explainer for every control, shown in the info modal.
+ *
+ * Written for someone who has never bought security before. Each entry says
+ * what the thing is, what goes wrong without it, and whether a company of
+ * their size actually needs it.
+ *
+ * That last field is the one that earns its place. This matrix describes what
+ * a mature programme looks like, so a small company reading 59 rows needs to
+ * know which of them are genuinely theirs, which are already inside a
+ * subscription they pay for, and which belong to organisations ten times
+ * their size. Saying "you do not need this yet" is the useful answer more
+ * often than the alternative.
+ *
+ * The aliases and CSF references already on each control are shown alongside,
+ * so this file carries only the prose.
+ */
+const INFO = {
+  /* ── GOVERN ── */
+  securityLeadership: {
+    what: 'Someone senior who owns security: sets the direction, decides what to buy, and answers for it. Often rented part-time as a virtual CISO rather than hired.',
+    without: 'Security becomes whatever IT had time for. Tools arrive because a vendor called, nobody owns the plan, and the first hard question from a customer or a regulator has no owner.',
+    size: 'Common from roughly 20 people up, earlier if you sell to enterprises or hold regulated data. Below that, an experienced IT partner with a written plan usually covers it.'
+  },
+  cyberRiskMgmt: {
+    what: 'Keeping a list of what could go wrong, how badly, and how likely, so spending follows the risk rather than the loudest vendor.',
+    without: 'Money goes to whatever felt urgent. You cannot say which risks you have accepted, so you have accepted all of them by default.',
+    size: 'A one-page list of your ten worst days beats no list at all. The formal quantification methods are for companies with a board asking for numbers.'
+  },
+  policyStandards: {
+    what: 'The written rules for how your company handles technology and data, and the baselines your systems are meant to be built to.',
+    without: 'Nobody can be held to a standard that was never written down. Every configuration decision gets made fresh, by whoever is doing it that day.',
+    size: 'Everyone needs a handful of short, real policies. Nobody needs the forty-document set a template pack will sell you.'
+  },
+  grcAssurance: {
+    what: 'Governance, risk and compliance as an ongoing job: keeping policies current, tracking which rules apply, and holding the evidence auditors ask for.',
+    without: 'Policies get written once for an audit and then rot. Each customer questionnaire becomes a fire drill because the evidence lives in six inboxes.',
+    size: 'Worth it when chasing SOC 2, HIPAA, ISO 27001 or CMMC, or when security reviews are eating a day a week.'
+  },
+  supplyChainRisk: {
+    what: 'Knowing which suppliers can hurt you if they are breached, and checking them before and during the relationship.',
+    without: 'Your security becomes the security of whichever vendor was cheapest. Most companies cannot list which suppliers hold their data.',
+    size: 'Start by listing the suppliers who could stop your business or leak your customers. That list is usually shorter than people expect and more alarming.'
+  },
+
+  /* ── IDENTIFY ── */
+  attackSurfaceMgmt: {
+    what: 'Continuous discovery of everything of yours reachable from the internet: servers, forgotten subdomains, exposed admin panels, storage left open.',
+    without: 'You defend what you remember owning. Attackers find the staging site from 2021 that nobody switched off.',
+    size: 'Valuable at any size and cheap. Even a one-off external scan usually turns up something nobody knew was live.'
+  },
+  exposureManagement: {
+    what: 'Finding the known weaknesses in what you run and fixing them in the order that actually reduces risk, rather than by scanner severity alone.',
+    without: 'You get a list of thousands of findings, fix the easy ones, and leave the handful that were genuinely reachable from outside.',
+    size: 'Everyone needs the scanning. The prioritisation platforms are for teams with more findings than hands.'
+  },
+  offensiveTesting: {
+    what: 'Hiring people to attack your systems the way a real attacker would, then reading what they got.',
+    without: 'You know what your tools claim to block. You do not know what someone determined can actually reach.',
+    size: 'Once a year for most, more if you ship software or a contract demands it. Insist the report says what they reached, not just a list of scanner output.'
+  },
+  threatIntelligence: {
+    what: 'Information about who is attacking organisations like yours and how, used to decide what to defend first.',
+    without: 'You defend against attacks in general rather than the ones aimed at your industry, which is a much larger and vaguer job.',
+    size: 'Most small companies get enough from their vendors and from free sector advisories. Paid feeds need someone with time to act on them.'
+  },
+  assetInventory: {
+    what: 'A current list of the hardware, software and services you own. The boring foundation nearly every other control assumes exists.',
+    without: 'Every other control has gaps you cannot see, because the thing it was meant to protect was not on the list.',
+    size: 'Everyone. A spreadsheet that is actually current beats a discovery platform nobody maintains.'
+  },
+  appApiDiscovery: {
+    what: 'Finding the applications and interfaces in use, including the software staff signed up for on a company card without telling anyone.',
+    without: 'Company data ends up in tools nobody approved, nobody monitors, and nobody can revoke when the person leaves.',
+    size: 'Everyone has more of this than they think. A look at the card statement and the sign-in logs is a real start.'
+  },
+  networkMapping: {
+    what: 'Knowing what is on your network and what talks to what, including the equipment nobody thinks of as a computer.',
+    without: 'You cannot segment, monitor or contain a network you have never drawn.',
+    size: 'Scales with how much you run yourself. A company living in cloud services needs far less of this than one with a server room.'
+  },
+  dataDiscovery: {
+    what: 'Finding where your sensitive data actually lives and labelling it, so customer records get treated differently from a lunch menu.',
+    without: 'You protect everything equally, which means nothing well, and cannot answer what you would have to disclose after an incident.',
+    size: 'The step before data protection tooling is worth buying. Even a manual inventory beats nothing.'
+  },
+  identityInventory: {
+    what: 'A list of every account that can reach your systems, including the service accounts and API keys nobody remembers creating.',
+    without: 'Accounts outlive employment and integrations outlive the project. The oldest forgotten key usually has the most access.',
+    size: 'Everyone, and mostly free. Your identity provider will export the list; the work is reading it.'
+  },
+
+  /* ── PROTECT ── */
+  zeroTrustArchitecture: {
+    what: 'Designing so that being inside the network grants nothing. Every request is checked on its own merits, every time.',
+    without: 'One compromised laptop inherits whatever the network trusts, which is usually everything.',
+    size: 'A direction rather than a purchase. Small companies get most of it by living in cloud services and enforcing strong sign-in.'
+  },
+  endpointProtection: {
+    what: 'Software on every machine that blocks malware before it runs.',
+    without: 'The commodity attacks that any filter would stop get through, and they are still most of what arrives.',
+    size: 'Everyone, and largely solved by what is already built into current Windows and macOS if it is switched on and monitored.'
+  },
+  patchConfigMgmt: {
+    what: 'Keeping software updated and systems configured to a known safe baseline, and proving both.',
+    without: 'Known flaws stay open for months. Most successful intrusions use a patch that existed and was not applied.',
+    size: 'Everyone. This and strong sign-in are the two highest-value things on this whole matrix.'
+  },
+  otIotSecurity: {
+    what: 'Security for equipment that runs physical things: production lines, building systems, medical devices, cameras.',
+    without: 'Machinery never designed for a network sits on one anyway, often running software the vendor stopped supporting years ago.',
+    size: 'Only if you have that equipment. If you do, it is urgent, because an incident here stops production rather than annoying people.'
+  },
+  secureSdlc: {
+    what: 'Checking software for security flaws while it is being written, rather than after customers find them.',
+    without: 'Flaws reach production and get found by users, researchers or attackers. Fixing them there costs many times more.',
+    size: 'Only if you build software. If you do, it belongs in the build pipeline, not in a yearly review.'
+  },
+  cloudSecurity: {
+    what: 'Watching your cloud accounts for dangerous configuration: storage open to the world, over-permissive roles, workloads running as administrator.',
+    without: 'The most common cloud breach is not a clever attack. It is a setting, left wrong, found by someone scanning for it.',
+    size: 'Anyone with meaningful cloud infrastructure. If you only use software-as-a-service, this is not yours to hold.'
+  },
+  saasSecurity: {
+    what: 'Managing the security settings of the software-as-a-service products you use, and which third-party apps have been granted access to them.',
+    without: 'A staff member approves an app that reads all company mail, and nothing notices. That access survives password changes.',
+    size: 'Everyone using Microsoft 365 or Google Workspace, though at small scale it is a configuration job rather than a product.'
+  },
+  waapApiProtection: {
+    what: 'A filter in front of your web applications and interfaces that blocks attacks, abuse and automated traffic.',
+    without: 'Your application defends itself alone, and the flaw you have not found yet is reachable by anyone.',
+    size: 'If you run a public web application, yes. Often already included with your content delivery network.'
+  },
+  saseSse: {
+    what: 'A cloud layer between your people and the internet that filters traffic and applies the same rules wherever they work.',
+    without: 'Protection depends on sitting in the office behind the office firewall, which is not where anyone works now.',
+    size: 'Suits companies with remote staff and many cloud applications. Often replaces several older appliances at once.'
+  },
+  ztnaRemoteAccess: {
+    what: 'How remote staff reach internal systems. The modern form grants access to specific applications, checked each time, instead of dropping someone onto the whole network.',
+    without: 'Anyone holding a remote access credential is inside everything, and stolen credentials are a routine way in.',
+    size: 'Everyone with remote workers. If you run a traditional VPN, pair it with strong sign-in and consider the per-application model at renewal.'
+  },
+  networkSegmentation: {
+    what: 'Splitting the network into compartments so a machine that gets compromised cannot reach everything else.',
+    without: 'One infected laptop can talk to the file server, the finance system and the backups. That is how one click becomes a shutdown.',
+    size: 'Usually a larger-company project. Smaller companies get much of the benefit by not running a flat office network.'
+  },
+  ddosProtection: {
+    what: 'Protection from floods of junk traffic sent to knock you offline.',
+    without: 'Someone with a grudge and a small budget can take your site down for as long as they care to pay.',
+    size: 'Often already included with your web host or content delivery network. Check before buying it separately.'
+  },
+  dataProtectionDlp: {
+    what: 'Controls that spot sensitive data leaving, by email, upload or copy to a drive, and block or flag it.',
+    without: 'A departing employee takes the customer list, or a spreadsheet goes to the wrong address, and nobody knows.',
+    size: 'Needs data discovery first. Bought without knowing where your sensitive data is, it produces mostly noise.'
+  },
+  encryptionKeyMgmt: {
+    what: 'Encrypting data at rest and in transit, and managing the keys properly, including who can use them and what happens when one is lost.',
+    without: 'A stolen laptop or a copied database is readable. Or the encryption is fine and the key was in the same place as the data.',
+    size: 'The encryption itself is mostly default now. The key management platforms are for companies with a real cryptographic estate.'
+  },
+  dspm: {
+    what: 'Continuous watch over where sensitive data sits and who can reach it, especially as it spreads across cloud services.',
+    without: 'Data copies multiply into places nobody is watching. The exposed copy is usually one nobody remembered making.',
+    size: 'For organisations with sprawling cloud data. Smaller companies get further with discovery and tidy permissions.'
+  },
+  mfaSso: {
+    what: 'Multi-factor authentication asks for something beyond a password. Single sign-on gives one strong login for everything, so there are fewer passwords to steal.',
+    without: 'A leaked password is a working key to your email, your files and your money. This is how most small-business compromises begin.',
+    size: 'Everyone, first, before anything else here. Prefer an app, a passkey or a security key over text messages.'
+  },
+  iamIga: {
+    what: 'Managing who has access to what: granted when someone joins, changed when they move, and removed the day they leave, with periodic review.',
+    without: 'Accounts outlive employment and permissions only ever accumulate. Nobody has looked at who can reach the finance system in years.',
+    size: 'Everyone, and mostly process at small scale. A leaver checklist that is actually followed beats a platform nobody configures.'
+  },
+  pamSecrets: {
+    what: 'Extra control over administrator accounts and the passwords and keys systems use to talk to each other: vaulted, time-limited, recorded.',
+    without: 'Admin passwords sit in a shared document and never change. One compromised admin account is the whole company.',
+    size: 'Larger companies buy the platform. Smaller ones get most of the benefit from separate admin accounts, a password manager and strong sign-in on every one.'
+  },
+  emailCollabSecurity: {
+    what: 'Filtering beyond what your mail provider does by default, including fraud that carries no attachment and no link.',
+    without: 'The dangerous message is a plausible request to change bank details. Basic spam filtering is not looking for that.',
+    size: 'Everyone. Email is still how most attacks arrive.'
+  },
+  awarenessHumanRisk: {
+    what: 'Teaching staff to recognise the attacks aimed at them, and measuring whether it worked.',
+    without: 'Your people are the target and nobody has shown them what the attacks look like now.',
+    size: 'Everyone. Short and frequent beats an annual hour that everyone clicks through. Measure who reports, not who clicks, and never punish clicking.'
+  },
+
+  /* ── DETECT ── */
+  siemLogging: {
+    what: 'Collecting logs from everything you run in one place, so a question about what happened has somewhere to be asked.',
+    without: 'The evidence of an intrusion exists, scattered across a dozen systems, and nobody assembles it until an investigator does it afterwards.',
+    size: 'Useful past a handful of systems, or when an insurer or auditor asks for log retention.'
+  },
+  socMdr: {
+    what: 'People watching your alerts around the clock and responding when something real appears. Almost always bought as a service.',
+    without: 'Alerts arrive at three in the morning and wait for business hours. Attackers know that and work accordingly.',
+    size: 'Buy it rather than build it. Staffing genuine 24/7 yourself takes eight to ten people.'
+  },
+  detectionEngineering: {
+    what: 'Writing and tuning your own detections, and going looking for attackers rather than waiting for an alert.',
+    without: 'You catch what your vendor\u2019s default rules catch, which is the attacks everyone already knows about.',
+    size: 'For organisations with a security team of their own. Buying detection as a service covers this for everyone else.'
+  },
+  edrXdr: {
+    what: 'Software on machines that watches behaviour rather than files, stops attacks in progress, and leaves a trail to investigate.',
+    without: 'Traditional antivirus catches known malware and misses the rest. Nobody notices until something breaks.',
+    size: 'Everyone. The common mistake is buying it unmanaged: the tool sees the attack and the alert lands in a console nobody opens.'
+  },
+  appDetectionResponse: {
+    what: 'Detection inside the running application itself, spotting attacks that look like ordinary traffic from outside.',
+    without: 'Attacks against your own code are invisible to network and endpoint tools alike.',
+    size: 'Only if you build and run your own software, and mostly at scale.'
+  },
+  ndr: {
+    what: 'Watching network traffic for the patterns that signal an intrusion, including data leaving quietly.',
+    without: 'You see traffic volumes and nothing about intent. Exfiltration looks like any other upload.',
+    size: 'More useful the more you run yourself. A cloud-only company gets similar value from its providers’ logs.'
+  },
+  dataDetectionResponse: {
+    what: 'Watching who is actually reading your data and flagging access that does not fit the pattern.',
+    without: 'The account with legitimate access reads everything and nothing objects, because every individual action was allowed.',
+    size: 'For organisations with concentrated valuable data and the staff to investigate what it flags.'
+  },
+  itdrUeba: {
+    what: 'Detection aimed at identity: impossible travel, sudden privilege changes, sessions behaving unlike the person they belong to.',
+    without: 'A stolen session or a valid login from an attacker looks exactly like the employee, because technically it is them.',
+    size: 'Increasingly the important one, since identity is now the main way in. Some of it is already in your identity provider’s higher tiers.'
+  },
+  digitalRiskMonitoring: {
+    what: 'Watching outside your walls for your brand and credentials: leaked passwords, lookalike domains, data for sale.',
+    without: 'Staff reuse work passwords elsewhere, those sites get breached, and you find out when someone signs in as your bookkeeper.',
+    size: 'Cheap and worth it at any size, though strong sign-in is the real fix for the credential half.'
+  },
+
+  /* ── RESPOND ── */
+  incidentResponse: {
+    what: 'A team who take over when something goes badly wrong: work out what happened, contain it, and help you recover. Usually on retainer.',
+    without: 'You start phoning strangers on the worst day of your year, negotiating a rate while the damage spreads.',
+    size: 'Everyone should know who they would call. A retainer buys a guaranteed response time and a team who already know your setup.'
+  },
+  soarAutomation: {
+    what: 'Automating the repetitive parts of responding, so common alerts are handled in seconds without waiting for a person.',
+    without: 'Analysts spend their time on the same manual steps, and the volume decides what gets looked at.',
+    size: 'For teams with enough alert volume to automate. Below that it is machinery without a job.'
+  },
+  crisisComms: {
+    what: 'Deciding in advance who speaks, to whom, and when: customers, regulators, insurers, staff. Including specialist help for extortion.',
+    without: 'The technical problem gets handled and the company still suffers, because the first anyone heard was from a journalist.',
+    size: 'Everyone needs the plan, which is free. The specialist help usually comes bundled with incident response or insurance.'
+  },
+  endpointContainment: {
+    what: 'The ability to cut a machine off the network immediately, from wherever you are, and clean or rebuild it remotely.',
+    without: 'Containing an infection means finding the laptop physically, which takes hours you do not have.',
+    size: 'Everyone, and it usually comes with your endpoint detection tool. Worth checking you can actually do it before you need to.'
+  },
+  appRemediation: {
+    what: 'Fixing a flaw in a running application fast, either by shipping a patch or by blocking the attack in front of it while you write one.',
+    without: 'A flaw published on a Friday stays exploitable until the next release.',
+    size: 'Only if you build software. If you buy it, this belongs to your vendor and their response time is worth asking about.'
+  },
+  networkContainment: {
+    what: 'Blocking traffic quickly during an incident: cutting a destination, isolating a segment, stopping data leaving.',
+    without: 'You watch the attack continue while changes go through a change process designed for ordinary weeks.',
+    size: 'Scales with how much network you own. The useful question is who can make an emergency block at 2am and how.'
+  },
+  dataBreachResponse: {
+    what: 'Working out exactly whose data was affected, preserving evidence, and meeting notification duties on the clock the law sets.',
+    without: 'You cannot answer the only question that matters to regulators and customers, so you either over-disclose or under-disclose.',
+    size: 'Everyone holding personal data. The deadlines are short and they start before you have finished investigating.'
+  },
+  identityResponse: {
+    what: 'Shutting down a compromised account properly: resetting the password, revoking live sessions and tokens, and undoing any access it granted itself.',
+    without: 'You change the password and the attacker keeps working, because their session was never ended.',
+    size: 'Everyone, and it is the single most commonly botched response step. Practise it once before you need it.'
+  },
+
+  /* ── RECOVER ── */
+  cyberResilience: {
+    what: 'Knowing which parts of the business must keep running, how long they can be down, and how you operate while systems are gone.',
+    without: 'Recovery priorities get decided in the moment, usually wrongly, by whoever is shouting.',
+    size: 'Everyone, and mostly free. Deciding what the minimum running company looks like is an afternoon that pays for itself.'
+  },
+  drPlanRehearsals: {
+    what: 'A written recovery plan, and actually practising it, including how long recovery takes and how much data you lose.',
+    without: 'The plan is in one person’s head and that person is on holiday. Nobody knows the recovery takes four days until it does.',
+    size: 'Everyone. One tabletop exercise a year finds more problems than most tools you could buy.'
+  },
+  cyberInsurance: {
+    what: 'Being able to answer the underwriting questions honestly, and knowing what your policy actually covers before you claim.',
+    without: 'You discover at claim time that a control you attested to was not in place, and the claim is reduced or refused.',
+    size: 'Anyone carrying a policy. Read the questionnaire as a checklist, because that is what it is.'
+  },
+  endpointRecovery: {
+    what: 'Getting a person back to work after their machine is lost, stolen or wiped: backups, and a standard build to restore onto.',
+    without: 'A failed drive takes whatever lived only on it, and rebuilding one laptop by hand costs most of a day.',
+    size: 'Everyone. Largely solved by keeping work in cloud storage, provided people genuinely save there.'
+  },
+  appRecovery: {
+    what: 'Rebuilding your applications and their configuration from a source of truth rather than from memory.',
+    without: 'The server is restored and nothing works, because the configuration that made it work was never written down.',
+    size: 'Anyone running their own applications. Keeping configuration in version control is the cheap version.'
+  },
+  networkRecovery: {
+    what: 'Restoring network equipment and its configuration, including a way in when the network itself is down.',
+    without: 'You cannot reach the equipment you need to fix, because reaching it requires the thing that is broken.',
+    size: 'Anyone with their own network equipment. Config backups and one out-of-band route cover most of it.'
+  },
+  immutableBackup: {
+    what: 'Backups that cannot be altered or deleted for a set period, by anyone, including an administrator.',
+    without: 'Ransomware that reaches your network reaches the backups on it, and encrypting the backups is the first thing it does.',
+    size: 'Everyone. This is the control that decides whether an incident is expensive or fatal, and immutable cloud storage does it as well as tape.'
+  },
+  identityRecovery: {
+    what: 'Recovering the directory everything else authenticates against, and having emergency accounts that still work when it is gone.',
+    without: 'Nobody can sign in to anything, including the tools you would use to fix it. Directory recovery is slow and rarely rehearsed.',
+    size: 'Anyone running their own directory. At minimum, hold two break-glass accounts with credentials somewhere physically secure.'
+  }
+};
+
 const CONTROLS = [
   /* ── GOVERN ───────────────────────────────────────────────────────── */
   { id:'securityLeadership', label:'Security Leadership', fn:0, rows:'all',
@@ -2214,6 +2616,18 @@ function buildRow(ctl) {
   chip.className = 'prio-chip';
   chip.textContent = meta[ctl.id].priority.toUpperCase();
   title.appendChild(chip);
+
+  if (INFO[ctl.id]) {
+    const info = document.createElement('button');
+    info.className = 'info-btn';
+    info.type = 'button';
+    info.textContent = 'i';
+    info.title = 'What is ' + ctl.label + '?';
+    info.setAttribute('aria-label', 'What is ' + ctl.label + '?');
+    // The row text toggles the assessment detail, so keep this click to itself.
+    info.addEventListener('click', function(e) { e.stopPropagation(); openInfo(ctl.id); });
+    title.appendChild(info);
+  }
   const sub = document.createElement('span');
   sub.className = 'sol-alias';
   sub.textContent = ctl.alias.slice(0, 3).join(' · ');
@@ -2235,7 +2649,11 @@ function buildRow(ctl) {
     inp.id = ctl.id + '-' + opt.val;
     inp.value = opt.val;
     inp.checked = state[ctl.id] === opt.val;
-    inp.addEventListener('change', function() { setStatus(ctl.id, opt.val); });
+    inp.addEventListener('click', function() { claimByHand(ctl.id); });
+    inp.addEventListener('change', function() {
+      claimByHand(ctl.id);
+      setStatus(ctl.id, opt.val);
+    });
     const dot = document.createElement('label');
     dot.htmlFor = inp.id;
     dot.className = opt.cls;
@@ -2291,11 +2709,11 @@ function buildDetail(ctl, li) {
     const yes = document.createElement('button');
     yes.className = 'confirm-btn inline';
     yes.textContent = 'Yes — Current';
-    yes.addEventListener('click', () => setStatus(ctl.id, 'blue'));
+    yes.addEventListener('click', () => { claimByHand(ctl.id); setStatus(ctl.id, 'blue'); });
     const no = document.createElement('button');
     no.className = 'confirm-btn inline deny';
     no.textContent = 'No — Gap';
-    no.addEventListener('click', () => setStatus(ctl.id, 'red'));
+    no.addEventListener('click', () => { claimByHand(ctl.id); setStatus(ctl.id, 'red'); });
     ask.appendChild(yes);
     ask.appendChild(no);
     d.appendChild(ask);
@@ -2450,6 +2868,11 @@ function renderList() {
   applyFilter();
 }
 
+/* A judgement made by a person outranks the active profile from then on. */
+function claimByHand(id) {
+  if (profilePainted[id]) delete profilePainted[id];
+}
+
 function setStatus(id, val) {
   state[id] = val;
   const li = document.getElementById('li-' + id);
@@ -2591,20 +3014,134 @@ CONTROLS.forEach(c => applyState(c.id));
 renderList();
 setView('controls');
 
+/* ── Info modal ──────────────────────────────────────────────────────────
+ * Answers "what is this thing", which the row detail deliberately does not:
+ * that panel is where an assessment gets recorded, this is where someone
+ * works out whether they have any business recording one.
+ */
+const INFO_STATUS = {
+  'new':  'Not assessed yet.',
+  off:    'Marked as: Not applicable.',
+  prov:   'Marked as: Unconfirmed, proposed by a product you named.',
+  blue:   'Marked as: Current.',
+  green:  'Marked as: Planned.',
+  red:    'Marked as: Gap.'
+};
+
+let infoOpener = null;
+
+function openInfo(id) {
+  const entry = INFO[id];
+  const ctl = CONTROLS.find(c => c.id === id);
+  if (!entry || !ctl) return;
+
+  document.getElementById('info-name').textContent = ctl.label;
+  document.getElementById('info-fn').textContent =
+    GRID.functions[ctl.fn] + ' \u00b7 ' + assetLabel(ctl);
+  document.getElementById('info-what').textContent = entry.what;
+  document.getElementById('info-without').textContent = entry.without;
+  document.getElementById('info-size').textContent = entry.size;
+  document.getElementById('info-status').textContent = INFO_STATUS[state[id]] || INFO_STATUS['new'];
+
+  // Reuse the metadata the control already carries rather than restating it.
+  const refs = document.getElementById('info-refs');
+  refs.innerHTML = '';
+  const csf = document.createElement('div');
+  csf.appendChild(document.createTextNode('NIST CSF 2.0: '));
+  ctl.csf.forEach(function(code) {
+    const tag = document.createElement('span');
+    tag.className = 'csf-tag';
+    tag.textContent = code;
+    csf.appendChild(tag);
+  });
+  refs.appendChild(csf);
+  const alias = document.createElement('div');
+  alias.textContent = 'Also sold as: ' + ctl.alias.join(', ');
+  refs.appendChild(alias);
+
+  infoOpener = document.activeElement;
+  document.getElementById('info-overlay').hidden = false;
+  document.getElementById('info-close').focus();
+}
+
+function closeInfo() {
+  document.getElementById('info-overlay').hidden = true;
+  if (infoOpener && typeof infoOpener.focus === 'function') infoOpener.focus();
+  infoOpener = null;
+}
+
+document.getElementById('info-overlay').addEventListener('click', function(e) {
+  if (e.target.id === 'info-overlay') closeInfo();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && !document.getElementById('info-overlay').hidden) closeInfo();
+});
+
 /* ── Templates & bulk actions ───────────────────────────────────────────── */
-function applyTemplate(name, colorMode) {
+/*
+ * A profile is a claim about what a company of that shape is missing, so it
+ * only ever marks gaps.
+ *
+ * It behaves as a selector rather than an accumulator: choosing one shows that
+ * profile and clears the last one, and choosing the same profile again clears
+ * it. Without that, clicking two profiles left you with the union of both and
+ * no way back short of Clear all.
+ *
+ * What it must never touch is a control somebody has judged for themselves.
+ * The existing guard already refused to overwrite an assessed control, but it
+ * could not tell a red this painted from a red a person chose, so it could
+ * never take its own marks back either. profilePainted records which controls
+ * the current profile is responsible for; everything else is left alone.
+ */
+let activeProfile = null;
+const profilePainted = {};   // control id -> true while this profile owns it
+
+function applyTemplate(name) {
   const tpl = TEMPLATES[name];
   if (!tpl) return;
-  colorMode = colorMode || document.getElementById('tpl-mode').value;
-  tpl.controls.forEach(function(id) {
-    if (!ASSESSED[state[id]] && state[id] !== 'off' && state[id] !== 'prov')
-      setStatus(id, colorMode);
+
+  const turningOff = activeProfile === name;
+  const wanted = turningOff ? {} : tpl.controls.reduce((a, id) => (a[id] = 1, a), {});
+
+  CONTROLS.forEach(function(c) {
+    const id = c.id;
+    if (wanted[id]) {
+      // Only claim a control nobody has judged. A person's Current, Planned,
+      // Gap, Not applicable or Unconfirmed all outrank a profile.
+      if (profilePainted[id] || (!ASSESSED[state[id]] && state[id] !== 'off' && state[id] !== 'prov')) {
+        profilePainted[id] = true;
+        setStatus(id, 'red');
+      }
+    } else if (profilePainted[id]) {
+      delete profilePainted[id];
+      setStatus(id, 'new');
+    }
   });
+
+  activeProfile = turningOff ? null : name;
+  markActiveProfile();
   renderList();
 }
 
+function markActiveProfile() {
+  Object.keys(TEMPLATES).forEach(function(name) {
+    const btn = document.getElementById('tpl-' + name);
+    if (btn) btn.classList.toggle('template-active', name === activeProfile);
+  });
+}
+
 function clearAll() {
-  CONTROLS.forEach(c => setStatus(c.id, 'off'));
+  activeProfile = null;
+  Object.keys(profilePainted).forEach(k => delete profilePainted[k]);
+  markActiveProfile();
+  /*
+   * Back to "Not assessed", which is where the board starts, rather than to
+   * "Not applicable". Those are different claims: one is a blank sheet, the
+   * other asserts that none of the 59 controls apply to this client. Clearing
+   * to "Not applicable" also left profiles inert afterwards, since a profile
+   * will not overwrite a judgement somebody made.
+   */
+  CONTROLS.forEach(c => setStatus(c.id, 'new'));
   renderList();
 }
 
